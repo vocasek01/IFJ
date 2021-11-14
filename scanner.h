@@ -60,14 +60,8 @@ typedef enum {
 
 } State;
 
-typedef union {
-    int integer_num;
-    float float_num;
-    char *string;
-} tokenAttribute;
-
 typedef struct {
-    tokenAttribute attribute;
+    char * attribute;
     State type;
 } Token;
 

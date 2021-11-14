@@ -9,42 +9,6 @@
 
 FILE *sourceFile;
 char str[MAX_LENGTH];
-const char* name[] = { 
-    "START",
-    "IDENTIFICATOR",
-    "KEYWORD",
-    "IDENORKEY",
-    "INT",
-    "DOUBLE",
-    "DOUB_DOT1",
-    "DOUB_DOT2",
-    "DOUB_EXP1",
-    "DOUB_EXP2",
-    "STR",
-    "ESCAPE1",
-    "ESCAPE2",
-    "ADD",
-    "SUB",
-    "MUL",
-    "DIV",     
-    "INT_DIV",
-    "LEN",     
-    "GT",     
-    "LT",  
-    "NOTEQ", 
-    "GTE", 
-    "LTE",
-    "EQ",
-    "KONC",
-    "ASSIGN", 
-    "RBR",     
-    "LBR",   
-    "ENDOFFILE", 
-    "EOL",       
-    "COMMENT",   
-    "BLOCKCOMMENT",
-    "BLOCKORLINE",
-    "ERROR"};
 
 /*
  *****************************************************
@@ -68,12 +32,12 @@ void errorCode() {
 }
 
 void getString (char *str, Token *token) {
-    token->attribute.string = (char *) malloc(sizeof(char) * strlen(str));
+    token->attribute = (char *) malloc(sizeof(char) * strlen(str));
 
-    if (!token->attribute.string)
+    if (!token->attribute)
         fprintf(stderr, "%s", "Internal err\n");
     else
-        memcpy(token->attribute.string, str, sizeof(char) * strlen(str));
+        memcpy(token->attribute, str, sizeof(char) * strlen(str));
 }
 
 bool isKeyWord (char *str) {
@@ -567,17 +531,3 @@ Token getToken () {
 
     }
 } 
-
-int main(int argc, char *argv[]) {
-    argv[1] = "test";
-    argc = 1;
-    Token a;
-    scannerInit(argv[1]);
-
-    do {
-        a = getToken();
-
-        printf(" type: %s \n value int: %d\n value float: %f\n value str: %s\n ------------------------------------------------------ \n", name[a.type], a.attribute.integer_num, a.attribute.float_num, a.attribute.string);
-    } while (strcmp(name[a.type], "ENDOFFILE") != 0);
-    return 0;
-}
