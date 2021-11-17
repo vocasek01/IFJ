@@ -28,9 +28,9 @@ int smInsertVariable(BSTNodePtr **root, char *name, char *data, int type) {
     if (*root != NULL) {
 
         if (strcmp((*root)->name, name) > 0) {
-            smInsertFunctin(&(*root)->RPtr, name);
+            smInsertVariable(&(*root)->RPtr, name, data, type);
         } else if (strcmp((*root)->name, name) < 0) {
-            smInsertFunctin(&(*root)->LPtr, name);
+            smInsertVariable(&(*root)->LPtr, name, data, type);
         } else {
             (*root)->data = data;
         }   
@@ -47,6 +47,7 @@ int smInsertVariable(BSTNodePtr **root, char *name, char *data, int type) {
         item->data = data;
         item->name = name;
         item->type = type;
+        item->isFunction = false;
         item->LPtr = NULL;
         item->RPtr = NULL;
 
@@ -83,7 +84,7 @@ BSTNodePtr *smSearchNode (BSTNodePtr *root, char *name) {
             if (strcmp(root->name, name) > 0) {
                 item = smSearchNode(root->RPtr, name);
             } else if (strcmp(root->name, name) < 0) {
-                item = smSearchNode(root->RPtr, name);
+                item = smSearchNode(root->LPtr, name);
             } else {
                 item = root;
             }
@@ -115,13 +116,23 @@ void smDeleteFunction (BSTNodePtr **root) {
 int main() {
     BSTNodePtr **root;
     root = malloc(sizeof(BSTNodePtr));
+    BSTNodePtr *item;
 
     smInit(root);
-    smInsertFunctin(root, "lolf");
-    smInsertVariable(&((*root)->LPtr), "lolname1", "loldata", 1);
-    smInsertVariable(&((*root)->LPtr), "lolname2", "loldata", 1);
-    
-    printf("%s %s\n", (*root)->LPtr->name, (*root)->LPtr->data);
+    smInsertFunctin(root, "lolf1");
+    smInsertVariable(&((*root)->LPtr), "lolname1", "loldata1", 1);
+    smInsertVariable(&((*root)->LPtr), "lolname2", "loldata2", 1);
+
+    smInsertFunctin(root, "lolf2");
+    smInsertVariable(&((*root)->LPtr), "lolname3", "loldata3", 1);
+    smInsertVariable(&((*root)->LPtr), "lolname1", "loldata1", 1);
+
+    item = smSearchNode(*root, "lolname1");
+    printf("%s\n", item->name);
+
+    item = smSearchNode(*root, "lolname2");
+    printf("%s\n", item->name);
+
     smDeleteFunction(root);
 
     smDispose(root);
