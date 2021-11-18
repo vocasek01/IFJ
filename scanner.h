@@ -29,6 +29,11 @@ typedef enum {
     ESCAPE1,  //
     ESCAPE2,  //
 
+
+
+    COLON,  // :
+    COMMA,   // ,
+
     //Opetators
     ADD,       // +
     SUB,       // -

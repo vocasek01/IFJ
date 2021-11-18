@@ -154,14 +154,34 @@ Token getToken () {
                 return token;
             }
         }
+/*
+ ******************************************************
+ * 
+ *                  STAV : ,                
+ * 
+ *
+*/   
 
+        if (state == START && c == ':') {
+            strncat(str, &c, 1);
+            token.type = COLON;
+            getString(str, &token);
+            return token;
+        }
+
+        if (state == START && c == ',') {
+            strncat(str, &c, 1);
+            token.type = COMMA;
+            getString(str, &token);
+            return token;
+        }
 /*
  ******************************************************
  * 
  *                  STAV OPERATORS                 
  * 
  *
-*/
+*/      
 
         if (state == START && c == '#') {
             strncat(str, &c, 1);

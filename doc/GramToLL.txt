@@ -1,64 +1,80 @@
-%token func id open_parenthesis close_parenthesis open_bracket close_bracket id int string float64 comma if for semicolon return prirazeni else eof expression package equals
+%token do ifj21 else end function global if integer local nil number require return string then while lbr rbr identificator colon comma assign endoffile expression str
 %%
 
 START : PREAMBLE BODY ;
 
-PREAMBLE : package id ;
+PREAMBLE : require ifj21 ;
 
 BODY : FUNC BODY
- | eof ;
+ | FUNC_DECLR BODY
+ | FUNC_CALL BODY
+ | endoffile;
 
-FUNC : func id open_parenthesis PARAMS close_parenthesis RET_TYPES open_bracket STATL close_bracket ;
+FUNC : function identificator lbr PARAMS rbr FUNC_TYPES ;
+
+FUNC_TYPES : colon RET_TYPES STATE_LIST end 
+ | STATE_LIST end ;
+
+FUNC_DECLR : global identificator colon function lbr PARAMS rbr colon RET_TYPES ;
+
+FUNC_CALL : identificator lbr PARAMS rbr ;
 
 PARAMS : /*eps*/
  | PARAM PARAMS_N ;
 PARAMS_N : /*eps*/
  | comma PARAM PARAMS_N ;
 
-PARAM  : id DATA_TYPE ;
+PARAM  : identificator colon DATA_TYPE ;
 
 RET_TYPES : /*eps*/
  | DATA_TYPE
- | open_parenthesis TYPES close_parenthesis ;
+ | TYPES ;
 
 TYPES  : /*eps*/
  | DATA_TYPE TYPES_N ;
 TYPES_N  : /*eps*/
  | comma DATA_TYPE TYPES_N ;
 
-DATA_TYPE : int
+DATA_TYPE : integer
  | string
- | float64 ;
+ | nil
+ | number ;
 
-STATL : /*eps*/
- | STATE STATL ;
+STATE_LIST : /*eps*/
+ | STATE STATE_LIST ;
 
-STATE  : id STATE_ID
- | if EXPR open_bracket STATL close_bracket ELSE 
- | for FOR_DECLR EXPR semicolon EXPR open_bracket STATL close_bracket
- | return EXPR EXPR_N;
+STATE : DECLR
+ | if EXPR then STATE_LIST ELSE end
+ | while EXPR do STATE_LIST end
+ | return RETURN
+ | identificator ID_STATE
+ | local identificator ID_N colon TYPES assign INIT_FUNC ;
 
-EXPR_N : /*eps*/
- | comma EXPR EXPR_N;
-
-STATE_ID: DECLR
- | open_parenthesis FUNC_PARAM close_parenthesis
- | ID_N equals EXPR ;
+DECLR : local identificator ID_N colon TYPES ;
 
 ID_N : /*eps*/
- | comma id ID_N ;
+ | comma identificator ID_N ;
+
+ID_STATE : lbr FUNC_PARAM rbr
+ | ID_N assign INIT_FUNC ;
+
+RETURN : /*eps*/
+ | identificator ID_N 
+ | EXPR ;
 
 FUNC_PARAM : /*eps*/
  | EXPR FUNC_PARAM_N ;
-
 FUNC_PARAM_N : /*eps*/
  | comma EXPR FUNC_PARAM_N ;
 
-DECLR : prirazeni EXPR ;
+INIT_FUNC : STATE
+ | identificator INIT_FUNC_ID
+ | EXPR ;
 
-FOR_DECLR : DECLR semicolon
- | semicolon ;
+INIT_FUNC_ID: ID_N 
+ | lbr identificator ID_N rbr ;
 
-ELSE : else open_bracket STATL close_bracket ;
+ELSE : /*eps*/
+ | else STATE_LIST ;
 
 EXPR : expression ;
