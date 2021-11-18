@@ -1,0 +1,58 @@
+<start>     ->  <preamble> <first_body>
+<preamble>  ->  require "ifj21"
+<first_body> ->  <func> <body>
+<first_body> ->  <func_noret> <body>
+<first_body> ->  <func_declr> <body>
+<first_body> ->  <func_call> <body>
+<body>      ->  <func> <body>
+<body>      ->  <func_declr> <body>
+<body>      ->  <func_noret> <body>
+<body>      ->  <func_call> <body>
+<body>      ->  EOF
+<func_call> ->  id ( <params> )
+<func_noret> -> function id ( <params> ) <state_list> end
+<func_decl> ->  global id : function ( <params> ) : <ret_types>
+<func>      ->  function id ( <params> ) : <ret_types> <state_list> end
+<params>    ->  eps
+<params>    ->  <param> <params_n>
+<params_n>  ->  eps
+<params_n>  ->  , <param> <params_n>
+<param>     ->  id : <data_type>
+<ret_types> ->  eps
+<ret_types> ->  <data_type>
+<ret_types> ->  <types>
+<types>     ->  eps
+<types>     ->  <data_type> <types_n>
+<types_n>   ->  eps
+<types_n>   ->  , <data_type> <types_n>
+<data_type> ->  integer
+<data_type> ->  string
+<data_type> ->  nil
+<data_type> ->  number
+<state_list>    ->  eps
+<state_list>    ->  <state> <state_list>
+<state>     ->  <declr>
+<state>     ->  if <expression> then <state_list> <else> end
+<state>     ->  while <expression> do <state_list> end
+<state>     ->  return <expression>
+<state>     ->  return <retun>
+<state>     ->  id ( <func_param> )
+<state>     ->  local id <id_n> : <types> = <declr_types>
+<state>     ->  local id <id_n> : <types> = <init_func>
+<state>     ->  id <id_n> = <init_func>
+<id_n>      ->  eps
+<id_n>      ->  , id <id_n>
+<func_param>    -> eps
+<func_param>    -> <expression> <func_param_n>
+<func_param_n>  -> eps
+<func_param_n>  -> , <expression> <func_param_n>
+<declr>     ->  local id <id_n> : <types>
+<else>      ->  eps
+<else>      ->  else <state_list>
+<init_func> ->  id <id_n> = <init_func>
+<init_func> ->  <state>
+<init_func> ->  function id ( <params> )
+<init_func> ->  <expression>
+<init_func> ->  <id_n>
+<return>    ->  id <id_n>
+<return>    ->  eps

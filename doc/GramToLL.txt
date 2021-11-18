@@ -1,0 +1,64 @@
+%token func id open_parenthesis close_parenthesis open_bracket close_bracket id int string float64 comma if for semicolon return prirazeni else eof expression package equals
+%%
+
+START : PREAMBLE BODY ;
+
+PREAMBLE : package id ;
+
+BODY : FUNC BODY
+ | eof ;
+
+FUNC : func id open_parenthesis PARAMS close_parenthesis RET_TYPES open_bracket STATL close_bracket ;
+
+PARAMS : /*eps*/
+ | PARAM PARAMS_N ;
+PARAMS_N : /*eps*/
+ | comma PARAM PARAMS_N ;
+
+PARAM  : id DATA_TYPE ;
+
+RET_TYPES : /*eps*/
+ | DATA_TYPE
+ | open_parenthesis TYPES close_parenthesis ;
+
+TYPES  : /*eps*/
+ | DATA_TYPE TYPES_N ;
+TYPES_N  : /*eps*/
+ | comma DATA_TYPE TYPES_N ;
+
+DATA_TYPE : int
+ | string
+ | float64 ;
+
+STATL : /*eps*/
+ | STATE STATL ;
+
+STATE  : id STATE_ID
+ | if EXPR open_bracket STATL close_bracket ELSE 
+ | for FOR_DECLR EXPR semicolon EXPR open_bracket STATL close_bracket
+ | return EXPR EXPR_N;
+
+EXPR_N : /*eps*/
+ | comma EXPR EXPR_N;
+
+STATE_ID: DECLR
+ | open_parenthesis FUNC_PARAM close_parenthesis
+ | ID_N equals EXPR ;
+
+ID_N : /*eps*/
+ | comma id ID_N ;
+
+FUNC_PARAM : /*eps*/
+ | EXPR FUNC_PARAM_N ;
+
+FUNC_PARAM_N : /*eps*/
+ | comma EXPR FUNC_PARAM_N ;
+
+DECLR : prirazeni EXPR ;
+
+FOR_DECLR : DECLR semicolon
+ | semicolon ;
+
+ELSE : else open_bracket STATL close_bracket ;
+
+EXPR : expression ;
