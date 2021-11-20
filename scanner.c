@@ -55,13 +55,13 @@ bool isKeyWord (char *str) {
 
 Token getToken () {
     char c;
-    State state = START;
+    TokenType state = START;
     Token token;
     str[0] = 0;
 
     while (true) {
 
-        c = (char) fgetc(sourceFile);
+        scanf("%c", &c);
 
 /*
  *****************************************************

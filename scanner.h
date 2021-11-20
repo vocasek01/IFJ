@@ -63,11 +63,11 @@ typedef enum {
     //Lex. error
     ERROR =-1,
 
-} State;
+} TokenType;
 
 typedef struct {
     char * attribute;
-    State type;
+    TokenType type;
 } Token;
 
 /**
