@@ -9,20 +9,18 @@
 <body>      ->  <func_noret> <body>
 <body>      ->  <func_call> <body>
 <body>      ->  EOF
-<func>      ->  function id ( <params> ) : <ret_types> <state_list> end
+<func>      ->  function id ( <params> ) : <types> <state_list> end
 <func_noret> -> function id ( <params> ) <state_list> end
-<func_decl> ->  global id : function ( <params> ) : <ret_types>
+<func_declr> ->  global id : function ( <params> ) : <types>
 <func_call> ->  id ( <params> )
 <params>    ->  eps
 <params>    ->  <param> <params_n>
 <params_n>  ->  eps
 <params_n>  ->  , <param> <params_n>
 <param>     ->  id : <data_type>
-<ret_types> ->  eps
-<ret_types> ->  <data_type>
-<ret_types> ->  <types>
-<types>     ->  eps
-<types>     ->  <data_type> <types_n>
+<types> ->  eps
+<types> ->  <data_type>
+<types> ->  <types_n>
 <types_n>   ->  eps
 <types_n>   ->  , <data_type> <types_n>
 <data_type> ->  integer
@@ -31,27 +29,31 @@
 <data_type> ->  number
 <state_list>    ->  eps
 <state_list>    ->  <state> <state_list>
-<state>     ->  <declr>
-<state>     ->  if <expression> then <state_list> <else> end
+<state_list>    ->  return <return>
+<state>     ->  local id : <types> <is_assign>
+<state>     ->  id <after_id>
+<state>     ->  if <expression> then <state_list> <after_if> 
 <state>     ->  while <expression> do <state_list> end
-<state>     ->  return <retun>
-<state>     ->  id <id_state>
-<state>     ->  local id <id_n> : <types> = <init_func>
+<after_id>  ->  <id_n> = <expr_func>
+<after_id>  ->  ( <func_param> )
+<after_if>  ->  else <state_list> end
+<is_assign> ->  eps
+<is_assign> ->  = <declr>
 <id_n>      ->  eps
 <id_n>      ->  , id <id_n>
+<declr>     ->  <expression>
+<declr>     ->  id ( <func_param> )
 <func_param>    -> eps
 <func_param>    -> <expression> <func_param_n>
 <func_param_n>  -> eps
 <func_param_n>  -> , <expression> <func_param_n>
-<declr>     ->  local id <id_n> : <types>
-<else>      ->  eps
-<else>      ->  else <state_list>
-<init_func> ->  <state>
-<init_func> ->  id ( id <id_n> )
-<init_func> ->  <expression>
-<init_func> ->  id <id_n>
-<return>    ->  id <id_n>
+<expr_func> ->  <expression> <expression_n>
+<expr_func> ->  id ( <func_param> )
+<expression_n>  ->  eps
+<expression_n>  ->  , <expression> <expression_n>
 <return>    ->  eps
-<return>    ->  <expression>
-<id_state>  ->  ( <func_param> )
-<id_state>  ->  <id_n> = <init_func>
+<return>    ->  id <ret_type>
+<return>    ->  <expression> 
+<ret_type>  ->  <id_n>
+<ret_type>  ->  ( <func_param> )
+<expression>    -> EXPRESSION

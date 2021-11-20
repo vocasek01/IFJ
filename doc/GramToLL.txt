@@ -1,5 +1,4 @@
-%token do ifj21 else end function global if integer local nil number require return string then while lbr rbr identificator colon comma assign endoffile expression str
-%%
+%token do ifj21 else end function global if integer local nil number require return string then while lbr rbr identificator colon comma assign endoffile expression%%
 
 START : PREAMBLE BODY ;
 
@@ -12,10 +11,10 @@ BODY : FUNC BODY
 
 FUNC : function identificator lbr PARAMS rbr FUNC_TYPES ;
 
-FUNC_TYPES : colon RET_TYPES STATE_LIST end 
+FUNC_TYPES : colon TYPES STATE_LIST end 
  | STATE_LIST end ;
 
-FUNC_DECLR : global identificator colon function lbr PARAMS rbr colon RET_TYPES ;
+FUNC_DECLR : global identificator colon function lbr PARAMS rbr colon TYPES ;
 
 FUNC_CALL : identificator lbr PARAMS rbr ;
 
@@ -26,12 +25,9 @@ PARAMS_N : /*eps*/
 
 PARAM  : identificator colon DATA_TYPE ;
 
-RET_TYPES : /*eps*/
- | DATA_TYPE
- | TYPES ;
+TYPES : /*eps*/
+ | DATA_TYPE TYPES_N;
 
-TYPES  : /*eps*/
- | DATA_TYPE TYPES_N ;
 TYPES_N  : /*eps*/
  | comma DATA_TYPE TYPES_N ;
 
@@ -41,40 +37,43 @@ DATA_TYPE : integer
  | number ;
 
 STATE_LIST : /*eps*/
- | STATE STATE_LIST ;
+ | STATE STATE_LIST 
+ | return RETURN ;
 
-STATE : DECLR
- | if EXPR then STATE_LIST ELSE end
- | while EXPR do STATE_LIST end
- | return RETURN
- | identificator ID_STATE
- | local identificator ID_N colon TYPES assign INIT_FUNC ;
+STATE : local identificator colon TYPES IS_ASSIGN
+ | identificator AFTER_ID 
+ | if EXPR then STATE_LIST else STATE_LIST end
+ | while EXPR do STATE_LIST end;
 
-DECLR : local identificator ID_N colon TYPES ;
+AFTER_ID : ID_N assign EXPR_FUNC
+ | lbr FUNC_PARAM rbr ;
 
 ID_N : /*eps*/
  | comma identificator ID_N ;
 
-ID_STATE : lbr FUNC_PARAM rbr
- | ID_N assign INIT_FUNC ;
+IS_ASSIGN : /*eps*/
+ | assign DECLR ;
 
-RETURN : /*eps*/
- | identificator ID_N 
- | EXPR ;
+DECLR : EXPR
+ | identificator lbr FUNC_PARAM rbr ;
 
 FUNC_PARAM : /*eps*/
  | EXPR FUNC_PARAM_N ;
+
 FUNC_PARAM_N : /*eps*/
  | comma EXPR FUNC_PARAM_N ;
 
-INIT_FUNC : STATE
- | identificator INIT_FUNC_ID
- | EXPR ;
+EXPR_FUNC : EXPR EXPR_N 
+ | identificator lbr FUNC_PARAM rbr ;
 
-INIT_FUNC_ID: ID_N 
- | lbr identificator ID_N rbr ;
+EXPR_N : /*eps*/
+ | comma EXPR EXPR_N ;
 
-ELSE : /*eps*/
- | else STATE_LIST ;
+RETURN : /*eps*/
+ | identificator RET_TYPE
+ | EXPR EXPR_N ;
+
+RET_TYPE : ID_N
+ | lbr FUNC_PARAM rbr ;
 
 EXPR : expression ;
