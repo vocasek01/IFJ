@@ -1,17 +1,16 @@
 <start>     ->  <preamble> <first_body>
 <preamble>  ->  require "ifj21"
-<first_body> ->  <func> <body>
-<first_body> ->  <func_noret> <body>
-<first_body> ->  <func_declr> <body>
-<first_body> ->  <func_call> <body>
+<first_body>    ->  <func> <body>
+<first_body>    ->  <func_declr> <body>
+<first_body>    ->  <func_call> <body>
 <body>      ->  <func> <body>
 <body>      ->  <func_declr> <body>
-<body>      ->  <func_noret> <body>
 <body>      ->  <func_call> <body>
 <body>      ->  EOF
-<func>      ->  function id ( <params> ) : <types> <state_list> end
-<func_noret> -> function id ( <params> ) <state_list> end
-<func_declr> ->  global id : function ( <params> ) : <types>
+<func>      ->  function id ( <params> ) <func_types>
+<func_types>    ->  : <types> <state_list> end
+<func_types>    ->  <state_list> end
+<func_declr>    ->  global id : function ( <params> ) : <types>
 <func_call> ->  id ( <params> )
 <params>    ->  eps
 <params>    ->  <param> <params_n>
@@ -32,11 +31,10 @@
 <state_list>    ->  return <return>
 <state>     ->  local id : <types> <is_assign>
 <state>     ->  id <after_id>
-<state>     ->  if <expression> then <state_list> <after_if> 
+<state>     ->  if <expression> then <state_list> else <state_list> end
 <state>     ->  while <expression> do <state_list> end
 <after_id>  ->  <id_n> = <expr_func>
 <after_id>  ->  ( <func_param> )
-<after_if>  ->  else <state_list> end
 <is_assign> ->  eps
 <is_assign> ->  = <declr>
 <id_n>      ->  eps
