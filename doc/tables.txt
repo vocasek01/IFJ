@@ -1,27 +1,27 @@
-int start();     T0 
-int preamble();    T1
-int firstBody();
-int body();      T2
-int func();      T3
-int funcDeclr();    T4
-int funcCall();    T5
-int params();       T6
-int funcTypes();     T7
-int types();     T8     T11     T20    T43
-int param();     T9
-int paramsN();       T10
-int stateList();   T12       T24
-int dataType();    T13   T15    T16    T29      T49
-int typesN();     T14    T17     T30    T50
-int state();       T18     T35
-int returnState();   T19    T36
-int isAssign();     T21    T44
-int afterID();     T22     T45
+int start();     T0                                          ****
+int preamble();    T1                                       ***
+int firstBody();                                            ****
+int body();      T2                                         ****
+int func();      T3                                         ****
+int funcDeclr();    T4                                       ***
+int funcCall();    T5                                      *****
+int params();       T6                                     *****   
+int funcTypes();     T7                                    *****
+int types();     T8     T11     T20    T43                  ****
+int param();     T9                                        ****
+int paramsN();       T10                                   *****
+int stateList();   T12       T24                           *******
+int dataType();    T13   T15    T16    T29      T49        ****
+int typesN();     T14    T17     T30    T50                 ****
+int state();       T18     T35                              ****
+int returnState();   T19    T36                             ****
+int isAssign();     T21    T44                              ****
+int afterID();     T22     T45                              ***
 int expr();      T23     T25    T27    T38    T39    T41    T47    T54   T55
-int retType();   T26    T46
-int declr();    T31     T51
-int exprN();    T28    T40      T48       T56
-int idN();      T32     T37     T53
-int exprFunc();  T33    T52
-int funcParam();    T34    
-int funcParamN();    T42
+int retType();   T26    T46                                 ***
+int declr();    T31     T51                                 ****
+int exprN();    T28    T40      T48       T56               ***
+int idN();      T32     T37     T53                         *****
+int exprFunc();  T33    T52                                 ***
+int funcParam();    T34                                     *****
+int funcParamN();    T42                                    *****
