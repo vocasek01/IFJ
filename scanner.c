@@ -61,7 +61,7 @@ Token getToken () {
 
     while (true) {
 
-        scanf("%c", &c);
+        c = getc(sourceFile);
 
 /*
  *****************************************************
@@ -428,6 +428,9 @@ Token getToken () {
         if (state == STR) {
             if (c == '"') {
                 strncat(str, &c, 1);
+                if (strcmp(str, "ifj21") == 0) {
+                    token.type = IFJ21;
+                }
                 getString(str, &token);
                 return token;
             } else if (c == '\\') {
@@ -550,4 +553,4 @@ Token getToken () {
         }
 
     }
-} 
+}

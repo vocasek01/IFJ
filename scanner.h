@@ -29,10 +29,11 @@ typedef enum {
     ESCAPE1,  //
     ESCAPE2,  //
 
+    IFJ21,    // "ifj21"
 
 
-    COLON,  // :
-    COMMA,   // ,
+    COLON,    // :
+    COMMA,    // ,
 
     //Opetators
     ADD,       // +
