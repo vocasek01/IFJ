@@ -7,7 +7,60 @@
 #define LEX_ERROR 1
 #define SYNTAX_ERROR 2
 
+// Call function FUN and check return code.
+#define CHECK_AND_CALL_FUNCTION(FUN) \
+    {                                \
+        returnCode = FUN;            \
+        if (returnCode != OK)        \
+        {                            \
+            return returnCode;       \
+        }                            \
+    }
+
+#define NEXT()                       \
+    {                                \
+        while (1)                    \
+        {                            \
+            token = getToken();      \
+            if (token.type == ERROR) \
+            {                        \
+                return LEX_ERROR;    \
+            }                        \
+            break;                   \
+        }                            \
+    }
+
+// Compare actual token with TOK and ATR, then call next token.
+#define checkAndLoadToken(TYPE)  \
+    {                            \
+        if (token.type != TYPE)  \
+        {                        \
+            return SYNTAX_ERROR; \
+        }                        \
+        NEXT();                  \
+    }
+
+#define checkAndLoadKeyword(TYPE, ATTRIBUTE)                               \
+    {                                                                      \
+        if (token.type != TYPE || strcmp(token.attribute, ATTRIBUTE) != 0) \
+        {                                                                  \
+            return SYNTAX_ERROR;                                           \
+        }                                                                  \
+        NEXT();                                                            \
+    }
+
+// Compare actual token with TOK and ATR, then insert into tree and call next token.
+#define checkInsertAndLoadToken(TYPE, ATTRIBUTE)                           \
+    {                                                                         \
+        if (token.type != TYPE || strcmp(token.attribute, ATTRIBUTE) != 0) \
+        {                                                                     \
+            return SYNTAX_ERROR;                                              \
+        } /*insert into tree*/                                                \
+        NEXT();                                                               \
+    }
+
 // Init nonterminal states:
+
 int start();
 int preamble();
 int firstBody();

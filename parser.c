@@ -4,60 +4,9 @@ Token token;
 int returnCode;
 // Load next token, check the return code.
 
-void next()
-{
-    while (1)
-    {
-        token = getToken();
-        if (token.type == ERROR)
-        {
-            return LEX_ERROR;
-        }
-        break;
-    }
-}
-
-// Compare actual token with TOK and ATR, then call next token.
-void checkAndLoadToken(TokenType type)
-{
-    if (token.type != type)
-    {
-        return SYNTAX_ERROR;
-    }
-    next();
-}
-
-void checkAndLoadKeyword(TokenType type, char *attribute)
-{
-    if (token.type != type || token.attribute != attribute)
-    {
-        return SYNTAX_ERROR;
-    }
-    next();
-}
-
-// Compare actual token with TOK and ATR, then insert into tree and call next token.
-void checkInsertAndLoadToken(TokenType type, char *attribute)
-{
-    if (token.type != type || token.attribute != attribute)
-    {
-        return SYNTAX_ERROR;
-    }
-    /*insert into tree*/
-    next();
-}
-
-// Call function FUN and check return code.
-#define CHECK_AND_CALL_FUNCTION(FUN) \
-    {                                \
-        returnCode = FUN;            \
-        if (returnCode != OK)        \
-        {                            \
-            return returnCode;       \
-        }                            \
-    }
 
 
+/*********TABLE*************/
 
 int start()
 {
@@ -73,18 +22,10 @@ int preamble()
 {
     // rule <preamble> -> require "ifj21"
 
-    checkAndLoadKeyword(KEYWORD, 'package');
+    checkAndLoadKeyword(KEYWORD, "require");
 
-    if (token.type == STR)
-    {
-        char *requireName = '"ifj21"';
-        if (token.attribute != requireName)
-        {
-            return LEX_ERROR;
-        }
-    }
-    else
-        return SYNTAX_ERROR;
+    if (token.type != IFJ21)
+        return LEX_ERROR;
 
     NEXT();
 
@@ -97,7 +38,7 @@ int firstBody()
     {
     case KEYWORD:
         // Rule: <first_body> -> <func> <body>
-        if (token.attribute == 'function')
+        if (strcmp(token.attribute, "function") == 0)
         {
             CHECK_AND_CALL_FUNCTION(func());
 
@@ -105,7 +46,7 @@ int firstBody()
             return OK;
             break;
         } // Rule: <first_body> -> <func_declr> <body>
-        else if (token.attribute == 'global')
+        else if (strcmp(token.attribute, "global") == 0)
         {
             CHECK_AND_CALL_FUNCTION(funcDeclr());
 
@@ -137,7 +78,7 @@ int body()
     {
     case KEYWORD:
         // Rule: <first_body> -> <func> <body>
-        if (token.attribute == 'function')
+        if (strcmp(token.attribute, "function") == 0)
         {
             CHECK_AND_CALL_FUNCTION(func());
 
@@ -145,7 +86,7 @@ int body()
             return OK;
             break;
         } // Rule: <first_body> -> <func_declr> <body>
-        else if (token.attribute == 'global')
+        else if (strcmp(token.attribute, "global") == 0)
         {
             CHECK_AND_CALL_FUNCTION(funcDeclr());
 
@@ -177,7 +118,7 @@ int body()
 int func()
 {
     // Rule: <func> -> function id ( <params> ) <func_types>
-    checkInsertAndLoadToken(KEYWORD, 'function');
+    checkInsertAndLoadToken(KEYWORD, "function");
     checkAndLoadToken(IDENTIFICATOR);
     checkAndLoadToken(LBR);
     CHECK_AND_CALL_FUNCTION(params());
@@ -190,10 +131,10 @@ int func()
 int funcDeclr()
 {
     // Rule: <func_declr>  ->  global id : function ( <params> ) : <types>
-    checkInsertAndLoadToken(KEYWORD, 'global');
+    checkInsertAndLoadToken(KEYWORD, "global");
     checkAndLoadToken(IDENTIFICATOR);
     checkAndLoadToken(COLON);
-    checkAndLoadKeyword(KEYWORD, 'function');
+    checkAndLoadKeyword(KEYWORD, "function");
     checkAndLoadToken(LBR);
     CHECK_AND_CALL_FUNCTION(params());
     checkAndLoadToken(RBR);
@@ -241,19 +182,19 @@ int funcTypes()
         checkAndLoadToken(COLON);
         CHECK_AND_CALL_FUNCTION(typesT11());
         CHECK_AND_CALL_FUNCTION(stateList());
-        checkAndLoadKeyword(KEYWORD, 'end');
+        checkAndLoadKeyword(KEYWORD, "end");
         return OK;
         break;
     case IDENTIFICATOR: // Rule: <func_types> ->  <state_list> end
         CHECK_AND_CALL_FUNCTION(stateList());
-        checkAndLoadKeyword(KEYWORD, 'end');
+        checkAndLoadKeyword(KEYWORD, "end");
         return OK;
         break;
     case KEYWORD:
-        if (token.attribute == 'end' || token.attribute == 'return' || token.attribute == 'local' || token.attribute == 'if' || token.attribute == 'while')
+        if (strcmp(token.attribute, "end") == 0 || strcmp(token.attribute, "return") == 0 || strcmp(token.attribute, "local") == 0 || strcmp(token.attribute, "if") == 0 || strcmp(token.attribute, "while") == 0)
         {
             CHECK_AND_CALL_FUNCTION(stateList());
-            checkAndLoadKeyword(KEYWORD, 'end');
+            checkAndLoadKeyword(KEYWORD, "end");
             return OK;
             break;
         }
@@ -280,12 +221,12 @@ int types()
         return OK;
         break;
     case KEYWORD:
-        if (token.attribute == 'function' || token.attribute == 'global')
+        if (strcmp(token.attribute, "function") == 0 || strcmp(token.attribute, "global") == 0)
         {
             return OK;
             break;
         } // Rule: <types> ->  <data_type>
-        else if (token.attribute == 'integer' || token.attribute == 'nil' || token.attribute == 'string' || token.attribute == 'number')
+        else if (strcmp(token.attribute, "integer") == 0 || strcmp(token.attribute, "nil") == 0 || strcmp(token.attribute, "string") == 0 || strcmp(token.attribute, "number") == 0)
         {
             CHECK_AND_CALL_FUNCTION(dataType());
             CHECK_AND_CALL_FUNCTION(typesN());
@@ -312,12 +253,12 @@ int typesT11()
         return OK;
         break;
     case KEYWORD:
-        if (token.attribute == 'end' || token.attribute == 'return' || token.attribute == 'local' || token.attribute == 'if' || token.attribute == 'while')
+        if (strcmp(token.attribute, "end") == 0 || strcmp(token.attribute, "return") == 0 || strcmp(token.attribute, "local") == 0 || strcmp(token.attribute, "if") == 0 || strcmp(token.attribute, "while") == 0)
         {
             return OK;
             break;
         } // Rule: <types> ->  <data_type>
-        else if (token.attribute == 'integer' || token.attribute == 'nil' || token.attribute == 'string' || token.attribute == 'number')
+        else if (strcmp(token.attribute, "integer") == 0 || strcmp(token.attribute, "nil") == 0 || strcmp(token.attribute, "string") == 0 || strcmp(token.attribute, "number") == 0)
         {
             CHECK_AND_CALL_FUNCTION(dataType());
             CHECK_AND_CALL_FUNCTION(typesNT17());
@@ -347,12 +288,12 @@ int typesT20()
         return OK;
         break;
     case KEYWORD:
-        if (token.attribute == 'end' || token.attribute == 'return' || token.attribute == 'local' || token.attribute == 'if' || token.attribute == 'while')
+        if (strcmp(token.attribute, "end") == 0 || strcmp(token.attribute, "return") == 0 || strcmp(token.attribute, "local") == 0 || strcmp(token.attribute, "if") == 0 || strcmp(token.attribute, "while") == 0)
         {
             return OK;
             break;
         } // Rule: <types> ->  <data_type>
-        else if (token.attribute == 'integer' || token.attribute == 'nil' || token.attribute == 'string' || token.attribute == 'number')
+        else if (strcmp(token.attribute, "integer") == 0 || strcmp(token.attribute, "nil") == 0 || strcmp(token.attribute, "string") == 0 || strcmp(token.attribute, "number") == 0)
         {
             CHECK_AND_CALL_FUNCTION(dataType());
             CHECK_AND_CALL_FUNCTION(typesNT30());
@@ -382,12 +323,12 @@ int typesT43()
         return OK;
         break;
     case KEYWORD:
-        if (token.attribute == 'else' || token.attribute == 'if' || token.attribute == 'return' || token.attribute == 'local' || token.attribute == 'while')
+        if (strcmp(token.attribute, "else") == 0 || strcmp(token.attribute, "if") == 0 || strcmp(token.attribute, "return") == 0 || strcmp(token.attribute, "local") == 0 || strcmp(token.attribute, "while") == 0)
         {
             return OK;
             break;
         } // Rule: <types> ->  <data_type>
-        else if (token.attribute == 'integer' || token.attribute == 'nil' || token.attribute == 'string' || token.attribute == 'number')
+        else if (strcmp(token.attribute, "integer") == 0 || strcmp(token.attribute, "nil") == 0 || strcmp(token.attribute, "string") == 0 || strcmp(token.attribute, "number") == 0)
         {
             CHECK_AND_CALL_FUNCTION(dataType());
             CHECK_AND_CALL_FUNCTION(typesNT50());
@@ -445,22 +386,24 @@ int stateList()
         return OK;
         break;
     case KEYWORD:
-        if (token.attribute == 'local' || token.attribute == 'if' || token.attribute == 'while')
+        if (strcmp(token.attribute, "local") == 0 || strcmp(token.attribute, "if") == 0 || strcmp(token.attribute, "while") == 0)
         {
             CHECK_AND_CALL_FUNCTION(state());
             CHECK_AND_CALL_FUNCTION(stateList());
             return OK;
             break;
         } // Rule: <state_list>->eps
-        else if (token.attribute == 'end')
+        else if (strcmp(token.attribute, "end") == 0)
         {
             return OK;
             break;
         } // Rule: <state_list>->return <return>
-        else if (token.attribute == 'return')
+        else if (strcmp(token.attribute, "return") == 0)
         {
-            checkAndLoadKeyword(KEYWORD, 'return');
+            checkAndLoadKeyword(KEYWORD, "return");
             CHECK_AND_CALL_FUNCTION(returnState());
+            return OK;
+            break;
         }
         else
         {
@@ -485,22 +428,24 @@ int stateListT24()
         return OK;
         break;
     case KEYWORD:
-        if (token.attribute == 'local' || token.attribute == 'if' || token.attribute == 'while')
+        if (strcmp(token.attribute, "local") == 0 || strcmp(token.attribute, "if") == 0 || strcmp(token.attribute, "while") == 0)
         {
             CHECK_AND_CALL_FUNCTION(stateT35());
             CHECK_AND_CALL_FUNCTION(stateListT24());
             return OK;
             break;
         } // Rule: <state_list>->eps
-        else if (token.attribute == 'else')
+        else if (strcmp(token.attribute, "else") == 0)
         {
             return OK;
             break;
         } // Rule: <state_list>->return <return>
-        else if (token.attribute == 'return')
+        else if (strcmp(token.attribute, "return") == 0)
         {
-            checkAndLoadKeyword(KEYWORD, 'return');
+            checkAndLoadKeyword(KEYWORD, "return");
             CHECK_AND_CALL_FUNCTION(returnStateT36());
+            return OK;
+            break;
         }
         else
         {
@@ -523,30 +468,32 @@ int dataType()
     switch (token.type)
     {
     case KEYWORD:
-        if (token.attribute == 'integer')
+        if (strcmp(token.attribute, "integer") == 0)
         {
-            checkAndLoadKeyword(KEYWORD, 'integer');
+            checkAndLoadKeyword(KEYWORD, "integer");
             return OK;
             break;
         }
-        else if (token.attribute == 'string')
+        else if (strcmp(token.attribute, "string") == 0)
         {
-            checkAndLoadKeyword(KEYWORD, 'string');
+            checkAndLoadKeyword(KEYWORD, "string");
             return OK;
             break;
         }
-        else if (token.attribute == 'nil')
+        else if (strcmp(token.attribute, "nil") == 0)
         {
-            checkAndLoadKeyword(KEYWORD, 'nil');
+            checkAndLoadKeyword(KEYWORD, "nil");
             return OK;
             break;
         }
-        else if (token.attribute == 'number')
+        else if (strcmp(token.attribute, "number") == 0)
         {
-            checkAndLoadKeyword(KEYWORD, 'number');
+            checkAndLoadKeyword(KEYWORD, "number");
             return OK;
             break;
         }
+        return SYNTAX_ERROR;
+        break;
     default:
         return SYNTAX_ERROR;
         break;
@@ -565,7 +512,7 @@ int typesN()
         return OK;
         break;
     case KEYWORD:
-        if (token.attribute == 'function' || token.attribute == 'global')
+        if (strcmp(token.attribute, "function") == 0 || strcmp(token.attribute, "global") == 0)
         {
             return OK;
             break;
@@ -579,6 +526,8 @@ int typesN()
         checkAndLoadToken(COMMA);
         CHECK_AND_CALL_FUNCTION(dataType());
         CHECK_AND_CALL_FUNCTION(typesN());
+        return OK;
+        break;
     default:
         return SYNTAX_ERROR;
         break;
@@ -594,7 +543,7 @@ int typesNT17()
         return OK;
         break;
     case KEYWORD:
-        if (token.attribute == 'while' || token.attribute == 'if' || token.attribute == 'local' || token.attribute == 'return' || token.attribute == 'end')
+        if (strcmp(token.attribute, "while") == 0 || strcmp(token.attribute, "if") == 0 || strcmp(token.attribute, "local") == 0 || strcmp(token.attribute, "return") == 0 || strcmp(token.attribute, "end") == 0)
         {
             return OK;
             break;
@@ -608,6 +557,8 @@ int typesNT17()
         checkAndLoadToken(COMMA);
         CHECK_AND_CALL_FUNCTION(dataType());
         CHECK_AND_CALL_FUNCTION(typesNT17());
+        return OK;
+        break;
     default:
         return SYNTAX_ERROR;
         break;
@@ -625,7 +576,7 @@ int typesNT30()
         return OK;
         break;
     case KEYWORD:
-        if (token.attribute == 'while' || token.attribute == 'if' || token.attribute == 'local' || token.attribute == 'return' || token.attribute == 'end')
+        if (strcmp(token.attribute, "while") == 0 || strcmp(token.attribute, "if") == 0 || strcmp(token.attribute, "local") == 0 || strcmp(token.attribute, "return") == 0 || strcmp(token.attribute, "end") == 0)
         {
             return OK;
             break;
@@ -639,6 +590,8 @@ int typesNT30()
         checkAndLoadToken(COMMA);
         CHECK_AND_CALL_FUNCTION(dataType());
         CHECK_AND_CALL_FUNCTION(typesNT30());
+        return OK;
+        break;
     default:
         return SYNTAX_ERROR;
         break;
@@ -656,7 +609,7 @@ int typesNT50()
         return OK;
         break;
     case KEYWORD:
-        if (token.attribute == 'while' || token.attribute == 'if' || token.attribute == 'local' || token.attribute == 'return' || token.attribute == 'else')
+        if (strcmp(token.attribute, "while") == 0 || strcmp(token.attribute, "if") == 0 || strcmp(token.attribute, "local") == 0 || strcmp(token.attribute, "return") == 0 || strcmp(token.attribute, "else") == 0)
         {
             return OK;
             break;
@@ -670,6 +623,8 @@ int typesNT50()
         checkAndLoadToken(COMMA);
         CHECK_AND_CALL_FUNCTION(dataType());
         CHECK_AND_CALL_FUNCTION(typesNT50());
+        return OK;
+        break;
     default:
         return SYNTAX_ERROR;
         break;
@@ -686,9 +641,9 @@ int state()
         return OK;
         break;
     case KEYWORD:
-        if (token.attribute == 'local') // Rule: <state>  ->  local id : <types> <is_assign>
+        if (strcmp(token.attribute, "local") == 0) // Rule: <state>  ->  local id : <types> <is_assign>
         {
-            checkAndLoadKeyword(KEYWORD, 'local');
+            checkAndLoadKeyword(KEYWORD, "local");
             checkAndLoadToken(IDENTIFICATOR);
             checkAndLoadToken(COLON);
             CHECK_AND_CALL_FUNCTION(typesT20());
@@ -696,25 +651,25 @@ int state()
             return OK;
             break;
         }
-        else if (token.attribute == 'if') // Rule: <state> ->  if <expression> then <state_list> <after_if>
+        else if (strcmp(token.attribute, "if") == 0) // Rule: <state> ->  if <expression> then <state_list> <after_if>
         {
-            checkInsertAndLoadToken(KEYWORD, 'if');
+            checkInsertAndLoadToken(KEYWORD, "if");
             CHECK_AND_CALL_FUNCTION(expr());
-            checkAndLoadKeyword(KEYWORD, 'then');
+            checkAndLoadKeyword(KEYWORD, "then");
             CHECK_AND_CALL_FUNCTION(stateListT24());
-            checkAndLoadKeyword(KEYWORD, 'else');
+            checkAndLoadKeyword(KEYWORD, "else");
             CHECK_AND_CALL_FUNCTION(stateList());
-            checkAndLoadKeyword(KEYWORD, 'end');
+            checkAndLoadKeyword(KEYWORD, "end");
             return OK;
             break;
         }
-        else if (token.attribute == 'while') // Rule: <state> ->  while <expression> do <state_list> end
+        else if (strcmp(token.attribute, "while") == 0) // Rule: <state> ->  while <expression> do <state_list> end
         {
-            checkInsertAndLoadToken(KEYWORD, 'while');
+            checkInsertAndLoadToken(KEYWORD, "while");
             CHECK_AND_CALL_FUNCTION(expr());
-            checkAndLoadKeyword(KEYWORD, 'do');
+            checkAndLoadKeyword(KEYWORD, "do");
             CHECK_AND_CALL_FUNCTION(stateList());
-            checkAndLoadKeyword(KEYWORD, 'end');
+            checkAndLoadKeyword(KEYWORD, "end");
             return OK;
             break;
         }
@@ -740,9 +695,9 @@ int stateT35()
         return OK;
         break;
     case KEYWORD:
-        if (token.attribute == 'local') // Rule: <state>  ->  local id : <types> <is_assign>
+        if (strcmp(token.attribute, "local") == 0) // Rule: <state>  ->  local id : <types> <is_assign>
         {
-            checkAndLoadKeyword(KEYWORD, 'local');
+            checkAndLoadKeyword(KEYWORD, "local");
             checkAndLoadToken(IDENTIFICATOR);
             checkAndLoadToken(COLON);
             CHECK_AND_CALL_FUNCTION(typesT43());
@@ -750,25 +705,25 @@ int stateT35()
             return OK;
             break;
         }
-        else if (token.attribute == 'if') // Rule: <state> ->  if <expression> then <state_list> <after_if>
+        else if (strcmp(token.attribute, "if") == 0) // Rule: <state> ->  if <expression> then <state_list> <after_if>
         {
-            checkInsertAndLoadToken(KEYWORD, 'if');
+            checkInsertAndLoadToken(KEYWORD, "if");
             CHECK_AND_CALL_FUNCTION(expr());
-            checkAndLoadKeyword(KEYWORD, 'then');
+            checkAndLoadKeyword(KEYWORD, "then");
             CHECK_AND_CALL_FUNCTION(stateListT24());
-            checkAndLoadKeyword(KEYWORD, 'else');
+            checkAndLoadKeyword(KEYWORD, "else");
             CHECK_AND_CALL_FUNCTION(stateList());
-            checkAndLoadKeyword(KEYWORD, 'end');
+            checkAndLoadKeyword(KEYWORD, "end");
             return OK;
             break;
         }
-        else if (token.attribute == 'while') // Rule: <state> ->  while <expression> do <state_list> end
+        else if (strcmp(token.attribute, "while") == 0) // Rule: <state> ->  while <expression> do <state_list> end
         {
-            checkInsertAndLoadToken(KEYWORD, 'while');
+            checkInsertAndLoadToken(KEYWORD, "while");
             CHECK_AND_CALL_FUNCTION(expr());
-            checkAndLoadKeyword(KEYWORD, 'do');
+            checkAndLoadKeyword(KEYWORD, "do");
             CHECK_AND_CALL_FUNCTION(stateList());
-            checkAndLoadKeyword(KEYWORD, 'end');
+            checkAndLoadKeyword(KEYWORD, "end");
             return OK;
             break;
         }
@@ -790,7 +745,7 @@ int returnState()
     {
     case IDENTIFICATOR: // Rule: <return> ->  id <ret_type>
         checkAndLoadToken(IDENTIFICATOR);
-        if (token.type == COMMA || token.type == LBR || token.attribute == 'end')
+        if (token.type == COMMA || token.type == LBR || strcmp(token.attribute, "end") == 0)
         {
             CHECK_AND_CALL_FUNCTION(retType());
         }
@@ -810,7 +765,7 @@ int returnState()
         return OK;
         break;
     case KEYWORD:
-        if (token.attribute == 'end') // Rule: <return>  ->  eps
+        if (strcmp(token.attribute, "end") == 0) // Rule: <return>  ->  eps
         {
             return OK;
             break;
@@ -832,7 +787,7 @@ int returnStateT36()
     {
     case IDENTIFICATOR: // Rule: <return> ->  id <ret_type>
         checkAndLoadToken(IDENTIFICATOR);
-        if (token.type == COMMA || token.type == LBR || token.attribute == 'else')
+        if (token.type == COMMA || token.type == LBR || strcmp(token.attribute, "else") == 0)
         {
             CHECK_AND_CALL_FUNCTION(retTypeT46());
         }
@@ -854,7 +809,7 @@ int returnStateT36()
         return OK;
         break;
     case KEYWORD:
-        if (token.attribute == 'else') // Rule: <return>  ->  eps
+        if (strcmp(token.attribute, "else") == 0) // Rule: <return>  ->  eps
         {
             return OK;
             break;
@@ -880,7 +835,7 @@ int isAssign()
         return OK;
         break;
     case KEYWORD:
-        if (token.attribute == 'end' || token.attribute == 'return' || token.attribute == 'local' || token.attribute == 'if' || token.attribute == 'while') // Rule: <return>  ->  eps
+        if (strcmp(token.attribute, "while") == 0 || strcmp(token.attribute, "if") == 0 || strcmp(token.attribute, "local") == 0 || strcmp(token.attribute, "return") == 0 || strcmp(token.attribute, "end") == 0) // Rule: <return>  ->  eps
         {
             return OK;
             break;
@@ -909,7 +864,7 @@ int isAssignT44()
         return OK;
         break;
     case KEYWORD:
-        if (token.attribute == 'else' || token.attribute == 'return' || token.attribute == 'local' || token.attribute == 'if' || token.attribute == 'while') // Rule: <return>  ->  eps
+        if (strcmp(token.attribute, "while") == 0 || strcmp(token.attribute, "if") == 0 || strcmp(token.attribute, "local") == 0 || strcmp(token.attribute, "return") == 0 || strcmp(token.attribute, "else") == 0) // Rule: <return>  ->  eps
         {
             return OK;
             break;
@@ -935,7 +890,6 @@ int afterID()
     switch (token.type)
     {
     case LBR: // Rule:<after_id> -> ( <func_param> )
-
         checkAndLoadToken(LBR);
         CHECK_AND_CALL_FUNCTION(funcParam());
         checkAndLoadToken(RBR);
@@ -963,7 +917,6 @@ int afterIDT45()
     switch (token.type)
     {
     case LBR: // Rule:<after_id> -> ( <func_param> )
-
         checkAndLoadToken(LBR);
         CHECK_AND_CALL_FUNCTION(funcParam());
         checkAndLoadToken(RBR);
@@ -978,7 +931,7 @@ int afterIDT45()
     case ASSIGN:
         CHECK_AND_CALL_FUNCTION(idN());
         checkAndLoadToken(ASSIGN);
-        CHECK_AND_CALL_FUNCTION(exprFuncT52()); ///if expr_func is similar, this is not required
+        CHECK_AND_CALL_FUNCTION(exprFuncT52());
         return OK;
         break;
     default:
@@ -1007,12 +960,14 @@ int retType()
         return OK;
         break;
     case KEYWORD:
-        if (token.attribute == 'end') // Rule: <ret_type>  ->  <id_n>
+        if (strcmp(token.attribute, "end") == 0) // Rule: <ret_type>  ->  <id_n>
         {
             CHECK_AND_CALL_FUNCTION(idNT37());
             return OK;
             break;
         }
+        return SYNTAX_ERROR;
+        break;
     default:
         return SYNTAX_ERROR;
         break;
@@ -1033,12 +988,14 @@ int retTypeT46()
         return OK;
         break;
     case KEYWORD:
-        if (token.attribute == 'else') // Rule: <ret_type>  ->  <id_n>
+        if (strcmp(token.attribute, "else") == 0) // Rule: <ret_type>  ->  <id_n>
         {
             CHECK_AND_CALL_FUNCTION(idNT53());
             return OK;
             break;
         }
+        return SYNTAX_ERROR;
+        break;
     default:
         return SYNTAX_ERROR;
         break;
@@ -1089,11 +1046,13 @@ int exprN()
         return OK;
         break;
     case KEYWORD:
-        if (token.attribute == 'end') // Rule: <expr_n>  ->  eps
+        if (strcmp(token.attribute, "end") == 0) // Rule: <expr_n>  ->  eps
         {
             return OK;
             break;
         }
+        return SYNTAX_ERROR;
+        break;
     default:
         return SYNTAX_ERROR;
         break;
@@ -1111,11 +1070,13 @@ int exprNT40()
         return OK;
         break;
     case KEYWORD:
-        if (token.attribute == 'end' || token.attribute == 'return' || token.attribute == 'local' || token.attribute == 'if' || token.attribute == 'while') // Rule: <expr_n>  ->  eps
+        if (strcmp(token.attribute, "while") == 0 || strcmp(token.attribute, "if") == 0 || strcmp(token.attribute, "local") == 0 || strcmp(token.attribute, "return") == 0 || strcmp(token.attribute, "end") == 0) // Rule: <expr_n>  ->  eps
         {
             return OK;
             break;
         }
+        return SYNTAX_ERROR;
+        break;
     case IDENTIFICATOR:
         return OK;
         break;
@@ -1131,15 +1092,17 @@ int exprNT48()
     case COMMA: // Rule: <expr_n>  ->  , <expr> <expr_n>
         checkAndLoadToken(COMMA);
         CHECK_AND_CALL_FUNCTION(expr());
-        CHECK_AND_CALL_FUNCTION(exprN48());
+        CHECK_AND_CALL_FUNCTION(exprNT48());
         return OK;
         break;
     case KEYWORD:
-        if (token.attribute == 'else') // Rule: <expr_n>  ->  eps
+        if (strcmp(token.attribute, "else") == 0) // Rule: <expr_n>  ->  eps
         {
             return OK;
             break;
         }
+        return SYNTAX_ERROR;
+        break;
     default:
         return SYNTAX_ERROR;
         break;
@@ -1156,11 +1119,13 @@ int exprNT56()
         return OK;
         break;
     case KEYWORD:
-        if (token.attribute == 'else' || token.attribute == 'return' || token.attribute == 'local' || token.attribute == 'if' || token.attribute == 'while') // Rule: <expr_n>  ->  eps
+        if (strcmp(token.attribute, "while") == 0 || strcmp(token.attribute, "if") == 0 || strcmp(token.attribute, "local") == 0 || strcmp(token.attribute, "return") == 0 || strcmp(token.attribute, "else") == 0) // Rule: <expr_n>  ->  eps
         {
             return OK;
             break;
         }
+        return SYNTAX_ERROR;
+        break;
     case IDENTIFICATOR:
         return OK;
         break;
@@ -1203,11 +1168,13 @@ int idNT37()
         return OK;
         break;
     case KEYWORD:
-        if (token.attribute == 'end') // Rule: <id_n>  ->  eps
+        if (strcmp(token.attribute, "end") == 0) // Rule: <id_n>  ->  eps
         {
             return OK;
             break;
         }
+        return SYNTAX_ERROR;
+        break;
     default:
         return SYNTAX_ERROR;
         break;
@@ -1227,11 +1194,13 @@ int idNT53()
         return OK;
         break;
     case KEYWORD:
-        if (token.attribute == 'else') // Rule: <id_n>  ->  eps
+        if (strcmp(token.attribute, "else") == 0) // Rule: <id_n>  ->  eps
         {
             return OK;
             break;
         }
+        return SYNTAX_ERROR;
+        break;
     default:
         return SYNTAX_ERROR;
         break;
@@ -1346,6 +1315,8 @@ int funcParamN()
         checkAndLoadToken(COMMA);
         CHECK_AND_CALL_FUNCTION(expr());
         CHECK_AND_CALL_FUNCTION(funcParamN());
+        return OK;
+        break;
     default:
         return SYNTAX_ERROR;
         break;
