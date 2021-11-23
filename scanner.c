@@ -428,7 +428,7 @@ Token getToken () {
         if (state == STR) {
             if (c == '"') {
                 strncat(str, &c, 1);
-                if (strcmp(str, "ifj21") == 0) {
+                if (strcmp(str, "\"ifj21\"") == 0) {
                     token.type = IFJ21;
                 }
                 getString(str, &token);
@@ -449,19 +449,19 @@ Token getToken () {
 
         if (state == ESCAPE1) {
             if (c == 'n') {
-                strncat("\n", &c, 1);
+                strncat("\n", &c, 2);
                 state = STR;
                 continue;
             } else if (c == 't') {
-                strncat("\t", &c, 1);
+                strncat("\t", &c, 2);
                 state = STR;
                 continue;
             } else if (c == '\\') {
-                strncat("\\", &c, 1);
+                strncat("\\", &c, 2);
                 state = STR;
                 continue;
             } else if (c == '"') {
-                strncat("\"", &c, 1);
+                strncat("\"", &c, 2);
                 state = STR;
                 continue;
             } else if (isdigit(c)) {
