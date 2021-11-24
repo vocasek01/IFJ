@@ -7,6 +7,9 @@
 
 void create(bst_node_t **tree)
 {
+    bst_node_t *item = NULL;
+    item = (bst_node_t *)malloc(sizeof(struct bst_node));
+
     Token token;
     // cre_node(&(*tree));
     do{
@@ -15,14 +18,54 @@ void create(bst_node_t **tree)
         // if (token.attribute == "function")
         if (strcmp(token.attribute, "function") == 0)
         {
-                cre_node(&(*tree));
-                cre_node(&(*tree)->next);
-                (*tree)->a = 1;
-                (*tree)->next->a = 2;
-                // printf("LOLOLOLOL\n");
+            cre_node(&item);
+            // printf("type: %d atribut: %s \n----------------------------------------------------------------------\n", token.type, token.attribute);
+            item->token = &token;
+
+            Token name;
+            name = getToken();
+            // printf("type: %d atribut: %s \n----------------------------------------------------------------------\n", token.type, token.attribute);
+            item->token_id = &name;
+
+            // printf("====== %s %s ======\n", item->token->attribute, item->token_id->attribute);
+            while (strcmp(token.attribute, ")") == 0)
+            {
+                token = getToken();
+            }
+            
+            create(&item->inside);
+            // cre_node(&item->inside);
+            // // printf("type: %d atribut: %s \n----------------------------------------------------------------------\n", token.type, token.attribute);
+            // item->inside->token = &token;
+            // token = getToken();
+            // printf("type: %d atribut: %s \n----------------------------------------------------------------------\n", token.type, token.attribute);
+            // item->inside->token_id = &token;
+
+            // printf("====== %s %s ======\n", item->inside->token->attribute, item->inside->token_id->attribute);
+
+            
+
+            cre_node(&item);
+            cre_node(&item->next);
+            create(&item->next);
+
+            // printf("LOLOLOLOL\n");
         }
-        if 
-    } while (token.type != ENDOFFILE);
+        if (strcmp(token.attribute, "if") == 0)
+        {
+            cre_node(&item);
+            // cre_node(&(*tree)->next);
+            item->a = 1;
+            printf("type: %d atribut: %s \n----------------------------------------------------------------------\n", token.type, token.attribute);
+            item->token_id = &token;
+            // break;
+            // (*tree)->next->a = 2;
+            // printf("LOLOLOLOL\n");
+        }
+
+    } while (token.type != ENDOFFILE || (strcmp(token.attribute, "end") == 0));
+
+    *tree = item;
 }
 
 void cre_node(bst_node_t **tree)
@@ -67,6 +110,5 @@ int main(int argc, char *argv[])
     // printf("LOL: %i", (*tree)->a);
     // add_next(&(*tree)->next);
     printf("LOL: %i", (*tree)->a);
-
-
+    // printf("%s %s\n", (*tree)->token_id.attribute, (*tree)->token.attribute);
 }

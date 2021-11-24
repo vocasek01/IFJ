@@ -449,19 +449,19 @@ Token getToken () {
 
         if (state == ESCAPE1) {
             if (c == 'n') {
-                strncat("\n", &c, 2);
+                strncat(str, "\n", 2);
                 state = STR;
                 continue;
             } else if (c == 't') {
-                strncat("\t", &c, 2);
+                strncat(str, "\t", 2);
                 state = STR;
                 continue;
             } else if (c == '\\') {
-                strncat("\\", &c, 2);
+                strncat(str, "\\", 2);
                 state = STR;
                 continue;
             } else if (c == '"') {
-                strncat("\"", &c, 2);
+                strncat(str, "\"", 2);
                 state = STR;
                 continue;
             } else if (isdigit(c)) {
