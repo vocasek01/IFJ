@@ -1,4 +1,6 @@
 #include "treegen.h"
+#include "parser.h"
+#include "parser.c"
 // #include "treegen.c"
 
 char *name[] = {
@@ -62,13 +64,15 @@ int main(int argc, char *argv[])
     argc = 2;
     argv[1] = "test_pr2.txt";
     scannerInit(argv[1]);
-    Token token;
-    do
-    {
-        token = getToken();
-        printf("type: %s atribut: %s \n----------------------------------------------------------------------\n", name[token.type], token.attribute );
-    }
-    while(token.type != ENDOFFILE);
+    // Token token;
+    // do
+    // {
+    //     token = getToken();
+    //     printf("type: %s atribut: %s \n----------------------------------------------------------------------\n", name[token.type], token.attribute );
+    // }
+    // while(token.type != ENDOFFILE);
+    NEXT();
+    start();
 
 
     // bst_node_t *tree;
