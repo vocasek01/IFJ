@@ -17,47 +17,47 @@
         }                            \
     }
 
-#define NEXT()                       \
-    {                                \
-        while (1)                    \
-        {                            \
-            token = getToken();      \
-            if (token.type == ERROR) \
-            {                        \
-                return LEX_ERROR;    \
-            }                        \
-            break;                   \
-        }                            \
-    }
+// #define NEXT()                       \
+//     {                                \
+//         while (1)                    \
+//         {                            \
+//             token = getToken();      \
+//             if (token.type == ERROR) \
+//             {                        \
+//                 return LEX_ERROR;    \
+//             }                        \
+//             break;                   \
+//         }                            \
+//     }
 
 // Compare actual token with TOK and ATR, then call next token.
-#define checkAndLoadToken(TYPE)  \
-    {                            \
-        if (token.type != TYPE)  \
-        {                        \
-            return SYNTAX_ERROR; \
-        }                        \
-        NEXT();                  \
-    }
+// #define checkAndLoadToken(TYPE)  \
+//     {                            \
+//         if (token.type != TYPE)  \
+//         {                        \
+//             return SYNTAX_ERROR; \
+//         }                        \
+//         NEXT();                  \
+//     }
 
-#define checkAndLoadKeyword(TYPE, ATTRIBUTE)                               \
-    {                                                                      \
-        if (token.type != TYPE || strcmp(token.attribute, ATTRIBUTE) != 0) \
-        {                                                                  \
-            return SYNTAX_ERROR;                                           \
-        }                                                                  \
-        NEXT();                                                            \
-    }
+// #define checkAndLoadKeyword(TYPE, ATTRIBUTE)                               \
+//     {                                                                      \
+//         if (token.type != TYPE || strcmp(token.attribute, ATTRIBUTE) != 0) \
+//         {                                                                  \
+//             return SYNTAX_ERROR;                                           \
+//         }                                                                  \
+//         NEXT();                                                            \
+//     }
 
 // Compare actual token with TOK and ATR, then insert into tree and call next token.
-#define checkInsertAndLoadToken(TYPE, ATTRIBUTE)                           \
-    {                                                                         \
-        if (token.type != TYPE || strcmp(token.attribute, ATTRIBUTE) != 0) \
-        {                                                                     \
-            return SYNTAX_ERROR;                                              \
-        } /*insert into tree*/                                                \
-        NEXT();                                                               \
-    }
+// #define checkInsertAndLoadToken(TYPE, ATTRIBUTE)                           \
+//     {                                                                         \
+//         if (token.type != TYPE || strcmp(token.attribute, ATTRIBUTE) != 0) \
+//         {                                                                     \
+//             return SYNTAX_ERROR;                                              \
+//         } /*insert into tree*/                                                \
+//         NEXT();                                                               \
+//     }
 
 // Init nonterminal states:
 

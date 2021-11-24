@@ -4,15 +4,51 @@ Token token;
 int returnCode;
 // Load next token, check the return code.
 
+void checkAndLoadKeyword(TokenType TYPE, char* ATTRIBUTE)                               \
+    {                                                                      \
+        if (token.type != TYPE || strcmp(token.attribute, ATTRIBUTE) != 0) \
+        {                                                                  \
+            return SYNTAX_ERROR;                                           \
+        }                                                                  \
+        NEXT();                                                            \
+    }
 
+void NEXT()                       \
+    {                                \
+        token = getToken();      \
+        if (token.type == ERROR) \
+        {                        \
+            return LEX_ERROR;    \
+        }                        \
+    }
+
+void checkAndLoadToken(TokenType TYPE)  \
+    {                            \
+        if (token.type != TYPE)  \
+        {                        \
+            return SYNTAX_ERROR; \
+        }                        \
+        NEXT();                  \
+    }
+
+void checkInsertAndLoadToken(TokenType TYPE, char* ATTRIBUTE)                           \
+{                                                                         \
+    if (token.type != TYPE || strcmp(token.attribute, ATTRIBUTE) != 0) \
+    {                                                                     \
+        return SYNTAX_ERROR;                                              \
+    } /*insert into tree*/                                                \
+    NEXT();                                                               \
+}
 
 /*********TABLE*************/
 
 int start()
 {
     // rule <start> -> <preamble> <first_body>
+    NEXT();
     CHECK_AND_CALL_FUNCTION(preamble());
 
+    NEXT();
     CHECK_AND_CALL_FUNCTION(firstBody());
 
     return OK;
@@ -21,15 +57,15 @@ int start()
 int preamble()
 {
     // rule <preamble> -> require "ifj21"
-
     checkAndLoadKeyword(KEYWORD, "require");
 
     if (token.type != IFJ21)
         return LEX_ERROR;
 
-    NEXT();
 
+    NEXT();
     return OK;
+
 }
 
 int firstBody()
@@ -41,7 +77,7 @@ int firstBody()
         if (strcmp(token.attribute, "function") == 0)
         {
             CHECK_AND_CALL_FUNCTION(func());
-
+            
             CHECK_AND_CALL_FUNCTION(body());
             return OK;
             break;
@@ -203,6 +239,10 @@ int funcTypes()
             return SYNTAX_ERROR;
             break;
         }
+    case EOL:
+        NEXT();
+        return OK;
+        break;
     default:
         return SYNTAX_ERROR;
         break;
