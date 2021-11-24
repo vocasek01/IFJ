@@ -1,5 +1,6 @@
 #include "parser.h"
 
+
 Token token;
 int returnCode;
 // Load next token, check the return code.
@@ -47,7 +48,7 @@ int start()
     // rule <start> -> <preamble> <first_body>
     NEXT();
     CHECK_AND_CALL_FUNCTION(preamble());
-
+    generate_header();
     NEXT();
     CHECK_AND_CALL_FUNCTION(firstBody());
 

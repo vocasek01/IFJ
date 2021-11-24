@@ -1,6 +1,8 @@
 #pragma once
 #include "scanner.h"
 #include "symtable.h"
+#include "codegen.h"
+
 
 #define OK 0
 #define BAD 1
