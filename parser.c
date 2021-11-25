@@ -1,16 +1,12 @@
 #include "parser.h"
 
-Token token;
-int returnCode;
-// Load next token, check the return code.
-
-
 
 /*********TABLE*************/
 
 int start()
 {
     // rule <start> -> <preamble> <first_body>
+    NEXT();
     CHECK_AND_CALL_FUNCTION(preamble());
 
     CHECK_AND_CALL_FUNCTION(firstBody());
@@ -21,7 +17,6 @@ int start()
 int preamble()
 {
     // rule <preamble> -> require "ifj21"
-
     checkAndLoadKeyword(KEYWORD, "require");
 
     if (token.type != IFJ21)
@@ -149,7 +144,7 @@ int funcCall()
     // Rule: <func_call> -> id ( <params> )
     checkAndLoadToken(IDENTIFICATOR);
     checkAndLoadToken(LBR);
-    CHECK_AND_CALL_FUNCTION(params());
+    CHECK_AND_CALL_FUNCTION(funcParam());
     checkAndLoadToken(RBR);
 
     return OK;
@@ -942,6 +937,8 @@ int afterIDT45()
 
 int expr()
 {
+    /*need to call expression parser and skip expression tokens*/
+    NEXT();
     return OK;
 }
 
