@@ -1,6 +1,5 @@
 #include "parser.h"
 
-
 /*********TABLE*************/
 
 int start()
