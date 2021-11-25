@@ -1318,3 +1318,10 @@ int funcParamN()
         break;
     }
 }
+
+int main(int argc, char *argv[])
+{
+    scannerInit(argv[1]);
+    int result = start();
+    return result;
+}
