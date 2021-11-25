@@ -106,5 +106,5 @@ int idNT37();
 int idNT53();
 int exprFunc();
 int exprFuncT52();
-int funcParam();
-int funcParamN();
+int funcParam();   //
+int funcParamN(); //

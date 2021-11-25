@@ -1,9 +1,6 @@
 require "ifj21"
-function foo()
-    local s2 : string = "a"
-    if s1 ~= "a" then
-        s1 = "b"
-    end
+function foo(a : integer, b : string)
+    local s1 : integer = 2
 end
 
 function main()

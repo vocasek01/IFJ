@@ -3,6 +3,8 @@
 #include "codegen.h"
 
 Token token;
+BSTNodePtr *symtable;
+int counter_param = 0;
 int returnCode;
 // Load next token, check the return code.
 
@@ -17,7 +19,7 @@ int start()
     CHECK_AND_CALL_FUNCTION(preamble());
     
     generate_header();
-    NEXT();
+    // NEXT();
     CHECK_AND_CALL_FUNCTION(firstBody());
 
     return OK;
@@ -112,6 +114,7 @@ int body()
         return OK;
         break;
     case ENDOFFILE:
+        // printf();
         return OK;
         break;
     default:
@@ -170,6 +173,8 @@ int params()
         break;
     case IDENTIFICATOR:
         // Rule: <first_body> -> <func_call> <body>
+        counter_param++;
+        generate_func_param(token.attribute, counter_param);
         CHECK_AND_CALL_FUNCTION(param());
         CHECK_AND_CALL_FUNCTION(paramsN());
         return OK;
@@ -197,7 +202,8 @@ int funcTypes()
         return OK;
         break;
     case KEYWORD:
-        if (strcmp(token.attribute, "end") == 0 || strcmp(token.attribute, "return") == 0 || strcmp(token.attribute, "local") == 0 || strcmp(token.attribute, "if") == 0 || strcmp(token.attribute, "while") == 0)
+        if (strcmp(token.attribute, "end") == 0 || strcmp(token.attribute, "return") == 0 || strcmp(token.attribute, "local") == 0 
+        || strcmp(token.attribute, "if") == 0 || strcmp(token.attribute, "while") == 0)
         {
             CHECK_AND_CALL_FUNCTION(stateList());
             checkAndLoadKeyword(KEYWORD, "end");
@@ -209,8 +215,12 @@ int funcTypes()
             return SYNTAX_ERROR;
             break;
         }
-    default:
-        return SYNTAX_ERROR;
+    case EOL:
+        NEXT();
+        return OK; ////skip
+
+
+    default : return SYNTAX_ERROR;
         break;
     }
 }
@@ -368,10 +378,12 @@ int paramsN()
     {
     // Rule: <params_n> ->  eps
     case RBR:
+        counter_param = 0;
         return OK;
         break;
     case COMMA: // Rule: <params_n> ->  , <data_type> <types_n>
         checkAndLoadToken(COMMA);
+        // NEXT();
         CHECK_AND_CALL_FUNCTION(param());
         CHECK_AND_CALL_FUNCTION(paramsN());
         return OK;
@@ -396,6 +408,7 @@ int stateList()
         if (strcmp(token.attribute, "local") == 0 || strcmp(token.attribute, "if") == 0 || strcmp(token.attribute, "while") == 0)
         {
             CHECK_AND_CALL_FUNCTION(state());
+            NEXT();///added
             CHECK_AND_CALL_FUNCTION(stateList());
             return OK;
             break;
@@ -477,7 +490,7 @@ int dataType()
     case KEYWORD:
         if (strcmp(token.attribute, "integer") == 0)
         {
-            checkAndLoadKeyword(KEYWORD, "integer");
+            checkAndLoadKeyword(KEYWORD, "integer"); // добавить в стак или симтейбл
             return OK;
             break;
         }
@@ -1029,13 +1042,16 @@ int declr()
         break;
     case INT:
     case DOUBLE:
-    case DOUB_DOT1:
-    case DOUB_DOT2:
-    case DOUB_EXP1:
-    case DOUB_EXP2:
-        CHECK_AND_CALL_FUNCTION(expr());
+    case STR: ///added
         return OK;
         break;
+    // case DOUB_DOT1:
+    // case DOUB_DOT2:
+    // case DOUB_EXP1:
+    // case DOUB_EXP2:
+        // CHECK_AND_CALL_FUNCTION(expr());
+        // return OK;
+        // break;
     default:
         return SYNTAX_ERROR;
         break;

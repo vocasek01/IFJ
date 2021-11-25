@@ -77,10 +77,12 @@ Token getToken () {
         }
 
         if (state == START && c == '\n') {
-                strncat(str, &c, 1);
-                token.type = EOL;
-                getString(str, &token);
-                return token;
+                // strncat(str, &c, 1);
+                // token.type = EOL;
+                // getString(str, &token);
+                // return token;
+                state = START;//added
+                continue;//added
             }
 
         if (state == START && c == ' ') {

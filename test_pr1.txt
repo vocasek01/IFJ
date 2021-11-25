@@ -17,7 +17,5 @@ function main()
     end
 end
 
-function lol()
-
 main()
 lol()
