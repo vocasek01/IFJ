@@ -1,45 +1,12 @@
 #include "parser.h"
-
+#include "codegen.c"
+#include "codegen.h"
 
 Token token;
 int returnCode;
 // Load next token, check the return code.
 
-void checkAndLoadKeyword(TokenType TYPE, char* ATTRIBUTE)                               \
-    {                                                                      \
-        if (token.type != TYPE || strcmp(token.attribute, ATTRIBUTE) != 0) \
-        {                                                                  \
-            return SYNTAX_ERROR;                                           \
-        }                                                                  \
-        NEXT();                                                            \
-    }
 
-void NEXT()                       \
-    {                                \
-        token = getToken();      \
-        if (token.type == ERROR) \
-        {                        \
-            return LEX_ERROR;    \
-        }                        \
-    }
-
-void checkAndLoadToken(TokenType TYPE)  \
-    {                            \
-        if (token.type != TYPE)  \
-        {                        \
-            return SYNTAX_ERROR; \
-        }                        \
-        NEXT();                  \
-    }
-
-void checkInsertAndLoadToken(TokenType TYPE, char* ATTRIBUTE)                           \
-{                                                                         \
-    if (token.type != TYPE || strcmp(token.attribute, ATTRIBUTE) != 0) \
-    {                                                                     \
-        return SYNTAX_ERROR;                                              \
-    } /*insert into tree*/                                                \
-    NEXT();                                                               \
-}
 
 /*********TABLE*************/
 
@@ -48,6 +15,7 @@ int start()
     // rule <start> -> <preamble> <first_body>
     NEXT();
     CHECK_AND_CALL_FUNCTION(preamble());
+    
     generate_header();
     NEXT();
     CHECK_AND_CALL_FUNCTION(firstBody());
@@ -58,15 +26,15 @@ int start()
 int preamble()
 {
     // rule <preamble> -> require "ifj21"
+
     checkAndLoadKeyword(KEYWORD, "require");
 
     if (token.type != IFJ21)
         return LEX_ERROR;
 
-
     NEXT();
-    return OK;
 
+    return OK;
 }
 
 int firstBody()
@@ -78,9 +46,10 @@ int firstBody()
         if (strcmp(token.attribute, "function") == 0)
         {
             CHECK_AND_CALL_FUNCTION(func());
-            
+
             CHECK_AND_CALL_FUNCTION(body());
             return OK;
+            break;
         } // Rule: <first_body> -> <func_declr> <body>
         else if (strcmp(token.attribute, "global") == 0)
         {
@@ -155,12 +124,13 @@ int func()
 {
     // Rule: <func> -> function id ( <params> ) <func_types>
     checkInsertAndLoadToken(KEYWORD, "function");
+    generate_func_top(token.attribute);
     checkAndLoadToken(IDENTIFICATOR);
     checkAndLoadToken(LBR);
     CHECK_AND_CALL_FUNCTION(params());
     checkAndLoadToken(RBR);
     CHECK_AND_CALL_FUNCTION(funcTypes());
-
+    // generate_func_bottom(token);
     return OK;
 }
 
@@ -239,10 +209,6 @@ int funcTypes()
             return SYNTAX_ERROR;
             break;
         }
-    case EOL:
-        NEXT();
-        return OK;
-        break;
     default:
         return SYNTAX_ERROR;
         break;
@@ -392,6 +358,7 @@ int param()
     checkAndLoadToken(IDENTIFICATOR);
     checkAndLoadToken(COLON);
     CHECK_AND_CALL_FUNCTION(dataType());
+    // generate_func_param(); ///need symtable_func Parametr
     return OK;
 }
 

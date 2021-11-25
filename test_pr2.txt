@@ -1,4 +1,11 @@
 require "ifj21"
+function foo()
+    local s2 : string = "a"
+    if s1 ~= "a" then
+        s1 = "b"
+    end
+end
+
 function main()
     local s1 : string = "l"
     if s1 ~= "l" then
@@ -6,12 +13,5 @@ function main()
     end
 end
 
-function lol()
-    local s2 : string = "a"
-    if s1 ~= "a" then
-        s1 = "b"
-    end
-end
-
 main()
-lol()
+foo()
