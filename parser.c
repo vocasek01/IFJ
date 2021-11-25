@@ -81,7 +81,6 @@ int firstBody()
             
             CHECK_AND_CALL_FUNCTION(body());
             return OK;
-            break;
         } // Rule: <first_body> -> <func_declr> <body>
         else if (strcmp(token.attribute, "global") == 0)
         {
