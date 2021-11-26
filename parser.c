@@ -1,4 +1,9 @@
 #include "parser.h"
+#include "codegen.c"
+#include "codegen.h"
+Token token;
+BSTNodePtr *symtable;
+int counter_param = 0;
 
 /*********TABLE*************/
 
@@ -113,6 +118,7 @@ int func()
 {
     // Rule: <func> -> function id ( <params> ) <func_types>
     checkInsertAndLoadToken(KEYWORD, "function");
+    generate_func_top(token.attribute);
     checkAndLoadToken(IDENTIFICATOR);
     checkAndLoadToken(LBR);
     CHECK_AND_CALL_FUNCTION(params());
@@ -158,6 +164,8 @@ int params()
         break;
     case IDENTIFICATOR:
         // Rule: <first_body> -> <func_call> <body>
+        counter_param++;
+        generate_func_param(token.attribute, counter_param);
         CHECK_AND_CALL_FUNCTION(param());
         CHECK_AND_CALL_FUNCTION(paramsN());
         return OK;

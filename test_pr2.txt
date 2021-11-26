@@ -1,0 +1,14 @@
+require "ifj21"
+function foo(a : integer, b : string)
+    local s1 : integer = 2
+end
+
+function main()
+    local s1 : string = "l"
+    if s1 ~= "l" then
+        s1 = "s"
+    end
+end
+
+main()
+foo()
