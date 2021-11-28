@@ -1,13 +1,14 @@
 #pragma once
 #include "scanner.h"
 #include "symtable.h"
-#include "codegen.h"
-
 
 #define OK 0
 #define BAD 1
 #define LEX_ERROR 1
 #define SYNTAX_ERROR 2
+
+Token token;
+int returnCode;
 
 // Call function FUN and check return code.
 #define CHECK_AND_CALL_FUNCTION(FUN) \
@@ -19,17 +20,23 @@
         }                            \
     }
 
-#define NEXT()                       \
-    {                                \
-        while (1)                    \
-        {                            \
-            token = getToken();      \
-            if (token.type == ERROR) \
-            {                        \
-                return LEX_ERROR;    \
-            }                        \
-            break;                   \
-        }                            \
+// Load next token, skip what is not needed.
+
+#define NEXT()                                                                                                         \
+    {                                                                                                                  \
+        while (1)                                                                                                      \
+        {                                                                                                              \
+            token = getToken();                                                                                        \
+            if (token.type != BLOCKORLINE && token.type != BLOCKCOMMENT && token.type != COMMENT && token.type != EOL) \
+            {                                                                                                          \
+                if (token.type == ERROR)                                                                               \
+                {                                                                                                      \
+                    return LEX_ERROR;                                                                                  \
+                }                                                                                                      \
+                printf("%s - %d \n", token.attribute, token.type);                                                     \
+                break;                                                                                                 \
+            }                                                                                                          \
+        }                                                                                                              \
     }
 
 // Compare actual token with TOK and ATR, then call next token.
@@ -53,12 +60,12 @@
 
 // Compare actual token with TOK and ATR, then insert into tree and call next token.
 #define checkInsertAndLoadToken(TYPE, ATTRIBUTE)                           \
-    {                                                                         \
+    {                                                                      \
         if (token.type != TYPE || strcmp(token.attribute, ATTRIBUTE) != 0) \
-        {                                                                     \
-            return SYNTAX_ERROR;                                              \
-        } /*insert into tree*/                                                \
-        NEXT();                                                               \
+        {                                                                  \
+            return SYNTAX_ERROR;                                           \
+        } /*insert into tree*/                                             \
+        NEXT();                                                            \
     }
 
 // Init nonterminal states:
@@ -106,5 +113,5 @@ int idNT37();
 int idNT53();
 int exprFunc();
 int exprFuncT52();
-int funcParam();   //
-int funcParamN(); //
+int funcParam();
+int funcParamN();
