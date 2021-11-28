@@ -32,12 +32,19 @@ void errorCode() {
 }
 
 void getString (char *str, Token *token) {
-    token->attribute = (char *) malloc(sizeof(char) * strlen(str));
 
+    token->attribute = (char *) malloc(sizeof(char) * (strlen(str)+1));
+
+    // printf("+++%ld\n", sizeof(char) * strlen(str)); //added
     if (!token->attribute)
         fprintf(stderr, "%s", "Internal err\n");
     else
+    {
+        token->attribute[strlen(str)] = '\0';
+            // str[strlen(str)-1] = '\0';
         memcpy(token->attribute, str, sizeof(char) * strlen(str));
+    }
+    // printf("+++%ld\n", sizeof(char) * strlen(str));
 }
 
 bool isKeyWord (char *str) {
