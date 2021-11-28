@@ -1,18 +1,24 @@
 #include "parser.h"
 #include "codegen.c"
 #include "codegen.h"
+#include "symtable.c"
+#include "stack.c"
+// #include "symtable.c"
 
 Token token;
 BSTNodePtr *symtable;
+BSTNodePtr *root_symtable;
+tokenStack tmp;
 int counter_param = 0;
 int returnCode;
-// Load next token, check the return code.
+typeVar change_type();
+typeVar check_type();
+char *char_type();
+    // Load next token, check the return code.
 
+    /*********TABLE*************/
 
-
-/*********TABLE*************/
-
-int start()
+    int start()
 {
     // rule <start> -> <preamble> <first_body>
     NEXT();
@@ -41,6 +47,7 @@ int preamble()
 
 int firstBody()
 {
+    smInit(&symtable);
     switch (token.type)
     {
     case KEYWORD:
@@ -127,6 +134,8 @@ int func()
 {
     // Rule: <func> -> function id ( <params> ) <func_types>
     checkInsertAndLoadToken(KEYWORD, "function");
+    smInsertFunctin(&symtable, token.attribute, NO); // symtable added name_func
+    root_symtable = symtable;
     generate_func_top(token.attribute);
     checkAndLoadToken(IDENTIFICATOR);
     checkAndLoadToken(LBR);
@@ -407,15 +416,26 @@ int stateList()
     case KEYWORD:
         if (strcmp(token.attribute, "local") == 0 || strcmp(token.attribute, "if") == 0 || strcmp(token.attribute, "while") == 0)
         {
+            stackInit(&tmp);
             CHECK_AND_CALL_FUNCTION(state());
-            NEXT();///added
+            // NEXT();///added
+            token = getToken();
             CHECK_AND_CALL_FUNCTION(stateList());
             return OK;
             break;
         } // Rule: <state_list>->eps
         else if (strcmp(token.attribute, "end") == 0)
         {
+            symtable = root_symtable;
+            generate_func_bottom(symtable->name);
+
+            smDeleteFunction(&symtable);
+            // smDeleteFunction(&root_symtable);
+            // stackClear(&tmp);
+            // stackFree(&tmp);
+            return SYNTAX_ERROR;
             return OK;
+
             break;
         } // Rule: <state_list>->return <return>
         else if (strcmp(token.attribute, "return") == 0)
@@ -490,6 +510,14 @@ int dataType()
     case KEYWORD:
         if (strcmp(token.attribute, "integer") == 0)
         {
+            ////adde type var in symtable*****
+            if (symtable->isFunction != true)
+            {
+                symtable = smSearchNode(symtable, tmp.head.attribute);
+                typeVar a = change_type();
+                smInsertVariable(&symtable, tmp.head.attribute, token.attribute, a);
+            }
+
             checkAndLoadKeyword(KEYWORD, "integer"); // добавить в стак или симтейбл
             return OK;
             break;
@@ -650,7 +678,6 @@ int typesNT50()
         break;
     }
 }
-
 int state()
 {
     switch (token.type)
@@ -664,10 +691,16 @@ int state()
         if (strcmp(token.attribute, "local") == 0) // Rule: <state>  ->  local id : <types> <is_assign>
         {
             checkAndLoadKeyword(KEYWORD, "local");
+            stackPush(&tmp, token); ///added stack name var token 
+
+            smInsertVariable(&symtable, token.attribute, NULL, NO); /// added symtable name var
+            symtable = smSearchNode(symtable, tmp.head.attribute);
+
+            // generate_declaration("LF@", token.attribute); /// added codegen
             checkAndLoadToken(IDENTIFICATOR);
             checkAndLoadToken(COLON);
-            CHECK_AND_CALL_FUNCTION(typesT20());
-            CHECK_AND_CALL_FUNCTION(isAssign());
+            CHECK_AND_CALL_FUNCTION(typesT20()); //symtable *** добавить в симтейбл енам и добавить тип данных
+            CHECK_AND_CALL_FUNCTION(isAssign()); //=
             return OK;
             break;
         }
@@ -866,7 +899,10 @@ int isAssign()
             break;
         }
     case ASSIGN: // Rule: <is_assign> ->  = <declr>
-        checkAndLoadToken(ASSIGN);
+        checkAndLoadToken(ASSIGN); //generate_move(char *dest_frame, char *identifier, char *source_frame, char *source)
+        typeVar a =  check_type();
+        smInsertVariable(&symtable, tmp.head.attribute, token.attribute, a);
+        // stackPop(&tmp);
         CHECK_AND_CALL_FUNCTION(declr());
         return OK;
         break;
@@ -1043,6 +1079,10 @@ int declr()
     case INT:
     case DOUBLE:
     case STR: ///added
+        symtable = smSearchNode(symtable, tmp.head.attribute);
+        generate_declaration("LF@", symtable->name); ///added
+        generate_move("LF@", symtable->name, char_type(), symtable->data); ///added codegen move
+        stackPop(&tmp);
         return OK;
         break;
     // case DOUB_DOT1:
@@ -1343,5 +1383,43 @@ int funcParamN()
     default:
         return SYNTAX_ERROR;
         break;
+    }
+}
+
+/**
+ * changes the variable type for symtable
+ * takes token.attribute at the moment
+ **/
+typeVar change_type()
+{
+    if (strcmp(token.attribute, "integer") == 0)
+    {
+        return integer;
+    }
+    // else if (strcmp(token.attribute, "") == 0)
+    // {
+    //     return iteger;
+    // }
+    return NO;
+}
+/**
+ * changes the variable type for symtable
+ * takes token.attribute at the moment
+ **/
+typeVar check_type()
+{
+    if(token.type == INT && symtable->type == integer)
+    {
+        return integer;
+    }
+
+    return SYNTAX_ERROR;
+}
+
+char *char_type()
+{
+    if (symtable->type == integer)
+    {
+        return "int@";
     }
 }
