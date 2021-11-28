@@ -26,13 +26,14 @@ int returnCode;
     {                                                                                                                  \
         while (1)                                                                                                      \
         {                                                                                                              \
-            token = getToken();                                                                                        \
+            token = getToken();                                                                                       \
             if (token.type != BLOCKORLINE && token.type != BLOCKCOMMENT && token.type != COMMENT && token.type != EOL) \
             {                                                                                                          \
                 if (token.type == ERROR)                                                                               \
                 {                                                                                                      \
                     return LEX_ERROR;                                                                                  \
                 }                                                                                                      \
+                printf("%s - %d \n", token.attribute, token.type);                                                     \
                 break;                                                                                                 \
             }                                                                                                          \
         }                                                                                                              \
@@ -67,8 +68,8 @@ int returnCode;
         NEXT();                                                            \
     }
 
-// Init nonterminal states:
 
+// Init nonterminal states:
 int start();
 int preamble();
 int firstBody();

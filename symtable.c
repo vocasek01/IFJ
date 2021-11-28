@@ -6,7 +6,7 @@ void smInit(BSTNodePtr **root) {
     *root = NULL;
 }
 
-int smInsertFunctin(BSTNodePtr **root, char *name) {
+int smInsertFunctin(BSTNodePtr **root, char *name, typeVar type) {
     BSTNodePtr *item = (BSTNodePtr *) malloc(sizeof(struct BSTNode));
 
     if (item == NULL) {
@@ -14,6 +14,7 @@ int smInsertFunctin(BSTNodePtr **root, char *name) {
     }
 
     item->isFunction = true;
+    item->type = type;
     item->name = name;
     item->data = NULL;
     item->LPtr = NULL;
@@ -24,7 +25,7 @@ int smInsertFunctin(BSTNodePtr **root, char *name) {
     return 0;
 }
 
-int smInsertVariable(BSTNodePtr **root, char *name, char *data, int type) {
+int smInsertVariable(BSTNodePtr **root, char *name, char *data, typeVar type) {
     if (*root != NULL) {
 
         if (strcmp((*root)->name, name) > 0) {
@@ -33,6 +34,7 @@ int smInsertVariable(BSTNodePtr **root, char *name, char *data, int type) {
             smInsertVariable(&(*root)->LPtr, name, data, type);
         } else {
             (*root)->data = data;
+            (*root)->type = type;
         }   
 
     } else {
@@ -113,29 +115,29 @@ void smDeleteFunction (BSTNodePtr **root) {
 
 //after delete!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-int main() {
-    BSTNodePtr **root;
-    root = malloc(sizeof(BSTNodePtr));
-    BSTNodePtr *item;
+// int main() {
+//     BSTNodePtr **root;
+//     root = malloc(sizeof(BSTNodePtr));
+//     BSTNodePtr *item;
 
-    smInit(root);
-    smInsertFunctin(root, "lolf1");
-    smInsertVariable(&((*root)->LPtr), "lolname1", "loldata1", 1);
-    smInsertVariable(&((*root)->LPtr), "lolname2", "loldata2", 1);
+//     smInit(root);
+//     smInsertFunctin(root, "lolf1");
+//     smInsertVariable(&((*root)->LPtr), "lolname1", "loldata1", 1);
+//     smInsertVariable(&((*root)->LPtr), "lolname2", "loldata2", 1);
 
-    smInsertFunctin(root, "lolf2");
-    smInsertVariable(&((*root)->LPtr), "lolname3", "loldata3", 1);
-    smInsertVariable(&((*root)->LPtr), "lolname1", "loldata1", 1);
+//     smInsertFunctin(root, "lolf2");
+//     smInsertVariable(&((*root)->LPtr), "lolname3", "loldata3", 1);
+//     smInsertVariable(&((*root)->LPtr), "lolname1", "loldata1", 1);
 
-    item = smSearchNode(*root, "lolname1");
-    printf("%s\n", item->name);
+//     item = smSearchNode(*root, "lolname1");
+//     printf("%s\n", item->name);
 
-    item = smSearchNode(*root, "lolname2");
-    printf("%s\n", item->name);
+//     item = smSearchNode(*root, "lolname2");
+//     printf("%s\n", item->name);
 
-    smDeleteFunction(root);
+//     smDeleteFunction(root);
 
-    smDispose(root);
-    free(root);
-    return 0;
-}
+//     smDispose(root);
+//     free(root);
+//     return 0;
+// }
