@@ -10,6 +10,8 @@ BSTNodePtr *symtable;
 BSTNodePtr *root_symtable;
 // tokenStack tmp;
 Token clipboard [16];
+Token nameFunc [16];
+int counter_func = -1;
 int counter_param = 0;
 int returnCode;
 typeVar change_type(char *type);
@@ -29,6 +31,7 @@ char *char_type(typeVar type);
     // NEXT();
     CHECK_AND_CALL_FUNCTION(firstBody());
 
+    smDispose(&root_symtable);
     return OK;
 }
 
@@ -135,7 +138,9 @@ int func()
 {
     // Rule: <func> -> function id ( <params> ) <func_types>
     checkInsertAndLoadToken(KEYWORD, "function");
-    smInsertFunctin(&symtable, token.attribute, NO); // symtable added name_func
+    counter_func++;
+    nameFunc[counter_func] = token;
+    smInsertFunctin(&symtable, token.attribute, NO, NULL, NO, 0); // symtable added name_func
     root_symtable = symtable;
     generate_func_top(token.attribute);
     checkAndLoadToken(IDENTIFICATOR);
@@ -377,6 +382,7 @@ int param()
 { // Rule:<param>     ->  id : <data_type>
 
     counter_param++; ///for cod gen
+    smInsertFunctin(&symtable, nameFunc[counter_func].attribute, NO, token.attribute, NO, counter_param-1);
     generate_func_param(token.attribute, counter_param); /// for cod gen
 
     checkAndLoadToken(IDENTIFICATOR);
@@ -433,7 +439,7 @@ int stateList()
             symtable = root_symtable;
             generate_func_bottom(symtable->name);
 
-            smDeleteFunction(&symtable);
+            // smDeleteFunction(&symtable);
             // smDeleteFunction(&root_symtable);
             // stackClear(&tmp);
             // stackFree(&tmp);
@@ -520,6 +526,10 @@ int dataType()
                 // typeVar a = change_type(token.attribute);
                 smInsertVariable(&symtable, clipboard[1].attribute, NULL, change_type(token.attribute), change_type(clipboard[0].attribute));
             }
+            else if (symtable->isFunction == true)
+            {
+                smInsertFunctin(&symtable, nameFunc[counter_func].attribute, NO, symtable->param[counter_param - 1].name, change_type(token.attribute), counter_param - 1);
+            }
             /// create safe param in symtable
 
             checkAndLoadKeyword(KEYWORD, "integer"); // добавить в стак или симтейбл
@@ -533,6 +543,10 @@ int dataType()
                 symtable = smSearchNode(symtable, clipboard[1].attribute);
                 // typeVar a = change_type(token.attribute);
                 smInsertVariable(&symtable, clipboard[1].attribute, NULL, change_type(token.attribute), change_type(clipboard[0].attribute));
+            }
+            else if (symtable->isFunction == true)
+            {
+                smInsertFunctin(&symtable, nameFunc[counter_func].attribute, NO, symtable->param[counter_param-1].name, change_type(token.attribute), counter_param - 1);
             }
             checkAndLoadKeyword(KEYWORD, "string");
             return OK;

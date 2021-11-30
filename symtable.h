@@ -7,13 +7,19 @@
 
 typedef enum
 {
+    NO,
     sINT,
     sSTR,
     FLOAT,
     sLOCAL,
     sGLOBAL,
-    NO,
 } typeVar;
+
+typedef struct Parametrs
+{
+    char *name;
+    typeVar type;
+}parametr;
 
 typedef struct BSTNode
 {
@@ -22,14 +28,19 @@ typedef struct BSTNode
     typeVar type;          //type of variable(int, double, str)
     typeVar scope;
     bool isFunction;       //node is function or variable
+    struct Parametrs param[32];
     struct BSTNode * LPtr; //left node
     struct BSTNode * RPtr; //right node
 }
 BSTNodePtr;
 
 void smInit(BSTNodePtr **root);
-
-int smInsertFunctin(BSTNodePtr **root, char *name, typeVar type);
+/**
+ * adde new func
+* @param parametr_name if name is unknown use NULL
+* @param parametr_type if name is unknown use NO
+**/
+int smInsertFunctin(BSTNodePtr **root, char *name, typeVar type, char *parametr_name, typeVar parametr_type, int param_num);
 
 int smInsertVariable(BSTNodePtr **root, char *name, char *data, typeVar type, typeVar scope);
 
