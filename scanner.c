@@ -493,12 +493,22 @@ Token getToken () {
             if (isdigit(c)) {
                 esc += 10 * (c - 48);
                 strncat(str, &c, 1);
+            } else {
+                token.type = ERROR;
+                state = STR;
+                ungetc(c, sourceFile);
+                continue;
             }
 
             c = (char) fgetc(sourceFile);
             if (isdigit(c)) {
                 esc += (c - 48);
                 strncat(str, &c, 1);
+            } else {
+                token.type = ERROR;
+                state = STR;
+                ungetc(c, sourceFile);
+                continue;
             }
             
             if (!(esc > 0 && esc < 256)) {
