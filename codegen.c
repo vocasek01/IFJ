@@ -32,7 +32,7 @@ int set_code_output(FILE *file)
 
 int generate_header()
 {
-    fprintf(ifj_code, ".IFJcode20\n");
+    fprintf(ifj_code, ".IFJcode21\n");
     fprintf(ifj_code, "JUMP $$main\n\n");
 
     // char *id = "inputf";

@@ -6,14 +6,28 @@ void smInit(BSTNodePtr **root) {
     *root = NULL;
 }
 
-int smInsertFunctin(BSTNodePtr **root, char *name, typeVar type) {
-    BSTNodePtr *item = (BSTNodePtr *) malloc(sizeof(struct BSTNode));
+int smInsertFunctin(BSTNodePtr **root, char *name, typeVar type, char *parametr_name, typeVar parametr_type, int param_num) {
+    if (*root != NULL)
+    {
+        if (strcmp((*root)->name, name) == 0)
+        {
+            // (*root)->isFunction = true;
+            (*root)->param[param_num].name = parametr_name;
+            (*root)->param[param_num].type = parametr_type;
+            (*root)->type = type;
+            return 0;
+        }
+    }
+    BSTNodePtr *item = (BSTNodePtr *)malloc(sizeof(struct BSTNode));
 
     if (item == NULL) {
         return 99;
     }
 
     item->isFunction = true;
+    item->param[param_num].name = parametr_name;
+    item->param[param_num].type = parametr_type;    
+
     item->type = type;
     item->name = name;
     item->data = NULL;
@@ -25,16 +39,17 @@ int smInsertFunctin(BSTNodePtr **root, char *name, typeVar type) {
     return 0;
 }
 
-int smInsertVariable(BSTNodePtr **root, char *name, char *data, typeVar type) {
+int smInsertVariable(BSTNodePtr **root, char *name, char *data, typeVar type, typeVar scope) {
     if (*root != NULL) {
 
         if (strcmp((*root)->name, name) > 0) {
-            smInsertVariable(&(*root)->RPtr, name, data, type);
+            smInsertVariable(&(*root)->RPtr, name, data, type, scope);
         } else if (strcmp((*root)->name, name) < 0) {
-            smInsertVariable(&(*root)->LPtr, name, data, type);
+            smInsertVariable(&(*root)->LPtr, name, data, type, scope);
         } else {
             (*root)->data = data;
             (*root)->type = type;
+            (*root)->scope = scope;
         }   
 
     } else {
@@ -49,6 +64,7 @@ int smInsertVariable(BSTNodePtr **root, char *name, char *data, typeVar type) {
         item->data = data;
         item->name = name;
         item->type = type;
+        item->scope = scope;
         item->isFunction = false;
         item->LPtr = NULL;
         item->RPtr = NULL;
