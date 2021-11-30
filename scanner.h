@@ -60,7 +60,8 @@ typedef enum {
     COMMENT,      // --text
     BLOCKCOMMENT, // --[ text ]
     BLOCKORLINE,  // which comment
-
+    
+    STOP,
     //Lex. error
     ERROR =-1,
 
