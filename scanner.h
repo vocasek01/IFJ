@@ -61,8 +61,12 @@ typedef enum {
     BLOCKCOMMENT, // --[ text ]
     BLOCKORLINE,  // which comment
     
-    STOP,
-    //Lex. error
+    //Expression
+    E_STOP,
+    E_SHIFT,
+    E_NONTERM,
+
+    //Lex. error or Expr error
     ERROR =-1,
 
 } TokenType;

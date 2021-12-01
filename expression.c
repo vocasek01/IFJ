@@ -1,5 +1,6 @@
 #include "expression.h"
 
+
 int find_index(TokenType a) {
 
     switch(a) {
@@ -32,7 +33,7 @@ int find_index(TokenType a) {
         case INT:
         case DOUBLE:
             return 12;
-        case STOP:
+        case E_STOP:
             return 13;
 
         default:
@@ -45,12 +46,49 @@ int find_index(TokenType a) {
 
 Rule find_rule(TokenType a, TokenType b) {
 
-    int a = find_index(a);
-    int b = find_index(b);
-    return precedence[a][b];
+    int x = find_index(a);
+    int y = find_index(b);
+    return precedence[x][y];
 }
 
+int convert_to_nonterm(BSTNodePtr *root, Stack *tokenStack) {
+
+    Token x = stackTop(tokenStack);
+    switch (x.type)
+    {
+    case E_NONTERM:
+        
+        break;
+
+    case IDENTIFICATOR:
+        convert_id(root, tokenStack);
+        return 0;
+        break;
+
+    default:
+        break;
+    }
 
 
+}
+
+int convert_id(BSTNodePtr *root, Stack *tokenStack) {
+
+    Token x = stackTop(tokenStack);
+    stackPop(tokenStack); //pop id
+    stackPop(tokenStack); //pop shift
+
+    BSTNodePtr *node = smSearchNode(root, x.attribute);
+
+    if (node == NULL) {
+        fprintf(stderr, "uninitialized variable");
+        return ERROR;
+    }
+
+    // x.type = node->type;
+    x.type = E_NONTERM;
+    stackPush(tokenStack, x);
+    return 0;
+}
 
 

@@ -4,12 +4,12 @@ typedef enum{
     E,       // Equals  "="
     S,       // Smaller "<"
     L,       // Larger  ">"
-    E = -1   // Error   " "
+    X = -1   // Error   " "
 } Rule;
 
 Rule precedence[14][14] = {
 
-    /*         +,   -,   *,   /,   (,   ),   >,   <,   >=,  <=,  ==,  !=,  i,   $   */
+    /*         +,   -,   *,   /,   (,   ),   >,   <,   >=,  <=,  ==,  ~=,  i,   $   */
     /* +  */  {L,   L,   S,   S,   S,   L,   L,   L,   L,   L,   L,   L,   L,   L},   
     /* -  */  {L,   L,   S,   S,   S,   L,   L,   L,   L,   L,   L,   L,   L,   L},   
     /* *  */  {L,   L,   L,   L,   S,   L,   L,   L,   L,   L,   L,   L,   L,   L},   
@@ -21,7 +21,7 @@ Rule precedence[14][14] = {
     /* >= */  {S,   S,   S,   S,   S,   E,   L,   L,   L,   L,   L,   L,   S,   L},  
     /* <= */  {S,   S,   S,   S,   S,   E,   L,   L,   L,   L,   L,   L,   S,   L},  
     /* == */  {S,   S,   S,   S,   S,   E,   L,   L,   L,   L,   L,   L,   S,   L},  
-    /* != */  {S,   S,   S,   S,   S,   E,   L,   L,   L,   L,   L,   L,   S,   L},  
+    /* ~= */  {S,   S,   S,   S,   S,   E,   L,   L,   L,   L,   L,   L,   S,   L},  
     /* i  */  {L,   L,   L,   L,   E,   L,   L,   L,   L,   L,   L,   L,   E,   L},   
     /* $  */  {S,   S,   S,   S,   S,   E,   S,   S,   S,   S,   S,   S,   S,   E},   
  

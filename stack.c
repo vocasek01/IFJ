@@ -4,7 +4,14 @@
 
 void stackInit(Stack *stack)
 {
-    stack->head.type = EMPTY;
+    Token tmp;
+    tmp.type = EMPTY;
+    tmp.attribute = NULL;
+
+    // stack = (Stack*)malloc(sizeof(Stack));
+
+    stack->head = tmp;
+    
     stack->next = NULL;
 }
 
@@ -60,7 +67,7 @@ void stackClear(Stack *stack)
 
 void stackFree(Stack *stack)
 {
-    if (stack == NULL)
+    if (stack == NULL || stack->head.type == EMPTY)
     {
         return;
     }

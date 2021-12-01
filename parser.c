@@ -3,7 +3,7 @@
 #include "codegen.h"
 #include "symtable.c"
 #include "stack.c"
-// #include "symtable.c"
+#include "expression.c"
 
 Token token;
 BSTNodePtr *symtable;
@@ -1026,6 +1026,83 @@ int afterIDT45()
 
 int expr()
 {
+    Stack tokenStack;
+    stackInit(&tokenStack);
+    Token tmp,a,b;
+    tmp.type = E_STOP;
+    tmp.attribute = NULL;
+    stackPush(&tokenStack,tmp);
+    int shift;
+
+
+    int result = 0;
+    while (true) {
+        a = stackTop(&tokenStack);
+        b = token;
+
+        int rule = find_rule(a.type, b.type);
+
+        switch (rule)
+        {
+
+        // equals case
+        case E:
+            /* code */
+            result = 1;
+            break;
+
+        // smaller case
+        case S:
+            /* code */
+            tmp = stackTop(&tokenStack);
+
+            if (tmp.type != E_STOP) {
+                stackPop(&tokenStack);
+            }
+
+            Token shift;
+            shift.attribute = NULL;
+            shift.type = E_SHIFT;
+            stackPush(&tokenStack,shift);
+
+            if (tmp.type != E_STOP) {
+                stackPush(&tokenStack,tmp);
+            }
+            stackPush(&tokenStack,b);
+            NEXT();
+
+            // result = 2;
+            break;
+
+        // larger case
+        case L:
+            /* code */
+            // shift = find_shift_position(&tokenStack);
+
+            convert_to_nonterm(root_symtable, &tokenStack);
+
+            // free(b.attribute);
+
+            // result = 3;
+            break;
+
+        // error case
+        case X:
+            /* code */
+            result = 4;
+            break;
+
+        default:
+            break;
+        }
+
+        if (b.type == E_STOP && stackTop(&tokenStack).type == E_STOP) {
+            break;
+        }
+    }
+    // while (b.type != E_STOP && stackTop(&tokenStack).type != E_STOP);
+
+    stackFree(&tokenStack);
     return OK;
 }
 

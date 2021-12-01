@@ -14,6 +14,7 @@ typedef struct tokenStack
  * @param stack stack to free
  **/
 void stackFree(Stack *stack);
+
 /**
 *   Init stack, use a stack to init
 *   @param stack init Stack
@@ -26,17 +27,20 @@ void stackInit(Stack *stack);
 *   @return top of stack
 **/
 Token stackTop(Stack *stack);
+
 /**
  * Cleaning stack Tokens
  * @param stack cleaned stack
  **/
 void stackClear(Stack *stack);
+
 /**
 *   Pop first token from stack or return if empty
 *   @param stack Stack where pop
 *   @return Return if is nothing to pop
 **/
 void stackPop(Stack *stack);
+
 /**
 *   Push on top of stack
 *   @param stack Stack where push

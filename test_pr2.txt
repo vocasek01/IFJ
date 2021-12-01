@@ -1,6 +1,6 @@
 require "ifj21"
 function foo(a : integer, b : string)
-    local s1 : integer = 2
+    local s2 : integer = 2
 end
 
 function main()
