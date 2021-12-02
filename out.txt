@@ -16,6 +16,10 @@ LABEL $$main
 CREATEFRAME
 PUSHFRAME
 DEFVAR LF@s1
-MOVE LF@s1 string@"l"
+MOVE LF@s1 string@"a"
+DEFVAR LF@s3
+MOVE LF@s3 int@1
 DEFVAR LF@var0
-MOVE LF@var0 string@"l"
+MOVE LF@var0 integer@1
+DEFVAR LF@var1
+GT LF@var1 LF@s3 LF@1

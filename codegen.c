@@ -495,6 +495,38 @@ int generate_arithmetic_operation_string(Token operation, char *result, char *a,
     return 0;
 }
 
+int generate_arithmetic_operation_bool(Token operation, char *result, char *a, char *b)
+{
+    switch (operation.type)
+    {
+    case LT:
+        fprintf(ifj_code, "LT LF@%s LF@%s LF@%s\n", result, a, b);
+        break;
+    case LTE:
+        fprintf(ifj_code, "GT LF@%s LF@%s LF@%s\n", result, a, b);
+        fprintf(ifj_code, "NOT LF@%s LF@%s\n", result, result);
+        break;
+    case EQ:
+        fprintf(ifj_code, "EQ LF@%s LF@%s LF@%s\n", result, a, b);
+        break;
+    case NOTEQ:
+        fprintf(ifj_code, "EQ LF@%s LF@%s LF@%s\n", result, a, b);
+        fprintf(ifj_code, "NOT LF@%s LF@%s\n", result, result);
+        break;
+    case GT:
+        fprintf(ifj_code, "GT LF@%s LF@%s LF@%s\n", result, a, b);
+        break;
+    case GTE:
+        fprintf(ifj_code, "LT LF@%s LF@%s LF@%s\n", result, a, b);
+        fprintf(ifj_code, "NOT LF@%s LF@%s\n", result, result);
+        break;
+    default:
+        fprintf(stderr, "Unsupported operation!");
+        return 1;
+    }
+    return 0;
+}
+
 int generate_arithmetic_operation_int(Token operation, char *result, char *a, char *b)
 {
     switch (operation.type)

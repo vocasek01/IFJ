@@ -1028,16 +1028,25 @@ int expr()
 {
     int stop_time = 0; //just for test DELETEME
     Stack tokenStack;
+    Token tmp,a,b,shift;
+    shift.attribute = NULL;
+    shift.type = E_SHIFT;
+
     stackInit(&tokenStack);
-    Token tmp,a,b;
     tmp.type = E_STOP;
     tmp.attribute = NULL;
+
     stackPush(&tokenStack,tmp);
-    int shift;
 
     int result = 0;
     while (true) {
+
         stop_time++;
+        if (token.type == ERROR) {
+            return LEX_ERROR;
+        }
+
+
         a = find_term(&tokenStack);
 
         if (token.type == KEYWORD) {
@@ -1053,43 +1062,53 @@ int expr()
 
         // equals case
         case E:
-            /* code */
             result = 1;
             break;
 
         // smaller case
         case S:
-            /* code */
             tmp = stackTop(&tokenStack);
+            int isShifted = 0;
+            switch (tmp.type)
+            {
+                case E_STOP:
+                case ADD:
+                case SUB:
+                case MUL:
+                case DIV:
+                case INT_DIV:
+                case LEN:
+                case GT:
+                case LT:
+                case NOTEQ:
+                case GTE:
+                case LTE:
+                case EQ:
+                case KONC:
+                    break;
+                default:
+                    isShifted = 1;
+                    break;
+            }
 
-            if (!(tmp.type == E_STOP || tmp.type == NOTEQ)) {
+            if (isShifted) {
                 stackPop(&tokenStack);
             }
 
-            Token shift;
-            shift.attribute = NULL;
-            shift.type = E_SHIFT;
             stackPush(&tokenStack,shift);
 
-            if (!(tmp.type == E_STOP || tmp.type == NOTEQ)) {
+            if (isShifted) {
                 stackPush(&tokenStack,tmp);
             }
             stackPush(&tokenStack,b);
             NEXT();
-
-            // result = 2;
             break;
 
         // larger case
         case L:
-            /* code */
-            // shift = find_shift_position(&tokenStack);
 
             convert_to_nonterm(root_symtable, &tokenStack);
 
-            // free(b.attribute);
-
-            // result = 3;
             break;
 
         // error case
@@ -1102,11 +1121,10 @@ int expr()
             break;
         }
 
-        if (b.type == E_STOP && stackTop(&tokenStack).type == E_STOP || stop_time == 5) {
+        if (b.type == E_STOP && find_term(&tokenStack).type == E_STOP) {
             break;
         }
     }
-    // while (b.type != E_STOP && stackTop(&tokenStack).type != E_STOP);
 
     // stackFree(&tokenStack);
     return OK;

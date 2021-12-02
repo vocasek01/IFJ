@@ -64,7 +64,12 @@ typedef enum {
     //Expression
     E_STOP,
     E_SHIFT,
-    E_NONTERM,
+    E_NONTERM_RULE,
+    E_NONTERM_ID,
+    E_NONTERM_STR,
+    E_NONTERM_FLOAT,
+    E_NONTERM_INT,
+    E_NONTERM_BOOL,
 
     //Lex. error or Expr error
     ERROR =-1,
