@@ -1026,6 +1026,7 @@ int afterIDT45()
 
 int expr()
 {
+    int stop_time = 0; //just for test DELETEME
     Stack tokenStack;
     stackInit(&tokenStack);
     Token tmp,a,b;
@@ -1034,11 +1035,16 @@ int expr()
     stackPush(&tokenStack,tmp);
     int shift;
 
-
     int result = 0;
     while (true) {
-        a = stackTop(&tokenStack);
-        b = token;
+        stop_time++;
+        a = find_term(&tokenStack);
+
+        if (token.type == KEYWORD) {
+            b.type = E_STOP;
+        }else {
+            b = token;        
+        }
 
         int rule = find_rule(a.type, b.type);
 
@@ -1056,7 +1062,7 @@ int expr()
             /* code */
             tmp = stackTop(&tokenStack);
 
-            if (tmp.type != E_STOP) {
+            if (!(tmp.type == E_STOP || tmp.type == NOTEQ)) {
                 stackPop(&tokenStack);
             }
 
@@ -1065,7 +1071,7 @@ int expr()
             shift.type = E_SHIFT;
             stackPush(&tokenStack,shift);
 
-            if (tmp.type != E_STOP) {
+            if (!(tmp.type == E_STOP || tmp.type == NOTEQ)) {
                 stackPush(&tokenStack,tmp);
             }
             stackPush(&tokenStack,b);
@@ -1096,13 +1102,13 @@ int expr()
             break;
         }
 
-        if (b.type == E_STOP && stackTop(&tokenStack).type == E_STOP) {
+        if (b.type == E_STOP && stackTop(&tokenStack).type == E_STOP || stop_time == 5) {
             break;
         }
     }
     // while (b.type != E_STOP && stackTop(&tokenStack).type != E_STOP);
 
-    stackFree(&tokenStack);
+    // stackFree(&tokenStack);
     return OK;
 }
 

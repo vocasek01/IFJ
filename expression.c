@@ -1,6 +1,7 @@
 #include "expression.h"
 
 
+
 int find_index(TokenType a) {
 
     switch(a) {
@@ -32,6 +33,7 @@ int find_index(TokenType a) {
         case IDENTIFICATOR:
         case INT:
         case DOUBLE:
+        case STR:
             return 12;
         case E_STOP:
             return 13;
@@ -64,13 +66,47 @@ int convert_to_nonterm(BSTNodePtr *root, Stack *tokenStack) {
         convert_id(root, tokenStack);
         return 0;
         break;
-
+    case STR:
+        convert_str(root, tokenStack);
+        return 0;
+        break;
     default:
         break;
     }
 
 
 }
+
+int convert_str(BSTNodePtr *root, Stack *tokenStack) {
+
+    int counter_of_vars = 0; //should be global 
+    Token x = stackTop(tokenStack);
+    stackPop(tokenStack); //pop id
+    stackPop(tokenStack); //pop shift
+
+    char* prefix = "string@"; // len = 7
+
+    int len = strlen(x.attribute); 
+
+    char* var_name = malloc(sizeof(char) * (7 + len));
+
+    sprintf(var_name,"var%i",counter_of_vars);
+
+    generate_declaration("LF@",var_name);
+
+    // sprintf(var_name,"%s",x.attribute);
+
+    generate_move("LF@", var_name, prefix, x.attribute);
+
+    x.type = E_NONTERM;
+
+    stackPush(tokenStack, x);
+
+
+    return 0;
+}
+
+
 
 int convert_id(BSTNodePtr *root, Stack *tokenStack) {
 
@@ -91,4 +127,25 @@ int convert_id(BSTNodePtr *root, Stack *tokenStack) {
     return 0;
 }
 
+Token find_term(Stack *tokenStack) {
 
+    Token result;
+    int found = 0;
+    Stack *tmp = tokenStack;
+
+    while(!found) {
+        
+        switch (tmp->head.type)
+        {
+        case E_NONTERM:
+        case E_SHIFT:
+            break;
+        
+        default:
+            found = 1;
+            return tmp->head;
+        }
+        tmp = tmp->next;
+    }
+
+}
