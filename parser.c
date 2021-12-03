@@ -734,6 +734,8 @@ int state()
         {
             checkInsertAndLoadToken(KEYWORD, "if");
             CHECK_AND_CALL_FUNCTION(expr());
+            generate_if_head(stackTop(&expressionStack).attribute, 0);
+            stackPop(&expressionStack);
             checkAndLoadKeyword(KEYWORD, "then");
             CHECK_AND_CALL_FUNCTION(stateListT24());
             checkAndLoadKeyword(KEYWORD, "else");
