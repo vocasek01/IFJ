@@ -1051,7 +1051,7 @@ int expr()
 
         a = find_term(&tokenStack);
 
-        if (token.type == KEYWORD || token.type == COMMA) {
+        if (token.type == KEYWORD || token.type == COMMA || token.type == RBR) { // FIXME
             b.type = E_STOP;
         }else {
             b = token;        
