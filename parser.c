@@ -14,9 +14,8 @@ Token nameFunc [16];
 int counter_func = -1;
 int counter_param = 0;
 int returnCode;
-typeVar change_type(char *type);
-typeVar check_type();
-char *char_type(typeVar type);
+
+Stack expressionStack;
     // Load next token, check the return code.
 
     /*********TABLE*************/
@@ -28,6 +27,7 @@ char *char_type(typeVar type);
     CHECK_AND_CALL_FUNCTION(preamble());
     
     generate_header();
+    stackInit(&expressionStack);
     // NEXT();
     CHECK_AND_CALL_FUNCTION(firstBody());
 
@@ -1126,6 +1126,9 @@ int expr()
         }
     }
 
+    Token expression = stackTop(&tokenStack);
+    stackPop(&tokenStack);
+    stackPush(&expressionStack,expression);
     // stackFree(&tokenStack);
     return OK;
 }
