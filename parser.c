@@ -428,7 +428,7 @@ int stateList()
         {
             // stackInit(&tmp);
             CHECK_AND_CALL_FUNCTION(state());
-            NEXT();///added
+            // NEXT();///added
             // token = getToken();
             CHECK_AND_CALL_FUNCTION(stateList());
             return OK;
@@ -437,8 +437,8 @@ int stateList()
         else if (strcmp(token.attribute, "end") == 0)
         {
             symtable = root_symtable;
-            generate_func_bottom(symtable->name);
-
+            generate_func_bottom(symtable->name); ///FIX MY 
+            
             // smDeleteFunction(&symtable);
             // smDeleteFunction(&root_symtable);
             // stackClear(&tmp);
@@ -738,8 +738,12 @@ int state()
             stackPop(&expressionStack);
             checkAndLoadKeyword(KEYWORD, "then");
             CHECK_AND_CALL_FUNCTION(stateListT24());
+
+            generate_if_middle(0);
             checkAndLoadKeyword(KEYWORD, "else");
             CHECK_AND_CALL_FUNCTION(stateList());
+
+            generate_if_end(0);
             checkAndLoadKeyword(KEYWORD, "end");
             return OK;
             break;
@@ -771,6 +775,7 @@ int stateT35()
     switch (token.type)
     {
     case IDENTIFICATOR: // Rule: <state> ->  id <after_id>
+        clipboard[0] = token;
         checkAndLoadToken(IDENTIFICATOR);
         CHECK_AND_CALL_FUNCTION(afterIDT45());
         return OK;
@@ -1217,6 +1222,7 @@ int declr()
         symtable = smSearchNode(symtable, clipboard[1].attribute);
         generate_declaration(char_type(symtable->scope), symtable->name); ///added
         generate_move(char_type(symtable->scope), symtable->name, char_type(symtable->type), symtable->data); ///added codegen move
+        NEXT();
         return OK;
         break;
     // case DOUB_DOT1:
@@ -1466,6 +1472,14 @@ int exprFuncT52()
     case STR:
         CHECK_AND_CALL_FUNCTION(expr());
         CHECK_AND_CALL_FUNCTION(exprNT56());
+        symtable = smSearchNode(root_symtable, clipboard[0].attribute);
+        if (symtable != NULL)
+        {
+            generate_move(char_type(symtable->scope), symtable->name, char_type(change_enum(expressionStack.head.type)), expressionStack.head.attribute);
+        }
+        else
+            return SYNTAX_ERROR;
+
         return OK;
         break;
     default:
@@ -1558,6 +1572,20 @@ typeVar check_type()
     return SYNTAX_ERROR;
 }
 
+typeVar change_enum (TokenType token)
+{
+    switch (token)
+    {
+    case E_NONTERM_STR:
+        return sSTR;
+    case E_NONTERM_INT:
+        return sINT;
+    default:
+        return SYNTAX_ERROR;
+    }
+}
+
+
 char *char_type(typeVar type)
 {
     if (type == sINT)
@@ -1574,3 +1602,4 @@ char *char_type(typeVar type)
     }
     printf("+++SYTAX ERROR+++");
 }
+

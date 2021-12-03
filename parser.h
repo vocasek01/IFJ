@@ -115,6 +115,7 @@ int exprFunc();
 int exprFuncT52();
 int funcParam();
 int funcParamN();
+typeVar change_enum(TokenType token);
 typeVar change_type(char *type);
 typeVar check_type();
 char *char_type(typeVar type);

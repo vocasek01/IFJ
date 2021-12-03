@@ -7,9 +7,7 @@ function main()
     local s1 : string = "a"
     local s3 : integer = 1
     if s3 > 1 then
-        s1 = foo(1, "artem")
+        s1 = "artem"
+    else
     end
 end
-
-main()
-foo()
