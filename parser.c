@@ -734,6 +734,8 @@ int state()
         {
             checkInsertAndLoadToken(KEYWORD, "if");
             CHECK_AND_CALL_FUNCTION(expr());
+            generate_if_head(stackTop(&expressionStack).attribute, 0);
+            stackPop(&expressionStack);
             checkAndLoadKeyword(KEYWORD, "then");
             CHECK_AND_CALL_FUNCTION(stateListT24());
             checkAndLoadKeyword(KEYWORD, "else");
@@ -1461,6 +1463,7 @@ int exprFuncT52()
     case DOUB_DOT2:
     case DOUB_EXP1:
     case DOUB_EXP2:
+    case STR:
         CHECK_AND_CALL_FUNCTION(expr());
         CHECK_AND_CALL_FUNCTION(exprNT56());
         return OK;
