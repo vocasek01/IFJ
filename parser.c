@@ -12,6 +12,7 @@ BSTNodePtr *root_symtable;
 Token clipboard [16];
 Token nameFunc [16];
 int counter_func = -1;
+int counter_if = -1;
 int counter_param = 0;
 int returnCode;
 
@@ -437,8 +438,13 @@ int stateList()
         else if (strcmp(token.attribute, "end") == 0)
         {
             symtable = root_symtable;
+            if (symtable->name != NULL)
+            {
+                if (symtable->name[0] == 'i' && symtable->name[1] == 'f')
+                    return OK;
+            }
             generate_func_bottom(symtable->name); ///FIX MY 
-            
+
             // smDeleteFunction(&symtable);
             // smDeleteFunction(&root_symtable);
             // stackClear(&tmp);
@@ -732,18 +738,28 @@ int state()
         }
         else if (strcmp(token.attribute, "if") == 0) // Rule: <state> ->  if <expression> then <state_list> <after_if>
         {
+            symtable = root_symtable;
+            counter_if++;
+            char name_if[6];
+            sprintf(name_if,"if%i", counter_if);
+            smInsertFunctin(&symtable, name_if, NO, NULL, NO, 0);
+            root_symtable = symtable;
             checkInsertAndLoadToken(KEYWORD, "if");
+
             CHECK_AND_CALL_FUNCTION(expr());
-            generate_if_head(stackTop(&expressionStack).attribute, 0);
+            generate_if_head(stackTop(&expressionStack).attribute, counter_if);
             stackPop(&expressionStack);
             checkAndLoadKeyword(KEYWORD, "then");
             CHECK_AND_CALL_FUNCTION(stateListT24());
 
-            generate_if_middle(0);
+            generate_if_middle(counter_if);
             checkAndLoadKeyword(KEYWORD, "else");
             CHECK_AND_CALL_FUNCTION(stateList());
 
-            generate_if_end(0);
+            generate_if_end(counter_if);
+            smDeleteFunction(&symtable);
+            root_symtable = symtable;
+            // counter_if--;
             checkAndLoadKeyword(KEYWORD, "end");
             return OK;
             break;
@@ -793,15 +809,40 @@ int stateT35()
         }
         else if (strcmp(token.attribute, "if") == 0) // Rule: <state> ->  if <expression> then <state_list> <after_if>
         {
+            symtable = root_symtable;
+            counter_if++;
+            char name_if[6];
+            sprintf(name_if, "if%i", counter_if);
+            smInsertFunctin(&symtable, name_if, NO, NULL, NO, 0);
+            root_symtable = symtable;
             checkInsertAndLoadToken(KEYWORD, "if");
+
             CHECK_AND_CALL_FUNCTION(expr());
+            generate_if_head(stackTop(&expressionStack).attribute, counter_if);
+            stackPop(&expressionStack);
             checkAndLoadKeyword(KEYWORD, "then");
             CHECK_AND_CALL_FUNCTION(stateListT24());
+
+            generate_if_middle(counter_if);
             checkAndLoadKeyword(KEYWORD, "else");
             CHECK_AND_CALL_FUNCTION(stateList());
+
+            generate_if_end(counter_if);
+            smDeleteFunction(&symtable);
+            root_symtable = symtable;
+            // counter_if--;
             checkAndLoadKeyword(KEYWORD, "end");
             return OK;
             break;
+            // checkInsertAndLoadToken(KEYWORD, "if");
+            // CHECK_AND_CALL_FUNCTION(expr());
+            // checkAndLoadKeyword(KEYWORD, "then");
+            // CHECK_AND_CALL_FUNCTION(stateListT24());
+            // checkAndLoadKeyword(KEYWORD, "else");
+            // CHECK_AND_CALL_FUNCTION(stateList());
+            // checkAndLoadKeyword(KEYWORD, "end");
+            // return OK;
+            // break;
         }
         else if (strcmp(token.attribute, "while") == 0) // Rule: <state> ->  while <expression> do <state_list> end
         {
@@ -1322,7 +1363,7 @@ int exprNT56()
         return OK;
         break;
     case KEYWORD:
-        if (strcmp(token.attribute, "while") == 0 || strcmp(token.attribute, "if") == 0 || strcmp(token.attribute, "local") == 0 || strcmp(token.attribute, "return") == 0 || strcmp(token.attribute, "else") == 0) // Rule: <expr_n>  ->  eps
+        if (strcmp(token.attribute, "while") == 0 || strcmp(token.attribute, "if") == 0 || strcmp(token.attribute, "local") == 0 || strcmp(token.attribute, "return") == 0 || strcmp(token.attribute, "else") == 0 || strcmp(token.attribute, "end") == 0)// Rule: <expr_n>  ->  eps
         {
             return OK;
             break;
@@ -1430,13 +1471,22 @@ int exprFunc()
         return OK;
         break;
     case INT:
+    case STR:
     case DOUBLE:
     case DOUB_DOT1:
     case DOUB_DOT2:
     case DOUB_EXP1:
     case DOUB_EXP2:
         CHECK_AND_CALL_FUNCTION(expr());
-        CHECK_AND_CALL_FUNCTION(exprNT40());
+        CHECK_AND_CALL_FUNCTION(exprNT56());
+        symtable = smSearchNode(root_symtable, clipboard[0].attribute);
+        if (symtable != NULL)
+        {
+            generate_move(char_type(symtable->scope), symtable->name, char_type(change_enum(expressionStack.head.type)), expressionStack.head.attribute);
+        }
+        else
+            return SYNTAX_ERROR;
+
         return OK;
         break;
     default:
@@ -1464,12 +1514,12 @@ int exprFuncT52()
         return OK;
         break;
     case INT:
+    case STR:
     case DOUBLE:
     case DOUB_DOT1:
     case DOUB_DOT2:
     case DOUB_EXP1:
     case DOUB_EXP2:
-    case STR:
         CHECK_AND_CALL_FUNCTION(expr());
         CHECK_AND_CALL_FUNCTION(exprNT56());
         symtable = smSearchNode(root_symtable, clipboard[0].attribute);

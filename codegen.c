@@ -633,7 +633,7 @@ int generate_if_middle(int number)
 int generate_if_end(int number)
 {
     fprintf(ifj_code, "LABEL $$IF_END%d\n", number);
-    fprintf(ifj_code, "# end%d\n", number);
+    fprintf(ifj_code, "# if%d end\n", number);
     return 0;
 }
 
