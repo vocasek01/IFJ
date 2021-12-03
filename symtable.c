@@ -11,11 +11,17 @@ int smInsertFunctin(BSTNodePtr **root, char *name, typeVar type, char *parametr_
     {
         if (strcmp((*root)->name, name) == 0)
         {
-            // (*root)->isFunction = true;
-            (*root)->param[param_num].name = parametr_name;
-            (*root)->param[param_num].type = parametr_type;
-            (*root)->type = type;
+            if (param_num == -1)
+            {
+                (*root)->type = type;
+            }
+            else{
+                (*root)->param[param_num].name = parametr_name;
+                (*root)->param[param_num].type = parametr_type;
+                (*root)->type = type;
+            }
             return 0;
+            // (*root)->isFunction = true;
         }
     }
     BSTNodePtr *item = (BSTNodePtr *)malloc(sizeof(struct BSTNode));
@@ -91,6 +97,10 @@ BSTNodePtr *smSearchNode (BSTNodePtr *root, char *name) {
     BSTNodePtr *item = NULL;
 
     if (root != NULL) {
+        if (strcmp(root->name, name) == 0)
+        {
+            return root;
+        }
         if (root->isFunction == true) {
             item = smSearchNode(root->LPtr, name);
             if (item == NULL) {
