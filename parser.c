@@ -1049,7 +1049,7 @@ int expr()
 
         a = find_term(&tokenStack);
 
-        if (token.type == KEYWORD) {
+        if (token.type == KEYWORD || token.type == COMMA) {
             b.type = E_STOP;
         }else {
             b = token;        
