@@ -1458,6 +1458,7 @@ int exprFuncT52()
     case DOUB_DOT2:
     case DOUB_EXP1:
     case DOUB_EXP2:
+    case STR:
         CHECK_AND_CALL_FUNCTION(expr());
         CHECK_AND_CALL_FUNCTION(exprNT56());
         return OK;
