@@ -198,6 +198,9 @@ int convert_str(BSTNodePtr *root, Stack *tokenStack) {
     generate_declaration("LF@",var_name);
     generate_move("LF@", var_name, prefix, x.attribute);
 
+    free(x.attribute);
+    x.attribute = var_name;
+
     switch (x.type)
     {
         case STR:
