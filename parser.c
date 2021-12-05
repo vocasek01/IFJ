@@ -477,6 +477,7 @@ int stateList()
                 // generate_declaration("LF@", a);
                 generate_move("LF@", a, "LF@", symtable->retVal[i].name); //FIX MY create scope
             }
+            generate_func_bottom(symtable->name);
             return OK;
             break;
         }
@@ -528,7 +529,7 @@ int stateListT24()
                 // generate_declaration("LF@", a);
                 generate_move("LF@", a, "LF@", symtable->retVal[i].name); // FIX MY create scope
             }
-            
+            generate_func_bottom(symtable->name);
             return OK;
             break;
         }
