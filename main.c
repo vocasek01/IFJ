@@ -11,13 +11,20 @@
 
 int main(int argc, char *argv[])
 {
+    // scannerInit(stdin);
+    // set_code_output(stdout);
+
     argc = 3;
-    argv[1] = "test_pr2.txt";
-    argv[2] = "out.txt";
-    scannerInit(argv[1]);
+    argv[1] = "test_pr2.in";
+    argv[2] = "out.out";
+
+    scannerInit(fopen(argv[1], "r"));
     set_code_output(fopen(argv[2], "w"));
-    // generate_int2float();
-    // generate_int2float();
-    start();
+
+    int a = start();
+    if (!a)
+        return a;
+
     return 0;
 }
+//./prg.code < test_pr2.in > out.out

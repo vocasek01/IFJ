@@ -86,7 +86,7 @@ typedef struct {
 *   @param filename Name of file
 *   @return true or false
 **/
-bool scannerInit(char* file);
+bool scannerInit(FILE* file);
 
 /**
 *   Write errorCode in stderr

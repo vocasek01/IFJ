@@ -421,6 +421,12 @@ int generate_chr()
     return 0;
 }
 
+int generate_write(char *dest_frame,char *var)
+{
+    fprintf(ifj_code, "WRITE %s%s\n", dest_frame, var);
+    return 0;
+}
+
 int generate_declaration(char *dest_frame, char *identifier)
 {
     fprintf(ifj_code, "DEFVAR %s%s\n", dest_frame, identifier);

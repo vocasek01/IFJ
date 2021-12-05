@@ -17,8 +17,8 @@ char str[MAX_LENGTH];
  * 
 */
 
-bool scannerInit(char* file) {
-    sourceFile = fopen(file, "r");
+bool scannerInit(FILE* file) {
+    sourceFile = file;
     if (!sourceFile)
     {
         perror("File opening failed");

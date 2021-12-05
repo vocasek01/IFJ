@@ -120,6 +120,16 @@ BSTNodePtr *smSearchNode (BSTNodePtr *root, char *name) {
         {
             return root;
         }
+        if (root->isFunction == true)
+        {
+            for (int i=0;root->param[i].name != NULL; i++)
+            {
+                if (strcmp(root->param[i].name, name) == 0)
+                {
+                    return root;
+                }
+            }
+        }
         if (root->isFunction == true) {
             item = smSearchNode(root->LPtr, name);
             if (item == NULL) {

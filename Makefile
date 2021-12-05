@@ -1,5 +1,5 @@
-PROJ=proj
-FILES=scanner.c parser.c symtable.c
+PROJ=prg.code
+FILES=main.c
 CFLAGS=-std=gnu99 -Wextra -Werror -pedantic -pthread
 CC=gcc
 RM=rm -f
