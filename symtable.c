@@ -6,19 +6,24 @@ void smInit(BSTNodePtr **root) {
     *root = NULL;
 }
 
-int smInsertFunctin(BSTNodePtr **root, char *name, typeVar type, char *parametr_name, typeVar parametr_type, int param_num) {
+int smInsertFunctin(BSTNodePtr **root, char *name, typeVar type, char *parametr_name, typeVar parametr_type, int param_num, int type_num)
+{
     if (*root != NULL)
     {
         if (strcmp((*root)->name, name) == 0)
         {
             if (param_num == -1)
             {
-                (*root)->type = type;
+                (*root)->type[type_num] = type;
+            }
+            else if (param_num == -2)
+            {
+                
             }
             else{
                 (*root)->param[param_num].name = parametr_name;
                 (*root)->param[param_num].type = parametr_type;
-                (*root)->type = type;
+                (*root)->type[type_num] = type;
             }
             return 0;
             // (*root)->isFunction = true;
@@ -34,7 +39,7 @@ int smInsertFunctin(BSTNodePtr **root, char *name, typeVar type, char *parametr_
     item->param[param_num].name = parametr_name;
     item->param[param_num].type = parametr_type;    
 
-    item->type = type;
+    item->type[0] = type;
     item->name = name;
     item->data = NULL;
     item->LPtr = NULL;
@@ -43,6 +48,20 @@ int smInsertFunctin(BSTNodePtr **root, char *name, typeVar type, char *parametr_
     *root = item;
 
     return 0;
+}
+
+int smAddRetVal(BSTNodePtr **root, char *retVal, int num_ret)
+{
+    if (*root != NULL)
+    {
+        if ((*root)->isFunction == true)
+        {
+            (*root)->retVal[num_ret].name = retVal;
+            return 0;
+        }
+        return 1;
+    }
+    return 1;
 }
 
 int smInsertVariable(BSTNodePtr **root, char *name, char *data, typeVar type, typeVar scope) {
@@ -54,7 +73,7 @@ int smInsertVariable(BSTNodePtr **root, char *name, char *data, typeVar type, ty
             smInsertVariable(&(*root)->LPtr, name, data, type, scope);
         } else {
             (*root)->data = data;
-            (*root)->type = type;
+            (*root)->type[0] = type;
             (*root)->scope = scope;
         }   
 
@@ -69,7 +88,7 @@ int smInsertVariable(BSTNodePtr **root, char *name, char *data, typeVar type, ty
         
         item->data = data;
         item->name = name;
-        item->type = type;
+        item->type[0] = type;
         item->scope = scope;
         item->isFunction = false;
         item->LPtr = NULL;

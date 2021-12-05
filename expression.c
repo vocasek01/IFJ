@@ -119,7 +119,7 @@ int convert_operation(BSTNodePtr *root, Stack *tokenStack) {
     char* var_name = malloc(sizeof(char) * 10);
     sprintf(var_name,"var%i",counter_of_vars++);
     result.attribute = var_name;
-    generate_declaration("LF@",var_name);
+    generate_declaration("LF@", var_name);
 
     if (right.type != left.type) {
         fprintf(stderr, "%s and %s have different types\n",right.attribute,left.attribute);
@@ -237,7 +237,7 @@ int convert_id(BSTNodePtr *root, Stack *tokenStack) {
     }
 
     // x.type = node->type;
-    switch (node->type)
+    switch (node->type[0])
     {
         case sSTR:
             x.type = E_NONTERM_STR;

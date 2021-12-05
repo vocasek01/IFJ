@@ -80,36 +80,33 @@ int generate_func_param(char *param_identifier, int param_pos)
     return 0;
 }
 
-// int generate_return_values(Symtable_item *function)
-// {
-//     char *ifjcode_type;
-//     char *empty_value;
-//     for (int i = 0; i < function->return_values_count; i++)
-//     {
-//         switch (function->dataType[i])
-//         {
-//         case DT_VOID:
-//             ifjcode_type = "nil";
-//             empty_value = "nil";
-//             break;
-//         case DT_STRING:
-//             ifjcode_type = "string";
-//             empty_value = "\"\"";
-//             break;
-//         case DT_INT:
-//             ifjcode_type = "int";
-//             empty_value = "0";
-//             break;
-//         case DT_FLOAT:
-//             ifjcode_type = "float";
-//             empty_value = "0x0.0p+0";
-//             break;
-//         }
-//         fprintf(ifj_code, "DEFVAR LF@%retval%d\n", i + 1);
-//         fprintf(ifj_code, "MOVE LF@%%retval%d %s@%s\n", i + 1, ifjcode_type, empty_value);
-//     }
-//     return 0;
-// }
+int generate_return_values(typeVar type, int i)
+{
+    char *empty_value;
+    char *ifjcode_type;
+    switch (type)
+    {
+    // case VOID:
+    //     ifjcode_type = "nil";
+    //     empty_value = "nil";
+    //     break;
+    case sSTR:
+        ifjcode_type = "string";
+        empty_value = "\"\"";
+        break;
+    case sINT:
+        ifjcode_type = "int";
+        empty_value = "0";
+        break;
+    case FLOAT:
+        ifjcode_type = "float";
+        empty_value = "0x0.0p+0";
+        break;
+    }
+    fprintf(ifj_code, "DEFVAR LF@%%retval%d\n", i);
+    fprintf(ifj_code, "MOVE LF@%%retval%d %s@%s\n", i, ifjcode_type, empty_value);
+    return 0;
+}
 
 int generate_func_bottom(char *function_identifier)
 {

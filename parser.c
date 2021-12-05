@@ -11,8 +11,10 @@ BSTNodePtr *root_symtable;
 // tokenStack tmp;
 Token clipboard [16];
 Token nameFunc [16];
+Token callFunc;
 int counter_func = -1;
 int counter_if = -1;
+int counter_type = 0;
 int counter_param = 0;
 int count_bracket = 0;
 int returnCode;
@@ -143,7 +145,7 @@ int func()
     checkInsertAndLoadToken(KEYWORD, "function");
     counter_func++;
     nameFunc[counter_func] = token;
-    smInsertFunctin(&symtable, token.attribute, NO, NULL, NO, 0); // symtable added name_func
+    smInsertFunctin(&symtable, token.attribute, NO, NULL, NO, 0, 0); // symtable added name_func
     root_symtable = symtable;
     generate_func_top(token.attribute);
     checkAndLoadToken(IDENTIFICATOR);
@@ -212,8 +214,9 @@ int funcTypes()
         checkAndLoadToken(COLON);
         CHECK_AND_CALL_FUNCTION(typesT11());
         CHECK_AND_CALL_FUNCTION(stateList());
+        CHECK_AND_CALL_FUNCTION(stateList()); //++++++POSSIBLE ERROR++++
         symtable = root_symtable;
-        checkAndLoadKeyword(KEYWORD, "end");
+        checkAndLoadKeyword(KEYWORD, "end"); ///fix my after return +++++++++
         return OK;
         break;
     case IDENTIFICATOR: // Rule: <func_types> ->  <state_list> end
@@ -298,6 +301,10 @@ int typesT11()
         {
             CHECK_AND_CALL_FUNCTION(dataType());
             CHECK_AND_CALL_FUNCTION(typesNT17());
+            for (int i=0; symtable->type[i] != NO; i++)
+            {
+                generate_return_values(symtable->type[i], i);
+            }
             return OK;
             break;
         }
@@ -387,7 +394,7 @@ int param()
 { // Rule:<param>     ->  id : <data_type>
 
     counter_param++; ///for cod gen
-    smInsertFunctin(&symtable, nameFunc[counter_func].attribute, NO, token.attribute, NO, counter_param-1);
+    smInsertFunctin(&symtable, nameFunc[counter_func].attribute, NO, token.attribute, NO, counter_param-1, 0);
     generate_func_param(token.attribute, counter_param); /// for cod gen
 
     checkAndLoadToken(IDENTIFICATOR);
@@ -460,7 +467,16 @@ int stateList()
         else if (strcmp(token.attribute, "return") == 0)
         {
             checkAndLoadKeyword(KEYWORD, "return");
+            symtable = root_symtable;
+            smAddRetVal(&symtable, token.attribute, 0);           //FIX MY create var_couter return variabls
             CHECK_AND_CALL_FUNCTION(returnState());
+            for (int i=0; symtable->retVal[i].name != NULL; i++)
+            {
+                char a[10];
+                sprintf(a, "retval%d", i);
+                // generate_declaration("LF@", a);
+                generate_move("LF@", a, "LF@", symtable->retVal[i].name); //FIX MY create scope
+            }
             return OK;
             break;
         }
@@ -501,8 +517,18 @@ int stateListT24()
         } // Rule: <state_list>->return <return>
         else if (strcmp(token.attribute, "return") == 0)
         {
-            checkAndLoadKeyword(KEYWORD, "return");
-            CHECK_AND_CALL_FUNCTION(returnStateT36());
+            checkAndLoadKeyword(KEYWORD, "return");    
+            symtable = root_symtable;
+            smAddRetVal(&symtable, token.attribute, 0);
+            CHECK_AND_CALL_FUNCTION(returnStateT36()); //FIX MY++++++++++
+            for (int i = 0; symtable->retVal[i].name != NULL; i++)
+            {
+                char a[10];
+                sprintf(a, "retval%d", i);
+                // generate_declaration("LF@", a);
+                generate_move("LF@", a, "LF@", symtable->retVal[i].name); // FIX MY create scope
+            }
+            
             return OK;
             break;
         }
@@ -540,10 +566,10 @@ int dataType()
             {
                 if (count_bracket == 2)
                 {
-                    smInsertFunctin(&symtable, nameFunc[counter_func].attribute, change_type(token.attribute), symtable->param[0].name, symtable->param[0].type, -1);
+                    smInsertFunctin(&symtable, nameFunc[counter_func].attribute, change_type(token.attribute), symtable->param[0].name, symtable->param[0].type, -1, counter_type++); //FIX MY
                 }
                 else
-                    smInsertFunctin(&symtable, nameFunc[counter_func].attribute, NO, symtable->param[counter_param - 1].name, change_type(token.attribute), counter_param - 1);
+                    smInsertFunctin(&symtable, nameFunc[counter_func].attribute, NO, symtable->param[counter_param - 1].name, change_type(token.attribute), counter_param - 1, 0);
             }
             /// create safe param in symtable
 
@@ -563,10 +589,10 @@ int dataType()
             {
                 if (count_bracket == 2)
                 {
-                    smInsertFunctin(&symtable, nameFunc[counter_func].attribute, change_type(token.attribute), symtable->param[0].name, symtable->param[0].type, -1);
+                    smInsertFunctin(&symtable, nameFunc[counter_func].attribute, change_type(token.attribute), symtable->param[0].name, symtable->param[0].type, -1, counter_type++); // FIX MY
                 }
                 else
-                    smInsertFunctin(&symtable, nameFunc[counter_func].attribute, NO, symtable->param[counter_param - 1].name, change_type(token.attribute), counter_param - 1);
+                    smInsertFunctin(&symtable, nameFunc[counter_func].attribute, NO, symtable->param[counter_param - 1].name, change_type(token.attribute), counter_param - 1, 0);
             }
             checkAndLoadKeyword(KEYWORD, "string");
             return OK;
@@ -757,7 +783,7 @@ int state()
             counter_if++;
             char name_if[6];
             sprintf(name_if,"if%i", counter_if);
-            smInsertFunctin(&symtable, name_if, NO, NULL, NO, 0);
+            smInsertFunctin(&symtable, name_if, NO, NULL, NO, 0, 0);
             root_symtable = symtable;
             checkInsertAndLoadToken(KEYWORD, "if");
 
@@ -828,7 +854,7 @@ int stateT35()
             counter_if++;
             char name_if[6];
             sprintf(name_if, "if%i", counter_if);
-            smInsertFunctin(&symtable, name_if, NO, NULL, NO, 0);
+            smInsertFunctin(&symtable, name_if, NO, NULL, NO, 0, 0);
             root_symtable = symtable;
             checkInsertAndLoadToken(KEYWORD, "if");
 
@@ -1277,7 +1303,7 @@ int declr()
         symtable = root_symtable;
         symtable = smSearchNode(symtable, clipboard[1].attribute);
         generate_declaration(char_type(symtable->scope), symtable->name); ///added
-        generate_move(char_type(symtable->scope), symtable->name, char_type(symtable->type), symtable->data); ///added codegen move
+        generate_move(char_type(symtable->scope), symtable->name, char_type(symtable->type[0 ]), symtable->data); ///added codegen move
         NEXT();
         return OK;
         break;
@@ -1471,6 +1497,7 @@ int exprFunc()
     switch (token.type)
     {
     case IDENTIFICATOR: // Rule: <expr_func> ->  id ( <func_param> )
+        callFunc = token;
         symtable = smSearchNode(root_symtable, token.attribute);
         checkAndLoadToken(IDENTIFICATOR);
         if (token.type == LBR)
@@ -1479,20 +1506,31 @@ int exprFunc()
             CHECK_AND_CALL_FUNCTION(funcParam());
             checkAndLoadToken(RBR);
             int countP = 0;
-            for(int i=0; symtable->param[i].name != NULL; i++)
-                countP++;
-
             char na[32];
-            while (countP != 0)
+            for(int i=0; symtable->param[i].name != NULL; i++)
             {
-                sprintf(na, "%%%d", countP);
+                sprintf(na, "%%%d", i+1);
                 generate_declaration("TF@", na);
                 symtable = smSearchNode(root_symtable, expressionStack.head.attribute);
-                generate_move("TF@", na, char_type(symtable->type), expressionStack.head.attribute);
+                generate_move("TF@", na, char_type(symtable->type[0]), expressionStack.head.attribute);
+                symtable = smSearchNode(root_symtable, callFunc.attribute);
                 stackPop(&expressionStack);
-                countP--;
+            }
+
+            generate_function_call(callFunc.attribute);
+
+                symtable = smSearchNode(root_symtable, callFunc.attribute);
+            for(int i=0; symtable->type[i] != NO; i++)
+            {
+                char a[10];
+                sprintf(a, "retval%d", i);
+                symtable = smSearchNode(root_symtable, expressionStack.head.attribute);
+                generate_move("TF@", clipboard[0].attribute,"LF@", a);
+                symtable = smSearchNode(root_symtable, callFunc.attribute);
             }
             symtable = root_symtable;
+            
+
             
         }
         else // Rule: <expr_func> ->  <expression> <expression_n>
@@ -1643,11 +1681,11 @@ typeVar change_type(char *type)
  **/
 typeVar check_type()
 {
-    if(token.type == INT && symtable->type == sINT)
+    if(token.type == INT && symtable->type[0] == sINT)
     {
         return sINT;
     }
-    else if (token.type == STR && symtable->type == sSTR)
+    else if (token.type == STR && symtable->type[0] == sSTR)
     {
         return sSTR;
     }

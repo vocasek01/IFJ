@@ -1,13 +1,15 @@
 require "ifj21"
-function foo(a : integer, b : string)
+function foo(a : integer, b : string) : integer : string
     local s2 : integer = 2
+    if s2 > 2 then
+        return 2234
+    else
+    end
+    return s2
 end
 
 function main()
     local s1 : string = "a"
     local s3 : integer = 1
-    if s3 > 1 then
-        s1 = "artem"
-    else
-    end
+    s3 = foo (s3, s1)
 end
