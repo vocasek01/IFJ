@@ -21,14 +21,21 @@ typedef struct Parametrs
     typeVar type;
 }parametr;
 
-typedef struct BSTNode
+typedef struct return_val
+{
+    char *name;
+    
+}retVAl;
+
+    typedef struct BSTNode
 {
     char *name;            //name of function or variable
     char * data;           //value of variable(12, 2.2, "Hello")
-    typeVar type;          //type of variable(int, double, str)
+    typeVar type[16];          //type of variable(int, double, str)
     typeVar scope;
     bool isFunction;       //node is function or variable
     struct Parametrs param[32];
+    struct return_val retVal[16];
     struct BSTNode * LPtr; //left node
     struct BSTNode * RPtr; //right node
 }
@@ -40,7 +47,9 @@ void smInit(BSTNodePtr **root);
 * @param parametr_name if name is unknown use NULL
 * @param parametr_type if name is unknown use NO
 **/
-int smInsertFunctin(BSTNodePtr **root, char *name, typeVar type, char *parametr_name, typeVar parametr_type, int param_num);
+int smInsertFunctin(BSTNodePtr **root, char *name, typeVar type, char *parametr_name, typeVar parametr_type, int param_num, int type_num);
+
+int smAddRetVal(BSTNodePtr **root, char *retVal, int num_ret);
 
 int smInsertVariable(BSTNodePtr **root, char *name, char *data, typeVar type, typeVar scope);
 

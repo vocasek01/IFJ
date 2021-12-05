@@ -26,7 +26,7 @@ int returnCode;
     {                                                                                                                  \
         while (1)                                                                                                      \
         {                                                                                                              \
-            token = getToken();                                                                                       \
+            token = getToken();                                                                                        \
             if (token.type != BLOCKORLINE && token.type != BLOCKCOMMENT && token.type != COMMENT && token.type != EOL) \
             {                                                                                                          \
                 if (token.type == ERROR)                                                                               \
