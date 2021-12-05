@@ -340,6 +340,10 @@ int typesT20()
         else if (strcmp(token.attribute, "integer") == 0 || strcmp(token.attribute, "nil") == 0 || strcmp(token.attribute, "string") == 0 || strcmp(token.attribute, "number") == 0)
         {
             CHECK_AND_CALL_FUNCTION(dataType());
+            if (strcmp(token.attribute, "=") != 0)
+            {
+                generate_declaration(char_type(symtable->scope), symtable->name);
+            }
             CHECK_AND_CALL_FUNCTION(typesNT30());
             return OK;
             break;
