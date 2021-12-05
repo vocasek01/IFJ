@@ -39,7 +39,7 @@ int find_index(TokenType a) {
             return 13;
 
         default:
-            break;
+            return ERROR;          
 
 
     }
@@ -50,6 +50,7 @@ Rule find_rule(TokenType a, TokenType b) {
 
     int x = find_index(a);
     int y = find_index(b);
+    if (x == ERROR || y == ERROR) return ERROR;
     return precedence[x][y];
 }
 
@@ -121,9 +122,9 @@ int convert_operation(BSTNodePtr *root, Stack *tokenStack) {
     result.attribute = var_name;
     generate_declaration("LF@",var_name);
 
-    if (right.type != left.type) {
-        fprintf(stderr, "%s and %s have different types\n",right.attribute,left.attribute);
-    }
+    // if (right.type != left.type) {
+        // fprintf(stderr, "%s and %s have different types\n",right.attribute,left.attribute);
+    // }
 
     int error_code;
     switch (right.type)

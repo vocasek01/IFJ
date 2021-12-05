@@ -1090,6 +1090,7 @@ int afterIDT45()
 int expr()
 {
     int stop_time = 0; //just for test DELETEME
+    int par_number = 0;
     Stack tokenStack;
     Token tmp,a,b,shift;
     shift.attribute = NULL;
@@ -1098,6 +1099,7 @@ int expr()
     stackInit(&tokenStack);
     tmp.type = E_STOP;
     tmp.attribute = NULL;
+
 
     stackPush(&tokenStack,tmp);
 
@@ -1112,20 +1114,30 @@ int expr()
 
         a = find_term(&tokenStack);
 
-        if (token.type == KEYWORD || token.type == COMMA || token.type == RBR) { // FIXME
+        if (token.type == KEYWORD || token.type == COMMA || token.type == RBR && par_number == 0) { // FIXME
             b.type = E_STOP;
         }else {
             b = token;        
         }
 
-        int rule = find_rule(a.type, b.type);
+        if (b.type == E_STOP && find_term(&tokenStack).type == E_STOP) {    // expression stop
+            break;
+        }
+
+        int rule = find_rule(a.type, b.type);       // precedence[a,b]
+        if (rule == ERROR) return ERROR;
 
         switch (rule)
         {
-
+        
         // equals case
         case E:
-            result = 1;
+            stackPush(&tokenStack,b);
+            
+            if (b.type == LBR) par_number++;
+            else if (b.type == RBR) par_number--;
+
+            NEXT();
             break;
 
         // smaller case
@@ -1160,6 +1172,9 @@ int expr()
 
             stackPush(&tokenStack,shift);
 
+            if (b.type == LBR) par_number++;
+            else if (b.type == RBR) par_number--;
+
             if (isShifted) {
                 stackPush(&tokenStack,tmp);
             }
@@ -1176,17 +1191,14 @@ int expr()
 
         // error case
         case X:
-            /* code */
-            result = 4;
+            return ERROR;
             break;
 
         default:
             break;
         }
 
-        if (b.type == E_STOP && find_term(&tokenStack).type == E_STOP) {
-            break;
-        }
+
     }
 
     Token expression = stackTop(&tokenStack);
