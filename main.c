@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 {
     // scannerInit(stdin);
     // set_code_output(stdout);
-//
+    //
     argc = 3;
     argv[1] = "test_pr2.in";
     argv[2] = "out.out";
@@ -24,5 +24,7 @@ int main(int argc, char *argv[])
     int a = start();
     printf("EROR CODE:%d\n", a);
     return a;
+
 }
 //./prg.code < test_pr2.in > out.out
+// float @0x1.2666666666666p+0

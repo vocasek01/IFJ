@@ -170,6 +170,29 @@ parametr *smSearcParamFunc(BSTNodePtr *root, char *name)
     return NULL;
 }
 
+BSTNodePtr *smChekVar(BSTNodePtr *root, char *name)
+{
+    BSTNodePtr *item = NULL;
+
+    if (root != NULL)
+    {
+            if (strcmp(root->name, name) != 0)
+            {
+                item = smChekVar(root->RPtr, name);
+            }
+            else
+            {
+                item = root;
+            }
+            return item;
+    }
+    else
+    {
+        return NULL;
+    }
+    return NULL;
+}
+
 void smDeleteFunction (BSTNodePtr **root) {
     if (*root != NULL) {
         smDispose(&(*root)->LPtr);

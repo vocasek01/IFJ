@@ -57,6 +57,8 @@ BSTNodePtr *smSearchNode (BSTNodePtr *root, char *name);
 
 parametr *smSearcParamFunc(BSTNodePtr *root, char *name);
 
+BSTNodePtr *smChekVar(BSTNodePtr *root, char *name);
+
 void smDispose (BSTNodePtr **root);
 
 void smDeleteFunction (BSTNodePtr **root);
