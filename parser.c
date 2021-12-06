@@ -21,6 +21,7 @@ int counter_retVal = 0;
 int counter_param = 0;
 int count_bracket = 0;
 int returnCode;
+char floatStart[21] = "0x";
 
 Stack expressionStack;
     // Load next token, check the return code.
@@ -151,6 +152,7 @@ int func()
     smInsertFunctin(&symtable, token.attribute, NO, NULL, NO, 0, 0); // symtable added name_func
     root_symtable = symtable;
     generate_func_top(token.attribute);
+    CHECK_AND_CALL_FUNCTION(chek_name(token.attribute));
     checkAndLoadToken(IDENTIFICATOR);
     checkAndLoadToken(LBR);
     CHECK_AND_CALL_FUNCTION(params());
@@ -567,45 +569,14 @@ int dataType()
     case KEYWORD:
         if (strcmp(token.attribute, "integer") == 0)
         {
-            ////adde type var in symtable*****
-            if (symtable->isFunction != true)
-            {
-                symtable = smSearchNode(symtable, clipboard[1].attribute);
-                // typeVar a = change_type(token.attribute);
-                smInsertVariable(&symtable, clipboard[1].attribute, NULL, change_type(token.attribute), change_type(clipboard[0].attribute));
-            }
-            else if (symtable->isFunction == true)
-            {
-                if (count_bracket == 2)
-                {
-                    smInsertFunctin(&symtable, nameFunc[counter_func].attribute, change_type(token.attribute), symtable->param[0].name, symtable->param[0].type, -1, counter_type++); //FIX MY
-                }
-                else
-                    smInsertFunctin(&symtable, nameFunc[counter_func].attribute, NO, symtable->param[counter_param - 1].name, change_type(token.attribute), counter_param - 1, 0);
-            }
-            /// create safe param in symtable
-
-            checkAndLoadKeyword(KEYWORD, "integer"); // добавить в стак или симтейбл
+            decType();
+            checkAndLoadKeyword(KEYWORD, "integer");
             return OK;
             break;
         }
         else if (strcmp(token.attribute, "string") == 0)
         {
-            if (symtable->isFunction != true)
-            {
-                symtable = smSearchNode(symtable, clipboard[1].attribute);
-                // typeVar a = change_type(token.attribute);
-                smInsertVariable(&symtable, clipboard[1].attribute, NULL, change_type(token.attribute), change_type(clipboard[0].attribute));
-            }
-            else if (symtable->isFunction == true)
-            {
-                if (count_bracket == 2)
-                {
-                    smInsertFunctin(&symtable, nameFunc[counter_func].attribute, change_type(token.attribute), symtable->param[0].name, symtable->param[0].type, -1, counter_type++); // FIX MY
-                }
-                else
-                    smInsertFunctin(&symtable, nameFunc[counter_func].attribute, NO, symtable->param[counter_param - 1].name, change_type(token.attribute), counter_param - 1, 0);
-            }
+            decType();
             checkAndLoadKeyword(KEYWORD, "string");
             return OK;
             break;
@@ -618,6 +589,7 @@ int dataType()
         }
         else if (strcmp(token.attribute, "number") == 0)
         {
+            decType();
             checkAndLoadKeyword(KEYWORD, "number");
             return OK;
             break;
@@ -627,6 +599,25 @@ int dataType()
     default:
         return SYNTAX_ERROR;
         break;
+    }
+}
+
+int decType()
+{
+    if (symtable->isFunction != true)
+    {
+        symtable = smSearchNode(symtable, clipboard[1].attribute);
+        // typeVar a = change_type(token.attribute);
+        smInsertVariable(&symtable, clipboard[1].attribute, NULL, change_type(token.attribute), change_type(clipboard[0].attribute));
+    }
+    else if (symtable->isFunction == true)
+    {
+        if (count_bracket == 2)
+        {
+            smInsertFunctin(&symtable, nameFunc[counter_func].attribute, change_type(token.attribute), symtable->param[0].name, symtable->param[0].type, -1, counter_type++); // FIX MY
+        }
+        else
+            smInsertFunctin(&symtable, nameFunc[counter_func].attribute, NO, symtable->param[counter_param - 1].name, change_type(token.attribute), counter_param - 1, 0);
     }
 }
 
@@ -784,8 +775,10 @@ int state()
         {
             clipboard[0] = token;
             checkAndLoadKeyword(KEYWORD, "local");
+            CHECK_AND_CALL_FUNCTION(chek_name(token.attribute));
             clipboard[1] = token; ///added stack name var token
-
+            CHECK_AND_CALL_FUNCTION(check_dec(token.attribute, 0));
+            //
             smInsertVariable(&symtable, clipboard[1].attribute, NULL, NO, change_type(clipboard[0].attribute)); /// added symtable name var
             symtable = smSearchNode(symtable, clipboard[1].attribute);
 
@@ -1042,9 +1035,19 @@ int isAssign()
             break;
         }
     case ASSIGN: // Rule: <is_assign> ->  = <declr>
-        checkAndLoadToken(ASSIGN); //generate_move(char *dest_frame, char *identifier, char *source_frame, char *source)
-        // typeVar a =  check_type();
-        smInsertVariable(&symtable, clipboard[1].attribute, token.attribute, check_type(), change_type(clipboard[0].attribute));
+        checkAndLoadToken(ASSIGN);
+        if (token.type == IDENTIFICATOR)
+        {
+            CHECK_AND_CALL_FUNCTION(check_dec(token.attribute, 1));
+        }
+        else if (token.type == DOUBLE)
+        {
+            //LOL
+        }
+        else
+            CHECK_AND_CALL_FUNCTION(check_type());
+
+        smInsertVariable(&symtable, clipboard[1].attribute, token.attribute, symtable->type[0], change_type(clipboard[0].attribute));
         // stackPop(&tmp);
         CHECK_AND_CALL_FUNCTION(declr());
         return OK;
@@ -1345,8 +1348,15 @@ int declr()
     case STR: ///added
         symtable = root_symtable;
         symtable = smSearchNode(symtable, clipboard[1].attribute);
+
         generate_declaration(char_type(symtable->scope), symtable->name); ///added
-        generate_move(char_type(symtable->scope), symtable->name, char_type(symtable->type[0 ]), symtable->data); ///added codegen move
+        if (symtable->type[0] == FLOAT)
+        {
+            generate_move(char_type(symtable->scope), symtable->name, char_type(symtable->type[0]), floatNum(symtable->data)); /// added codegen move
+            for(int i=2; i < 21;i++)
+                floatStart[i] = '\0';
+        }else
+            generate_move(char_type(symtable->scope), symtable->name, char_type(symtable->type[0]), symtable->data);
         NEXT();
         return OK;
         break;
@@ -1768,23 +1778,99 @@ typeVar change_type(char *type)
     {
         return sLOCAL;
     }
+    else if (strcmp(type, "number") == 0)
+    {
+        return FLOAT;
+    }
     return NO;
 }
 /**
- *checking the data type of the variable 
- *and the input data type
+ *checking for error 4
+ * 4 - sémantická chyba v příkazu přiřazení (typová nekompatibilita).
  **/
-typeVar check_type()
+int check_type()
 {
-    if(token.type == INT && symtable->type[0] == sINT)
+    if ((token.type == INT || token.type == DOUBLE) && symtable->type[0] == sINT)
     {
-        return sINT;
+        return OK;
     }
     else if (token.type == STR && symtable->type[0] == sSTR)
     {
-        return sSTR;
+        return OK;
     }
-    return SYNTAX_ERROR;
+    else if (token.type == DOUBLE && symtable->type[0] == FLOAT)
+    {
+        return OK;
+    }
+    return 4; //• 4 - sémantická chyba v příkazu přiřazení (typová nekompatibilita).
+}
+
+/**
+ *checking for error 3
+ *3 - pokus o redefinici proměnné -
+ *  {"do", "else", "end", "function",
+ *    "global", "if", "integer", "local",
+ *   "nil", "number", "require", "return",
+ *  "string", "then", "while"};.
+ *
+ **/
+int chek_name(char *name)
+{
+    char *dec_name[] = 
+    {"do", "else", "end", "function",
+    "global", "if", "integer", "local", 
+    "nil", "number", "require", "return", 
+    "string", "then", "while"};
+
+    for (int i=0; i < 15; i++)
+    {
+        if (strcmp(name, dec_name[i]) == 0)
+            return 3;
+    }
+    return OK;
+}
+/**
+ *checking for error 3
+ *3 - sémantická chyba v programu – nedefinovaná funkce/proměnná,
+ *pokus o redefinici proměnné, atp.
+ **/
+int check_dec(char *name, int a)
+{
+    if (a == 0)
+    {        
+        if (smSearchNode(root_symtable, name) != NULL)
+        {
+            //FIX MY 
+            for (int i=0; nameFunc[i].attribute != NULL;i++)
+            {
+                if (strcmp(name, nameFunc[i].attribute) == 0)
+                    return 3; //• 3 - sémantická chyba v programu – nedefinovaná funkce/proměnná, pokus o redefinici proměnné, atp.
+
+                symtable = smSearchNode(root_symtable, nameFunc[counter_func].attribute);
+                if (smChekVar(symtable, name) != NULL)
+                    return 3;
+                symtable = root_symtable;
+                // smSearchNode(root_symtable, nameFunc[i].attribute)
+            }
+
+        }
+        return OK;
+    }
+    if (a == 1)
+    {
+        if (smSearchNode(root_symtable, name) != NULL)
+        {
+            // FIX MY
+            // for (int i = 0; nameFunc[i].attribute != NULL; i++)
+            // {
+                // if (strcmp(name, nameFunc[i].attribute) == 0)
+                    return OK; //• 3 - sémantická chyba v programu – nedefinovaná funkce/proměnná, pokus o redefinici proměnné, atp.
+
+                // smSearchNode(root_symtable, nameFunc[i].attribute)
+            // }
+        }
+        return 3;
+    }
 }
 
 typeVar change_enum (TokenType token)
@@ -1800,6 +1886,14 @@ typeVar change_enum (TokenType token)
     }
 }
 
+char *floatNum(char *num)
+{
+    // char floatStart[21] = "0x";
+    char end[4] = "p+0\0";
+    strncat(floatStart, num, 15);
+    strncat(floatStart, end, 4);
+    return floatStart;
+}
 
 char *char_type(typeVar type)
 {
@@ -1810,6 +1904,10 @@ char *char_type(typeVar type)
     else if (type == sSTR)
     {
         return "string@";
+    }
+    else if(type == FLOAT)
+    {
+        return "float@";
     }
     else if (type == sLOCAL)
     {

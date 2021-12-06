@@ -428,7 +428,6 @@ Token getToken () {
  * 
 */
         if (state == START && c == '"') {
-            strncat(str, &c, 1);
             state = STR;
             token.type = STR;
             continue;
@@ -436,41 +435,52 @@ Token getToken () {
 
         if (state == STR) {
             if (c == '"') {
-                strncat(str, &c, 1);
-                if (strcmp(str, "\"ifj21\"") == 0) {
+                if (strcmp(str, "ifj21") == 0) {
                     token.type = IFJ21;
+                    getString("\"ifj21\"", &token);
+                } else {
+                    getString(str, &token);
                 }
-                getString(str, &token);
                 return token;
             } else if (c == '\\') {
                 state = ESCAPE1;
                 continue;
             } else if (c > 31) {
-                strncat(str, &c, 1);
                 state = STR;
+
+                if (c == ' ') {
+                    strncat(str, "\\032", 5); // FIX MY
+                    continue;
+                } else if ( c == '#') {
+                    strncat(str, "\\032", 5); // FIX MY
+                    continue;
+                } else {
+                    strncat(str, &c, 1);
+                }
+                
                 continue;
             } else {
-                strncat(str, &c, 1);
-                token.type = ERROR;
-                continue;
-            }
+                    strncat(str, &c, 1);
+                    token.type = ERROR;
+                    continue;
+                }
         }
 
         if (state == ESCAPE1) {
             if (c == 'n') {
-                strncat(str, "\n", 2);
+                strncat(str, "\\010", 5); // FIX MY
                 state = STR;
                 continue;
             } else if (c == 't') {
-                strncat(str, "\t", 2);
+                strncat(str, "\\009", 5); //FIX MY
                 state = STR;
                 continue;
             } else if (c == '\\') {
-                strncat(str, "\\", 2);
+                strncat(str, "\\092", 5); // FIX MY
                 state = STR;
                 continue;
             } else if (c == '"') {
-                strncat(str, "\"", 2);
+                strncat(str, "\\034", 2); // FIX MY
                 state = STR;
                 continue;
             } else if (isdigit(c)) {
