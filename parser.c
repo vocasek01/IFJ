@@ -49,7 +49,7 @@ int preamble()
     checkAndLoadKeyword(KEYWORD, "require");
 
     if (token.type != IFJ21)
-        return LEX_ERROR;
+        return 7;
 
     NEXT();
 

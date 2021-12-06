@@ -50,7 +50,7 @@ Rule find_rule(TokenType a, TokenType b) {
 
     int x = find_index(a);
     int y = find_index(b);
-    if (x == ERROR || y == ERROR) return ERROR;
+    if (x == ERROR || y == ERROR) return 0;
     return precedence[x][y];
 }
 
