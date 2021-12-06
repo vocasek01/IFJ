@@ -153,6 +153,23 @@ BSTNodePtr *smSearchNode (BSTNodePtr *root, char *name) {
     
 }
 
+parametr smSearcParamFunc(BSTNodePtr *root, char *name)
+{
+    BSTNodePtr *item = NULL;
+    item = smSearchNode(root, name);
+    if (item == NULL)
+        return item->param[32];
+
+    for (int i = 0; item->param[i].name != NULL; i++)
+    {
+        if (strcmp(item->param[i].name, name) == 0)
+        {
+            return item->param[i];
+        }
+    }
+    return item->param[32];
+}
+
 void smDeleteFunction (BSTNodePtr **root) {
     if (*root != NULL) {
         smDispose(&(*root)->LPtr);

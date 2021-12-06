@@ -1,12 +1,13 @@
 require "ifj21"
 
 function fn(a:integer):integer
-    a = 6
+    a = a + 2
     return a
 end
 
-function main(c:integer)
-    local b:integer = fn(1)
+function main()
+    local b:integer = 1
+    b = b + fn(b)
 end
 
-main(2)
+main()
