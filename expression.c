@@ -80,8 +80,6 @@ int convert_to_nonterm(BSTNodePtr *root, Stack *tokenStack) {
         case EQ:
             convert_operation(root, tokenStack);
             return 0;
-            break;
-        
         default:
             break;
         }
@@ -92,16 +90,32 @@ int convert_to_nonterm(BSTNodePtr *root, Stack *tokenStack) {
     case IDENTIFICATOR:
         convert_id(root, tokenStack);
         return 0;
-        break;
     case STR:
     case INT:
     case DOUBLE:
         convert_str(root, tokenStack);
         return 0;
-        break;
+    case RBR:
+        convert_parentheses(tokenStack);
+        return 0;
     default:
         break;
     }
+
+
+}
+
+int convert_parentheses(Stack *tokenStack) {
+
+    Token right = stackTop(tokenStack);
+    stackPop(tokenStack); //pop right
+    Token term = stackTop(tokenStack);
+    stackPop(tokenStack); //pop operator
+    Token left = stackTop(tokenStack);
+    stackPop(tokenStack); //pop left
+    stackPop(tokenStack); //pop shift
+
+    stackPush(tokenStack,term);
 
 
 }

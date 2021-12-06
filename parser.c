@@ -1148,7 +1148,6 @@ int expr()
     tmp.type = E_STOP;
     tmp.attribute = NULL;
 
-
     stackPush(&tokenStack,tmp);
 
     int result = 0;
@@ -1208,6 +1207,9 @@ int expr()
                 case LTE:
                 case EQ:
                 case KONC:
+                case LBR:
+                case RBR:
+                    isShifted = 0;
                     break;
                 default:
                     isShifted = 1;
