@@ -1232,6 +1232,7 @@ int expr()
     // stackFree(&tokenStack);
     return OK;
 }
+}
 
 int retType()
 {
