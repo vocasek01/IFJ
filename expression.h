@@ -1,7 +1,8 @@
-#include "scanner.h"
+// #include "scanner.h"
 #include "precedence.h"
 #include "stack.h"
 #include "symtable.h"
+#include "codegen.c" // FIX MY
 
 
 int find_index(TokenType a);

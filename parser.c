@@ -14,7 +14,10 @@ Token nameFunc [16];
 Token callFunc;
 int counter_func = -1;
 int counter_if = -1;
+
 int counter_type = 0;
+int counter_retVal = 0;
+
 int counter_param = 0;
 int count_bracket = 0;
 int returnCode;
@@ -473,7 +476,7 @@ int stateList()
         {
             checkAndLoadKeyword(KEYWORD, "return");
             symtable = root_symtable;
-            smAddRetVal(&symtable, token.attribute, 0);           //FIX MY create var_couter return variabls
+            smAddRetVal(&symtable, token.attribute, counter_retVal++);           //FIX MY create var_couter return variabls
             CHECK_AND_CALL_FUNCTION(returnState());
             for (int i=0; symtable->retVal[i].name != NULL; i++)
             {
@@ -481,8 +484,11 @@ int stateList()
                 sprintf(a, "retval%d", i);
                 // generate_declaration("LF@", a);
                 generate_move("LF@", a, "LF@", symtable->retVal[i].name); //FIX MY create scope
+                // counter_retVal++;
             }
+
             generate_func_bottom(symtable->name);
+
             return OK;
             break;
         }
@@ -1482,7 +1488,9 @@ int idNT37()
     {
     case COMMA: // Rule: <id_n>  ->  , id <id_n>
         checkAndLoadToken(COMMA);
-        checkAndLoadToken(IDENTIFICATOR);
+
+        smAddRetVal(&symtable, token.attribute, counter_retVal++);
+        checkAndLoadToken(IDENTIFICATOR);   //?????
         CHECK_AND_CALL_FUNCTION(idNT37());
         return OK;
         break;
@@ -1535,21 +1543,27 @@ int exprFunc()
     {
     case IDENTIFICATOR: // Rule: <expr_func> ->  id ( <func_param> )
         callFunc = token;
-        symtable = smSearchNode(root_symtable, token.attribute);
-        checkAndLoadToken(IDENTIFICATOR);
+        // symtable = smSearchNode(root_symtable, token.attribute);
+        if (smSearcParamFunc(root_symtable, token.attribute) == NULL )
+        {
+            if (smSearchNode(root_symtable, token.attribute)->isFunction == true)
+                checkAndLoadToken(IDENTIFICATOR);  
+        }
+
         if (token.type == LBR)
         {
             checkAndLoadToken(LBR);
             CHECK_AND_CALL_FUNCTION(funcParam());
             checkAndLoadToken(RBR);
+
             int countP = 0;
-            char na[32];
+            char charParam[32];
             for(int i=0; symtable->param[i].name != NULL; i++)
             {
-                sprintf(na, "%%%d", i+1);
-                generate_declaration("TF@", na);
+                sprintf(charParam, "%%%d", i+1);
+                generate_declaration("TF@", charParam);
                 // symtable = smSearchNode(root_symtable, expressionStack.head.attribute);
-                generate_move("TF@", na, char_type(change_enum(expressionStack.head.type)), expressionStack.head.attribute);
+                generate_move("TF@", charParam, char_type(change_enum(expressionStack.head.type)), expressionStack.head.attribute);
                 // symtable = smSearchNode(root_symtable, callFunc.attribute);
                 stackPop(&expressionStack);
             }
@@ -1559,10 +1573,10 @@ int exprFunc()
             symtable = smSearchNode(root_symtable, callFunc.attribute);
             for(int i=0; symtable->type[i] != NO; i++)
             {
-                char a[10];
-                sprintf(a, "retval%d", i);
+                char charRetval[10];
+                sprintf(charRetval, "retval%d", i);
                 // symtable = smSearchNode(root_symtable, expressionStack.head.attribute);
-                generate_move("LF@", clipboard[0].attribute,"TF@", a);
+                generate_move("LF@", clipboard[0].attribute,"TF@", charRetval);
                 // symtable = smSearchNode(root_symtable, callFunc.attribute);
             }
             symtable = root_symtable;
@@ -1574,6 +1588,21 @@ int exprFunc()
         {
             CHECK_AND_CALL_FUNCTION(expr());
             CHECK_AND_CALL_FUNCTION(exprNT40());
+
+            symtable = smSearchNode(root_symtable, clipboard[0].attribute);
+            if (smSearcParamFunc(root_symtable, clipboard[0].attribute) == NULL)
+            {
+                if (symtable != NULL)
+                {
+                    generate_move(char_type(symtable->scope), symtable->name, char_type(change_enum(expressionStack.head.type)), expressionStack.head.attribute);
+                    stackPop(&expressionStack);
+                    return OK;
+                }
+                else
+                    return SYNTAX_ERROR;
+            }
+            generate_move("LF@", smSearcParamFunc(root_symtable, clipboard[0].attribute)->name, char_type(change_enum(expressionStack.head.type)), expressionStack.head.attribute);
+            stackPop(&expressionStack);
         }
         return OK;
         break;

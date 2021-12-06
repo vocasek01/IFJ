@@ -55,6 +55,8 @@ int smInsertVariable(BSTNodePtr **root, char *name, char *data, typeVar type, ty
 
 BSTNodePtr *smSearchNode (BSTNodePtr *root, char *name);
 
+parametr *smSearcParamFunc(BSTNodePtr *root, char *name);
+
 void smDispose (BSTNodePtr **root);
 
 void smDeleteFunction (BSTNodePtr **root);
