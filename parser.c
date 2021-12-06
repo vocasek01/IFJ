@@ -1186,8 +1186,8 @@ int expr()
         switch (rule)
         {
         
-        // equals case
         case E:
+            // pushes b token to stack
             stackPush(&tokenStack,b);
             
             if (b.type == LBR) par_number++;
@@ -1196,36 +1196,11 @@ int expr()
             NEXT();
             break;
 
-        // smaller case
         case S:
+            // pushes shift before or after token 
             tmp = stackTop(&tokenStack);
-            int isShifted = 0;
-            switch (tmp.type)
-            {
-                case E_STOP:
-                case ADD:
-                case SUB:
-                case MUL:
-                case DIV:
-                case INT_DIV:
-                case LEN:
-                case GT:
-                case LT:
-                case NOTEQ:
-                case GTE:
-                case LTE:
-                case EQ:
-                case KONC:
-                case LBR:
-                case RBR:
-                    isShifted = 0;
-                    break;
-                default:
-                    isShifted = 1;
-                    break;
-            }
 
-            if (isShifted) {
+            if (isShifted(tmp)) {
                 stackPop(&tokenStack);
             }
 
@@ -1234,29 +1209,23 @@ int expr()
             if (b.type == LBR) par_number++;
             else if (b.type == RBR) par_number--;
 
-            if (isShifted) {
+            if (isShifted(tmp)) {
                 stackPush(&tokenStack,tmp);
             }
+
             stackPush(&tokenStack,b);
             NEXT();
             break;
 
-        // larger case
         case L:
-
+            // takes tokens from stack and convert to term (i+i) -> (E) -> E
             convert_to_nonterm(root_symtable, &tokenStack);
-
             break;
 
-        // error case
         case X:
+            // unreal combination of expression tokens
             return ERROR;
             break;
-
-        default:
-            break;
-        }
-
 
     }
 

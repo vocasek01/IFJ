@@ -13,3 +13,4 @@ int convert_to_nonterm(BSTNodePtr *root, Stack *tokenStack);
 int convert_operation(BSTNodePtr *root, Stack *tokenStack);
 int convert_parentheses(Stack *tokenStack);
 Token find_term(Stack *tokenStack);
+int isShifted(Token a);
