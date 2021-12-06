@@ -122,6 +122,7 @@ int convert_parentheses(Stack *tokenStack) {
 
 int convert_operation(BSTNodePtr *root, Stack *tokenStack) {
 
+    int nilType = 0;
     Token right = stackTop(tokenStack);
     stackPop(tokenStack); //pop right
     Token operator = stackTop(tokenStack);
@@ -135,6 +136,8 @@ int convert_operation(BSTNodePtr *root, Stack *tokenStack) {
     sprintf(var_name,"var%i",counter_of_vars++);
     result.attribute = var_name;
     generate_declaration("LF@", var_name);
+
+    // if (right.)
 
     // if (right.type != left.type) {
         // fprintf(stderr, "%s and %s have different types\n",right.attribute,left.attribute);
@@ -298,4 +301,29 @@ Token find_term(Stack *tokenStack) {
         tmp = tmp->next;
     }
 
+}
+
+int isShifted(Token a) {
+    switch (a.type)
+    {
+    case E_STOP:
+    case ADD:
+    case SUB:
+    case MUL:
+    case DIV:
+    case INT_DIV:
+    case LEN:
+    case GT:
+    case LT:
+    case NOTEQ:
+    case GTE:
+    case LTE:
+    case EQ:
+    case KONC:
+    case LBR:
+    case RBR:
+        return 0;
+    default:
+        return 1;
+    }
 }
