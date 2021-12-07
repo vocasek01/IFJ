@@ -14,6 +14,7 @@ Token nameFunc [16];
 Token callFunc;
 int counter_func = -1;
 int counter_if = -1;
+int counter_while = -1;
 
 int counter_type = 0;
 int counter_retVal = 0;
@@ -820,10 +821,23 @@ int state()
         }
         else if (strcmp(token.attribute, "while") == 0) // Rule: <state> ->  while <expression> do <state_list> end
         {
+            symtable = root_symtable;
+            counter_while++;
+            char name_while[9];
+            sprintf(name_while, "while%d", counter_while);
+            smInsertFunctin(&symtable, name_while, NO, NULL, NO, 0, 0);
+            root_symtable = symtable;
             checkInsertAndLoadToken(KEYWORD, "while");
+
             CHECK_AND_CALL_FUNCTION(expr());
+            generate_while_head(stackTop(&expressionStack).attribute, counter_while);
+            generate_while_label_cycle(counter_while);
             checkAndLoadKeyword(KEYWORD, "do");
             CHECK_AND_CALL_FUNCTION(stateList());
+
+            generate_while_iterate(stackTop(&expressionStack).attribute, counter_while);
+            generate_while_label_end(counter_while);
+            smDeleteFunction(&symtable);
             checkAndLoadKeyword(KEYWORD, "end");
             return OK;
             break;
