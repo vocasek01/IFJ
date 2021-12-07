@@ -1054,7 +1054,7 @@ int isAssign()
         clipboard[0] = clipboard[1];
         CHECK_AND_CALL_FUNCTION(exprFunc());
 
-        if (token.type == IDENTIFICATOR)
+        if (token.type == IDENTIFICATOR && strcmp(token.attribute, "write") != 0)
         {
             CHECK_AND_CALL_FUNCTION(check_dec(token.attribute, 1));
         }
