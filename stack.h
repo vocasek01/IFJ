@@ -52,4 +52,4 @@ void stackPush(Stack *stack, Token new);
 *   Reversing stack 
 *   @param stack Stack top reverse
 **/
-void stackReverse(Stack *stack)
+void stackReverse(Stack *stack);
