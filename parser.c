@@ -462,7 +462,7 @@ int stateList()
             symtable = root_symtable;
             if (symtable->name != NULL)
             {
-                if (symtable->name[0] == 'i' && symtable->name[1] == 'f')
+                if ((symtable->name[0] == 'i' && symtable->name[1] == 'f') || (symtable->name[0] == 'w' && symtable->name[1] == 'h' && symtable->name[2] == 'i' && symtable->name[3] == 'l'))
                     return OK;
             }
             generate_func_bottom(symtable->name); ///FIX MY 
@@ -838,6 +838,7 @@ int state()
             generate_while_iterate(stackTop(&expressionStack).attribute, counter_while);
             generate_while_label_end(counter_while);
             smDeleteFunction(&symtable);
+            root_symtable = symtable;
             checkAndLoadKeyword(KEYWORD, "end");
             return OK;
             break;
@@ -1050,6 +1051,9 @@ int isAssign()
         }
     case ASSIGN: // Rule: <is_assign> ->  = <declr>
         checkAndLoadToken(ASSIGN);
+        clipboard[0] = clipboard[1];
+        CHECK_AND_CALL_FUNCTION(exprFunc());
+
         if (token.type == IDENTIFICATOR)
         {
             CHECK_AND_CALL_FUNCTION(check_dec(token.attribute, 1));
@@ -1061,9 +1065,9 @@ int isAssign()
         else
             CHECK_AND_CALL_FUNCTION(check_type());
 
-        smInsertVariable(&symtable, clipboard[1].attribute, token.attribute, symtable->type[0], change_type(clipboard[0].attribute));
+        smInsertVariable(&symtable, symtable->name, token.attribute, symtable->type[0], symtable->scope);
         // stackPop(&tmp);
-        CHECK_AND_CALL_FUNCTION(declr());
+        // CHECK_AND_CALL_FUNCTION(declr());
         return OK;
         break;
     default:
@@ -1774,15 +1778,15 @@ typeVar change_type(char *type)
  **/
 int check_type()
 {
-    if ((token.type == INT || token.type == DOUBLE) && symtable->type[0] == sINT)
+    if ((expressionStack.head.type == E_NONTERM_INT || expressionStack.head.type == E_NONTERM_FLOAT) && symtable->type[0] == sINT)
     {
         return OK;
     }
-    else if (token.type == STR && symtable->type[0] == sSTR)
+    else if (expressionStack.head.type == E_NONTERM_STR && symtable->type[0] == sSTR)
     {
         return OK;
     }
-    else if (token.type == DOUBLE && symtable->type[0] == FLOAT)
+    else if (expressionStack.head.type == E_NONTERM_FLOAT && symtable->type[0] == FLOAT)
     {
         return OK;
     }
@@ -1893,7 +1897,7 @@ char *char_type(typeVar type)
     {
         return "float@";
     }
-    else if (type == sLOCAL)
+    else if (type == sLOCAL || type == NO) //FIX MY
     {
         return "LF@";
     }
