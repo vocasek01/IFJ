@@ -64,6 +64,23 @@ void stackClear(Stack *stack)
     }
 }
 
+void stackReverse(Stack *stack)
+{
+    Stack clone;
+    stackInit(&clone);
+
+    Stack *result = stack;
+    while (result->head.type != EMPTY)
+    {
+        Token x = stackTop(stack);
+        stackPush(&clone,x);
+        stackPop(stack);
+        result = stack;
+    }
+
+    stackFree(stack);
+    stack = &clone;
+}
 
 void stackFree(Stack *stack)
 {
