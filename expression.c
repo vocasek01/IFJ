@@ -221,11 +221,17 @@ int convert_str(BSTNodePtr *root, Stack *tokenStack) {
             break;
         case DOUBLE:
             prefix = "float@";
-            // FIXME float can be 0            
+            // FIXME float can be 0
+            double attribute_in_double = atof(x.attribute);
+            char* tmp = malloc(sizeof(char)*100);
+            if (tmp == NULL) return ERR_ALLOCATION_ERROR_OR_ETC;
+            free(x.attribute);
+            sprintf(tmp,"%a",attribute_in_double);   
+            x.attribute = tmp;         
             break;
 
         case INT:
-            prefix = "integer@";
+            prefix = "int@";
             // if attribute will be zero, value will be non zero
             value = !atoi(x.attribute);
 
