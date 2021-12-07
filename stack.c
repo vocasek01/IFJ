@@ -64,7 +64,7 @@ void stackClear(Stack *stack)
     }
 }
 
-void stackReverse(Stack *stack)
+Stack stackReverse(Stack *stack)
 {
     Stack clone;
     stackInit(&clone);
@@ -78,8 +78,9 @@ void stackReverse(Stack *stack)
         result = stack;
     }
 
-    stackFree(stack);
+    // stackFree(stack);
     stack = &clone;
+    return *stack;
 }
 
 void stackFree(Stack *stack)

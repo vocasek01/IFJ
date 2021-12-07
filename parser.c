@@ -761,6 +761,7 @@ int state()
         clipboard[0] = token;
         checkAndLoadToken(IDENTIFICATOR);
         CHECK_AND_CALL_FUNCTION(afterID());
+        expressionStack = stackReverse(&expressionStack);
         if (strcmp(clipboard[0].attribute, "write") == 0)
         {
             for (int i=0; expressionStack.head.attribute != NULL; i++)
