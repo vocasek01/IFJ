@@ -47,3 +47,9 @@ void stackPop(Stack *stack);
 *   @param new token pushing in stack
 **/
 void stackPush(Stack *stack, Token new);
+
+/**
+*   Reversing stack 
+*   @param stack Stack top reverse
+**/
+void stackReverse(Stack *stack)
