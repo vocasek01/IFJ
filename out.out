@@ -4,25 +4,42 @@ JUMP $$main
 LABEL $$main
 CREATEFRAME
 PUSHFRAME
-DEFVAR LF@a
-MOVE LF@a int@1
 DEFVAR LF@var0
-MOVE LF@var0 integer@2
+MOVE LF@var0 integer@5
 DEFVAR LF@var1
-GT LF@var1 LF@a LF@var0
-JUMPIFEQ $$IF_FALSE0 LF@var1 bool@false
-# True0
+MOVE LF@var1 integer@6
 DEFVAR LF@var2
-MOVE LF@var2 string@yes\010
-MOVE LF@a string@var2
-WRITE LF@var2
-JUMP $$IF_END0
-LABEL $$IF_FALSE0
-# False0
+MUL LF@var2 LF@var0 LF@var1
 DEFVAR LF@var3
-MOVE LF@var3 string@no\010
-MOVE LF@a string@var3
-WRITE LF@var3
-LABEL $$IF_END0
-# if0 end
+MOVE LF@var3 integer@4
+DEFVAR LF@var4
+MOVE LF@var4 integer@7
+DEFVAR LF@var5
+MUL LF@var5 LF@var3 LF@var4
+DEFVAR LF@var6
+ADD LF@var6 LF@var2 LF@var5
+DEFVAR LF@var7
+MOVE LF@var7 integer@1
+DEFVAR LF@var8
+MOVE LF@var8 integer@3
+DEFVAR LF@var9
+MUL LF@var9 LF@var7 LF@var8
+DEFVAR LF@var10
+MOVE LF@var10 integer@2
+DEFVAR LF@var11
+MOVE LF@var11 integer@12
+DEFVAR LF@var12
+ADD LF@var12 LF@var10 LF@var11
+DEFVAR LF@var13
+MUL LF@var13 LF@var9 LF@var12
+DEFVAR LF@var14
+SUB LF@var14 LF@var6 LF@var13
+DEFVAR LF@var15
+MOVE LF@var15 integer@43
+DEFVAR LF@var16
+ADD LF@var16 LF@var14 LF@var15
+MOVE LF@a int@var16
+DEFVAR LF@var17
+MOVE LF@var17 integer@13
+MOVE LF@a int@var17
 # end of main body

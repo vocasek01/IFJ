@@ -1164,9 +1164,9 @@ int afterIDT45()
 
 int expr()
 {
-    int stop_time = 0; //just for test DELETEME
-    int par_number = 0;
-    Stack tokenStack;
+    int brackets_number = 0; // number of ()
+    int finish = 0; // if == 1, end of expr()
+    Stack tokenStack;  
     Token tmp,a,b,shift;
     shift.attribute = NULL;
     shift.type = E_SHIFT;
@@ -1177,18 +1177,14 @@ int expr()
 
     stackPush(&tokenStack,tmp);
 
-    int result = 0;
     while (true) {
 
-        stop_time++;
         if (token.type == ERROR) {
             return LEX_ERROR;
         }
-
-
         a = find_term(&tokenStack);
 
-        if (token.type == KEYWORD && strcmp(token.attribute, "nil") != 0 || token.type == COMMA || token.type == RBR && par_number == 0) { // FIXME
+        if (token.type == KEYWORD && strcmp(token.attribute, "nil") != 0 || token.type == COMMA || token.type == RBR && brackets_number == 0 || finish) { // FIXME
             b.type = E_STOP;
         }else {
             b = token;        
@@ -1208,8 +1204,8 @@ int expr()
             // pushes b token to stack
             stackPush(&tokenStack,b);
             
-            if (b.type == LBR) par_number++;
-            else if (b.type == RBR) par_number--;
+            if (b.type == LBR) brackets_number++;
+            else if (b.type == RBR) brackets_number--;
 
             NEXT();
             break;
@@ -1224,8 +1220,8 @@ int expr()
 
             stackPush(&tokenStack,shift);
 
-            if (b.type == LBR) par_number++;
-            else if (b.type == RBR) par_number--;
+            if (b.type == LBR) brackets_number++;
+            else if (b.type == RBR) brackets_number--;
 
             if (isShifted(tmp)) {
                 stackPush(&tokenStack,tmp);
@@ -1242,7 +1238,10 @@ int expr()
 
         case X:
             // unreal combination of expression tokens
-            return OK;
+            return ERROR;
+        case F:
+            // finish
+            finish = 1;
             break;
         }
 
