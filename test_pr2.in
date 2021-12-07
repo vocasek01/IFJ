@@ -1,13 +1,12 @@
 require "ifj21"
 
-function fn(a:integer):integer
-    a = a + 2
-    return a
-end
-
 function main()
-    local b:integer = 1
-    b = b + fn(b)
+    local a:integer = 1
+    if a > 2 then
+        write("yes\n")
+    else
+        write("no\n")
+    end
 end
 
 main()

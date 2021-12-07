@@ -4,6 +4,8 @@
 #include "string.h"
 // #include "scanner.h"
 #include "scanner.c"
+#include "parser.h"
+
 // #include "symtable.h"
 #pragma once
 
@@ -614,6 +616,24 @@ int generate_arithmetic_operation_float(Token operation, char *result, char *a, 
     default:
         fprintf(stderr, "Unsupported operation!");
         return 1;
+    }
+    return 0;
+}
+
+int generate_arithmetic_operation_nil(Token operation, char *result, char *a, char *b)
+{
+    switch (operation.type)
+    {
+    case EQ:
+        fprintf(ifj_code, "EQ LF@%s LF@%s LF@%s\n", result, a, b);
+        break;
+    case NOTEQ:
+        fprintf(ifj_code, "EQ LF@%s LF@%s LF@%s\n", result, a, b);
+        fprintf(ifj_code, "NOT LF@%s LF@%s\n", result, result);
+        break;
+    default:
+        fprintf(stderr, "Unsupported operation!");
+        return ERR_NIL_UNSUPPORTED_OPERATION;
     }
     return 0;
 }

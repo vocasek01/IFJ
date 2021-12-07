@@ -1170,7 +1170,7 @@ int expr()
 
         a = find_term(&tokenStack);
 
-        if (token.type == KEYWORD || token.type == COMMA || token.type == RBR && par_number == 0) { // FIXME
+        if (token.type == KEYWORD && strcmp(token.attribute, "nil") != 0 || token.type == COMMA || token.type == RBR && par_number == 0) { // FIXME
             b.type = E_STOP;
         }else {
             b = token;        
@@ -1219,13 +1219,14 @@ int expr()
 
         case L:
             // takes tokens from stack and convert to term (i+i) -> (E) -> E
-            convert_to_nonterm(root_symtable, &tokenStack);
+            CHECK_AND_CALL_FUNCTION(convert_to_nonterm(root_symtable, &tokenStack));
             break;
 
         case X:
             // unreal combination of expression tokens
             return ERROR;
             break;
+        }
 
     }
 
@@ -1234,7 +1235,6 @@ int expr()
     stackPush(&expressionStack,expression);
     // stackFree(&tokenStack);
     return OK;
-}
 }
 
 int retType()

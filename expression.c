@@ -30,6 +30,8 @@ int find_index(TokenType a) {
             return 10;
         case NOTEQ:
             return 11;
+        // for nil only
+        case KEYWORD: 
         case IDENTIFICATOR:
         case INT:
         case DOUBLE:
@@ -63,6 +65,7 @@ int convert_to_nonterm(BSTNodePtr *root, Stack *tokenStack) {
     case E_NONTERM_FLOAT:
     case E_NONTERM_BOOL:
     case E_NONTERM_STR:
+    case E_NONTERM_NIL:
 
         x = stackTop(tokenStack->next);
         switch (x.type)
@@ -78,13 +81,9 @@ int convert_to_nonterm(BSTNodePtr *root, Stack *tokenStack) {
         case GTE:
         case LTE:
         case EQ:
-            convert_operation(root, tokenStack);
+            CHECK_AND_CALL_FUNCTION(convert_operation(root, tokenStack));
             return 0;
-        default:
-            break;
         }
-
-
         break;
 
     case IDENTIFICATOR:
@@ -98,11 +97,26 @@ int convert_to_nonterm(BSTNodePtr *root, Stack *tokenStack) {
     case RBR:
         convert_parentheses(tokenStack);
         return 0;
+    case KEYWORD:
+        convert_nil(tokenStack);
+        return 0;
     default:
         break;
     }
 
+    return 0;
+}
 
+int convert_nil(Stack *tokenStack) {
+
+    Token x = stackTop(tokenStack);
+    stackPop(tokenStack); //pop nil
+    stackPop(tokenStack); //pop shift
+    
+    x.type = E_NONTERM_NIL; 
+
+    stackPush(tokenStack, x);
+    return 0;
 }
 
 int convert_parentheses(Stack *tokenStack) {
@@ -122,7 +136,7 @@ int convert_parentheses(Stack *tokenStack) {
 
 int convert_operation(BSTNodePtr *root, Stack *tokenStack) {
 
-    int nilType = 0;
+    int error_code = 0;
     Token right = stackTop(tokenStack);
     stackPop(tokenStack); //pop right
     Token operator = stackTop(tokenStack);
@@ -133,38 +147,41 @@ int convert_operation(BSTNodePtr *root, Stack *tokenStack) {
     Token result;
 
     char* var_name = malloc(sizeof(char) * 10);
+    if (var_name == NULL) return ERR_ALLOCATION_ERROR_OR_ETC;
+
     sprintf(var_name,"var%i",counter_of_vars++);
     result.attribute = var_name;
     generate_declaration("LF@", var_name);
 
-    // if (right.)
 
     // if (right.type != left.type) {
         // fprintf(stderr, "%s and %s have different types\n",right.attribute,left.attribute);
     // }
 
-    int error_code;
     switch (right.type)
     {
         case E_NONTERM_STR:
-            error_code = generate_arithmetic_operation_string(operator,var_name,left.attribute,right.attribute);
+            CHECK_AND_CALL_FUNCTION(generate_arithmetic_operation_string(operator,var_name,left.attribute,right.attribute));
             break;
         case E_NONTERM_INT:
-            error_code = generate_arithmetic_operation_int(operator,var_name,left.attribute,right.attribute);
+            CHECK_AND_CALL_FUNCTION(generate_arithmetic_operation_int(operator,var_name,left.attribute,right.attribute));
             break;
         case E_NONTERM_BOOL:
-            error_code = generate_arithmetic_operation_bool(operator,var_name,left.attribute,right.attribute);
+            CHECK_AND_CALL_FUNCTION(generate_arithmetic_operation_bool(operator,var_name,left.attribute,right.attribute));
             break;
         case E_NONTERM_FLOAT:
-            error_code = generate_arithmetic_operation_float(operator,var_name,left.attribute,right.attribute);
+            CHECK_AND_CALL_FUNCTION(generate_arithmetic_operation_float(operator,var_name,left.attribute,right.attribute));
+            break;
+         case E_NONTERM_NIL:
+            CHECK_AND_CALL_FUNCTION(generate_arithmetic_operation_nil(operator,var_name,left.attribute,right.attribute));
             break;
 
         default:
-            error_code = 1;
+            error_code = ERR_COMPATIBILITY_IN_OPERATIONS;
     }
     
     if (error_code) {
-        return 2;
+        return error_code;
     }
 
     switch (operator.type)
@@ -191,6 +208,7 @@ int convert_operation(BSTNodePtr *root, Stack *tokenStack) {
 
 int convert_str(BSTNodePtr *root, Stack *tokenStack) {
 
+    int value = 0;
     Token x = stackTop(tokenStack);
     stackPop(tokenStack); //pop id
     stackPop(tokenStack); //pop shift
@@ -203,14 +221,21 @@ int convert_str(BSTNodePtr *root, Stack *tokenStack) {
             break;
         case DOUBLE:
             prefix = "float@";
+            // FIXME float can be 0            
             break;
+
         case INT:
             prefix = "integer@";
+            // if attribute will be zero, value will be non zero
+            value = !atoi(x.attribute);
+
             break;
         default:
             break;
     }
     char* var_name = malloc(sizeof(char) * 10);
+    if (var_name == NULL) return ERR_ALLOCATION_ERROR_OR_ETC;
+
     sprintf(var_name,"var%i",counter_of_vars++);
 
     generate_declaration("LF@",var_name);
@@ -228,7 +253,12 @@ int convert_str(BSTNodePtr *root, Stack *tokenStack) {
             x.type = E_NONTERM_FLOAT;
             break;
         case INT:
-            x.type = E_NONTERM_INT;
+            // FIXME zero division 
+            // if (value) {
+                // x.type = E_NONTERM_ZERO_INT;
+            // } else {
+                x.type = E_NONTERM_INT;
+            // }
             break;
         default:
             break;
@@ -291,6 +321,7 @@ Token find_term(Stack *tokenStack) {
         case E_NONTERM_STR:
         case E_NONTERM_FLOAT:
         case E_NONTERM_BOOL:
+        case E_NONTERM_NIL:
         case E_SHIFT:
             break;
         

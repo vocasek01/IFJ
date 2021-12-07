@@ -69,7 +69,9 @@ typedef enum {
     E_NONTERM_STR,
     E_NONTERM_FLOAT,
     E_NONTERM_INT,
+    E_NONTERM_ZERO_INT,
     E_NONTERM_BOOL,
+    E_NONTERM_NIL,
 
     //Lex. error or Expr error
     ERROR =-1,

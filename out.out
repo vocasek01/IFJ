@@ -1,0 +1,28 @@
+.IFJcode21
+JUMP $$main
+
+LABEL $$main
+CREATEFRAME
+PUSHFRAME
+DEFVAR LF@a
+MOVE LF@a int@1
+DEFVAR LF@var0
+MOVE LF@var0 integer@2
+DEFVAR LF@var1
+GT LF@var1 LF@a LF@var0
+JUMPIFEQ $$IF_FALSE0 LF@var1 bool@false
+# True0
+DEFVAR LF@var2
+MOVE LF@var2 string@yes\010
+MOVE LF@a string@var2
+WRITE LF@var2
+JUMP $$IF_END0
+LABEL $$IF_FALSE0
+# False0
+DEFVAR LF@var3
+MOVE LF@var3 string@no\010
+MOVE LF@a string@var3
+WRITE LF@var3
+LABEL $$IF_END0
+# if0 end
+# end of main body
