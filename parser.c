@@ -1238,7 +1238,7 @@ int expr()
 
         case X:
             // unreal combination of expression tokens
-            return ERROR;
+            return OK;
             break;
         }
 
