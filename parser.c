@@ -1065,8 +1065,8 @@ int isAssign()
         else
             CHECK_AND_CALL_FUNCTION(check_type());
 
-        smInsertVariable(&symtable, symtable->name, token.attribute, symtable->type[0], symtable->scope);
-        // stackPop(&tmp);
+        smInsertVariable(&symtable, symtable->name, expressionStack.head.attribute, symtable->type[0], symtable->scope);
+        stackPop(&expressionStack);
         // CHECK_AND_CALL_FUNCTION(declr());
         return OK;
         break;
@@ -1786,6 +1786,10 @@ int check_type()
         return OK;
     }
     else if (expressionStack.head.type == E_NONTERM_FLOAT && symtable->type[0] == FLOAT)
+    {
+        return OK;
+    }
+    else if (expressionStack.head.attribute == NULL)
     {
         return OK;
     }
