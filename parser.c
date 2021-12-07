@@ -1053,7 +1053,8 @@ int isAssign()
     case ASSIGN: // Rule: <is_assign> ->  = <declr>
         checkAndLoadToken(ASSIGN);
         clipboard[0] = clipboard[1];
-        CHECK_AND_CALL_FUNCTION(exprFunc());
+        generate_declaration("LF@", clipboard[0].attribute);
+            CHECK_AND_CALL_FUNCTION(exprFunc());
 
         if (token.type == IDENTIFICATOR && strcmp(token.attribute, "write") != 0)
         {
@@ -1063,8 +1064,8 @@ int isAssign()
         {
             //LOL
         }
-        else
-            CHECK_AND_CALL_FUNCTION(check_type());
+        // else
+        //     CHECK_AND_CALL_FUNCTION(check_type());
 
         smInsertVariable(&symtable, symtable->name, expressionStack.head.attribute, symtable->type[0], symtable->scope);
         stackPop(&expressionStack);
@@ -1541,11 +1542,13 @@ int exprFunc()
     {
     case IDENTIFICATOR: // Rule: <expr_func> ->  id ( <func_param> )
         callFunc = token;
+        clipboard[1] = token;
         // symtable = smSearchNode(root_symtable, token.attribute);
         if (smSearcParamFunc(root_symtable, token.attribute) == NULL )
         {
+            CHECK_AND_CALL_FUNCTION(check_dec(token.attribute,1));
             if (smSearchNode(root_symtable, token.attribute)->isFunction == true)
-                checkAndLoadToken(IDENTIFICATOR);  
+                checkAndLoadToken(IDENTIFICATOR);
         }
 
         if (token.type == LBR)
@@ -1620,14 +1623,14 @@ int exprFunc()
             {
                 if (strcmp(symtable->param[i].name, clipboard[0].attribute) == 0)
                 {
-                    generate_move("LF@", clipboard[0].attribute, char_type(change_enum(expressionStack.head.type)), expressionStack.head.attribute);
+                    generate_move("LF@", clipboard[0].attribute, "LF@", expressionStack.head.attribute);
                     return OK;
                 }
             }
         }
         if (symtable != NULL)
         {
-            generate_move(char_type(symtable->scope), clipboard[0].attribute, char_type(change_enum(expressionStack.head.type)), expressionStack.head.attribute);
+            generate_move(char_type(symtable->scope), clipboard[0].attribute, "LF@", expressionStack.head.attribute);
         }else
             return SYNTAX_ERROR;
 
@@ -1703,6 +1706,10 @@ int funcParam()
     case DOUB_EXP2:
         CHECK_AND_CALL_FUNCTION(expr());  //FIX MY add -----
         CHECK_AND_CALL_FUNCTION(funcParamN());
+
+        if (strcmp(clipboard[0].attribute, "write") == 0)
+            return OK;
+
         symtable = smSearchNode(root_symtable, clipboard[1].attribute);
         if (symtable != NULL) // FIXED исправить поиск, добавить поиск параметров
         {
