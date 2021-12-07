@@ -660,28 +660,28 @@ int generate_if_end(int number)
     return 0;
 }
 
-int generate_for_head(char *check_operand_identifier, int for_counter)
+int generate_while_head(char *check_operand_identifier, int while_counter)
 {
-    fprintf(ifj_code, "JUMPIFEQ $CYCLE%d LF@%s bool@true\n", for_counter, check_operand_identifier);
-    fprintf(ifj_code, "JUMP $END%d\n", for_counter);
+    fprintf(ifj_code, "JUMPIFEQ $CYCLE%d LF@%s bool@true\n", while_counter, check_operand_identifier);
+    fprintf(ifj_code, "JUMP $END%d\n", while_counter);
     return 0;
 }
 
-int generate_for_label_end(int for_counter)
+int generate_while_label_cycle(int while_counter)
 {
-    fprintf(ifj_code, "LABEL $END%d\n", for_counter);
+    fprintf(ifj_code, "LABEL $CYCLE%d\n", while_counter);
     return 0;
 }
 
-int generate_for_label_cycle(int for_counter)
+int generate_while_iterate(char *check_operand_identifier, int while_counter)
 {
-    fprintf(ifj_code, "LABEL $CYCLE%d\n", for_counter);
+    fprintf(ifj_code, "JUMPIFEQ $CYCLE%d LF@%s bool@true\n", while_counter, check_operand_identifier);
+    fprintf(ifj_code, "JUMP $END%d\n", while_counter);
     return 0;
 }
 
-int generate_for_iterate(char *check_operand_identifier, int for_counter)
+int generate_while_label_end(int while_counter)
 {
-    fprintf(ifj_code, "JUMPIFEQ $CYCLE%d LF@%s bool@true\n", for_counter, check_operand_identifier);
-    fprintf(ifj_code, "JUMP $END%d\n", for_counter);
+    fprintf(ifj_code, "LABEL $END%d\n", while_counter);
     return 0;
 }
