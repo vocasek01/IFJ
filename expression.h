@@ -4,9 +4,44 @@
 #include "symtable.h"
 #include "codegen.c" // FIX MY
 
+typedef enum{
+
+    //Expression type
+    E_NONTERM_INT,
+    E_NONTERM_FLOAT,
+    E_NONTERM_STR,
+    E_NONTERM_BOOL,
+    E_NONTERM_NIL,
+    E_NONTERM_ZERO_INT,
+    E_NONTERM_RULE,
+    E_NONTERM_ID,
+    E_STOP,
+    E_SHIFT
+
+} RuleType;
+
+typedef enum{
+
+    A, // convert left operator to type of right    example: 5 + 4.9 -> int2float(5) + 4.9
+    B, // convert right operator to type of left    example: 2.1 + 4 -> 2.1 + int2float(4)
+    C, // compatibility is okay    example : (1 + 2)
+    D = ERR_COMPATIBILITY_IN_OPERATIONS, // error    example: 1 + "a"
+
+} Compability;
+
+int compability[5][5] = {
+    //           INT   FLOAT STR   BOOL  NIL
+    /* INT   */ {C,    A,    D,    D,    C},
+    /* FLOAT */ {B,    C,    X,    D,    C},
+    /* STR   */ {D,    D,    C,    D,    C},
+    /* BOOL  */ {D,    D,    D,    C,    D},
+    /* NIL   */ {C,    C,    C,    D,    C}
+};
 
 int find_index(TokenType a);
 Rule find_rule(TokenType a, TokenType b);
+int types_compability(Token a, Token b);
+int find_type(Token a);
 int convert_id(BSTNodePtr *root, Stack *tokenStack);
 int convert_str(BSTNodePtr *root, Stack *tokenStack);
 int convert_to_nonterm(BSTNodePtr *root, Stack *tokenStack);

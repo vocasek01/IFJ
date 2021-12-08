@@ -1,8 +1,16 @@
 require "ifj21"
 
 function main()
-    local a:number = 5.1
-    a = 13
-end
+    local a:integer = 5
+    local b:number = 4.9
+    local c:number = 5.1
 
+    if a > a then
+        write("ano,")
+    else
+        write("ne,")
+    end
+
+
+end
 main()

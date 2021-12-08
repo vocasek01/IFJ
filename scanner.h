@@ -8,7 +8,7 @@
 #pragma once
 
 typedef enum {
-    START,
+    START = 100,
 
     //Keyword or Identificator
     IDENTIFICATOR,   // text bez (if,else,for,return,package,func)
@@ -60,18 +60,6 @@ typedef enum {
     COMMENT,      // --text
     BLOCKCOMMENT, // --[ text ]
     BLOCKORLINE,  // which comment
-    
-    //Expression
-    E_STOP,
-    E_SHIFT,
-    E_NONTERM_RULE,
-    E_NONTERM_ID,
-    E_NONTERM_STR,
-    E_NONTERM_FLOAT,
-    E_NONTERM_INT,
-    E_NONTERM_ZERO_INT,
-    E_NONTERM_BOOL,
-    E_NONTERM_NIL,
 
     //Lex. error or Expr error
     ERROR =-1,

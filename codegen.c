@@ -157,7 +157,7 @@ int generate_builtin_function(char *function_identifier)
     }
     else if (strcmp(function_identifier, "int2float") == 0)
     {
-        return generate_int2float();
+        // return generate_int2float();
     }
     else if (strcmp(function_identifier, "float2int") == 0)
     {
@@ -248,11 +248,9 @@ int generate_print()
     return 0;
 }
 
-int generate_int2float()
+int generate_int2float(char* identificator)
 {
-    fprintf(ifj_code, "LABEL $int2float\nPUSHFRAME\nDEFVAR LF@%%retval1\nMOVE LF@%%retval1 nil@nil\n");
-    fprintf(ifj_code, "DEFVAR LF@int2float\nMOVE LF@int2float LF@%%1\nINT2FLOAT LF@%%retval1 LF@int2float\n");
-    fprintf(ifj_code, "POPFRAME\nRETURN\n");
+    fprintf(ifj_code, "INT2FLOAT LF@%s LF@%s\n",identificator,identificator);
     return 0;
 }
 

@@ -4,10 +4,30 @@ JUMP $$main
 LABEL $$main
 CREATEFRAME
 PUSHFRAME
+DEFVAR LF@a
 DEFVAR LF@var0
-MOVE LF@var0 float@0x1.4666666666666p+2
-MOVE LF@a string@var0
+MOVE LF@var0 int@5
+MOVE LF@a LF@var0
+DEFVAR LF@b
 DEFVAR LF@var1
-MOVE LF@var1 int@13
-MOVE LF@a int@var1
-# end of main body
+MOVE LF@var1 float@0x1.399999999999ap+2
+MOVE LF@b LF@var1
+DEFVAR LF@c
+DEFVAR LF@var2
+MOVE LF@var2 float@0x1.4666666666666p+2
+MOVE LF@c LF@var2
+DEFVAR LF@var3
+GT LF@var3 LF@a LF@a
+JUMPIFEQ $$IF_FALSE0 LF@var3 bool@false
+# True0
+DEFVAR LF@var4
+MOVE LF@var4 string@ano,
+WRITE LF@var4
+JUMP $$IF_END0
+LABEL $$IF_FALSE0
+# False0
+DEFVAR LF@var5
+MOVE LF@var5 string@ne,
+WRITE LF@var5
+LABEL $$IF_END0
+# if0 end

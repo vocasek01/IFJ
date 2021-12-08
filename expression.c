@@ -87,18 +87,18 @@ int convert_to_nonterm(BSTNodePtr *root, Stack *tokenStack) {
         break;
 
     case IDENTIFICATOR:
-        convert_id(root, tokenStack);
+        CHECK_AND_CALL_FUNCTION(convert_id(root, tokenStack));
         return 0;
     case STR:
     case INT:
     case DOUBLE:
-        convert_str(root, tokenStack);
+        CHECK_AND_CALL_FUNCTION(convert_str(root, tokenStack));
         return 0;
     case RBR:
-        convert_parentheses(tokenStack);
+        CHECK_AND_CALL_FUNCTION(convert_parentheses(tokenStack));
         return 0;
     case KEYWORD:
-        convert_nil(tokenStack);
+        CHECK_AND_CALL_FUNCTION(convert_nil(tokenStack));
         return 0;
     default:
         break;
@@ -134,6 +134,32 @@ int convert_parentheses(Stack *tokenStack) {
 
 }
 
+
+int types_compability(Token a, Token b) {
+
+    switch(compability[a.type][b.type]) {
+        case A:
+            generate_int2float(a.attribute);
+
+            // find "a.attribute" in symtable and change type to sFLOAT
+            // BSTNodePtr *node1 = smSearchNode(root_symtable, a.attribute);
+            // node1->type[0] = FLOAT;
+            a.type = E_NONTERM_FLOAT;
+            return OK;
+        case B:
+            // find "b.attribute" in symtable and change type to sFLOAT
+            // BSTNodePtr *node2 = smSearchNode(root_symtable, b.attribute);
+            // node2->type[0] = FLOAT;
+            generate_int2float(b.attribute);
+            b.type = E_NONTERM_FLOAT;   
+            return OK;
+        case C:
+            return OK;
+        case D:
+            return ERR_COMPATIBILITY_IN_OPERATIONS;
+    }
+}
+
 int convert_operation(BSTNodePtr *root, Stack *tokenStack) {
 
     int error_code = 0;
@@ -153,10 +179,7 @@ int convert_operation(BSTNodePtr *root, Stack *tokenStack) {
     result.attribute = var_name;
     generate_declaration("LF@", var_name);
 
-
-    // if (right.type != left.type) {
-        // fprintf(stderr, "%s and %s have different types\n",right.attribute,left.attribute);
-    // }
+    CHECK_AND_CALL_FUNCTION(types_compability(right,left));
 
     switch (right.type)
     {
