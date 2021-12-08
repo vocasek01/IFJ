@@ -484,7 +484,7 @@ int stateList()
             for (int i=0; symtable->retVal[i].name != NULL; i++)
             {
                 char a[10];
-                sprintf(a, "retval%d", i);
+                sprintf(a, "%%retval%d", i);
                 // generate_declaration("LF@", a);
                 generate_move("LF@", a, "LF@", symtable->retVal[i].name); //FIX MY create scope
                 // counter_retVal++;
@@ -539,7 +539,7 @@ int stateListT24()
             for (int i = 0; symtable->retVal[i].name != NULL; i++)
             {
                 char a[10];
-                sprintf(a, "retval%d", i);
+                sprintf(a, "%%retval%d", i);
                 // generate_declaration("LF@", a);
                 generate_move("LF@", a, "LF@", symtable->retVal[i].name); // FIX MY create scope
             }
@@ -864,6 +864,7 @@ int stateT35()
         clipboard[0] = token;
         checkAndLoadToken(IDENTIFICATOR);
         CHECK_AND_CALL_FUNCTION(afterIDT45());
+        expressionStack = stackReverse(&expressionStack);
         if (strcmp(clipboard[0].attribute, "write") == 0)
         {
             for (int i = 0; expressionStack.head.attribute != NULL; i++)
@@ -1052,24 +1053,40 @@ int isAssign()
         }
     case ASSIGN: // Rule: <is_assign> ->  = <declr>
         checkAndLoadToken(ASSIGN);
-        clipboard[0] = clipboard[1];
-        generate_declaration("LF@", clipboard[0].attribute);
-            CHECK_AND_CALL_FUNCTION(exprFunc());
-
-        if (token.type == IDENTIFICATOR && strcmp(token.attribute, "write") != 0)
+        if (token.type == IDENTIFICATOR)
         {
             CHECK_AND_CALL_FUNCTION(check_dec(token.attribute, 1));
         }
         else if (token.type == DOUBLE)
         {
-            //LOL
+            // LOL
         }
-        // else
-        //     CHECK_AND_CALL_FUNCTION(check_type());
+        else
+            CHECK_AND_CALL_FUNCTION(check_type());
 
-        smInsertVariable(&symtable, symtable->name, expressionStack.head.attribute, symtable->type[0], symtable->scope);
-        stackPop(&expressionStack);
-        // CHECK_AND_CALL_FUNCTION(declr());
+        smInsertVariable(&symtable, clipboard[1].attribute, token.attribute, symtable->type[0], change_type(clipboard[0].attribute));
+        // stackPop(&tmp);
+        CHECK_AND_CALL_FUNCTION(declr());
+
+        // checkAndLoadToken(ASSIGN);
+        // clipboard[0] = clipboard[1];
+        // generate_declaration("LF@", clipboard[0].attribute);
+        // CHECK_AND_CALL_FUNCTION(exprFunc());
+
+        // if (token.type == IDENTIFICATOR && strcmp(token.attribute, "write") != 0)
+        // {
+        //     CHECK_AND_CALL_FUNCTION(check_dec(token.attribute, 1));
+        // }
+        // else if (token.type == DOUBLE)
+        // {
+        //     //LOL
+        // }
+        // // else
+        // //     CHECK_AND_CALL_FUNCTION(check_type());
+
+        // smInsertVariable(&symtable, symtable->name, expressionStack.head.attribute, symtable->type[0], symtable->scope);
+        // stackPop(&expressionStack);
+        // // CHECK_AND_CALL_FUNCTION(declr());
         return OK;
         break;
     default:
@@ -1315,38 +1332,85 @@ int retTypeT46()
 
 int declr()
 {
+    generate_declaration(char_type(symtable->scope), symtable->name);
     switch (token.type)
     {
     case IDENTIFICATOR: // Rule: <declr>     ->  id ( <func_param> )
-        checkAndLoadToken(IDENTIFICATOR);
+        clipboard[2] = token;
+        if (smSearcParamFunc(root_symtable, token.attribute) == NULL)
+        {
+            symtable = smSearchNode(root_symtable, token.attribute);
+            CHECK_AND_CALL_FUNCTION(check_dec(token.attribute, 1));
+            if (smSearchNode(root_symtable, token.attribute)->isFunction == true)
+            {
+                callFunc = token;
+                // generate_frame();
+                checkAndLoadToken(IDENTIFICATOR);
+            }
+        }
+
         if (token.type == LBR)
         {
-            generate_declaration(char_type(symtable->scope), symtable->name); // FIX MY carefully EROR
             checkAndLoadToken(LBR);
             CHECK_AND_CALL_FUNCTION(funcParam());
             checkAndLoadToken(RBR);
+
+            int countP = 0;
+            char charParam[32];
+            generate_frame();
+            for (int i = 0; symtable->param[i].name != NULL; i++)
+            {
+                sprintf(charParam, "%%%d", i + 1);
+                generate_declaration("TF@", charParam);
+                // symtable = smSearchNode(root_symtable, expressionStack.head.attribute);
+                generate_move("TF@", charParam, "LF@", expressionStack.head.attribute); // FIX MY
+                // symtable = smSearchNode(root_symtable, callFunc.attribute);
+                stackPop(&expressionStack);
+            }
+
+            generate_function_call(callFunc.attribute);
+
+            symtable = smSearchNode(root_symtable, callFunc.attribute);
+            for (int i = 0; symtable->type[i] != NO; i++)
+            {
+                char charRetval[10];
+                sprintf(charRetval, "%%retval%d", i);
+                // symtable = smSearchNode(root_symtable, expressionStack.head.attribute);
+                generate_move("LF@", clipboard[1].attribute, "TF@", charRetval);
+                // symtable = smSearchNode(root_symtable, callFunc.attribute);
+            }
+            symtable = root_symtable;
+            callFunc.attribute = NULL;
         }
         else // Rule: <declr>     ->  <expression>
         {
             CHECK_AND_CALL_FUNCTION(expr());
+            generate_move("LF@", symtable->name, "LF@", expressionStack.head.attribute);
+            stackPop(&expressionStack);
         }
         return OK;
         break;
     case INT:
     case DOUBLE:
     case STR: ///added
-        symtable = root_symtable;
-        symtable = smSearchNode(symtable, clipboard[1].attribute);
+        // generate_declaration(char_type(symtable->scope), symtable->name); ///added
+        CHECK_AND_CALL_FUNCTION(expr());
+        CHECK_AND_CALL_FUNCTION(exprNT40());
 
-        generate_declaration(char_type(symtable->scope), symtable->name); ///added
-        if (symtable->type[0] == FLOAT)
-        {
-            generate_move(char_type(symtable->scope), symtable->name, char_type(symtable->type[0]), floatNum(symtable->data)); /// added codegen move
-            for(int i=2; i < 21;i++)
-                floatStart[i] = '\0';
-        }else
-            generate_move(char_type(symtable->scope), symtable->name, char_type(symtable->type[0]), symtable->data);
-        NEXT();
+        generate_move(char_type(symtable->scope), symtable->name, "LF@", expressionStack.head.attribute); /// added codegen move
+        stackPop(&expressionStack);
+        // symtable = root_symtable;
+        // symtable = smSearchNode(symtable, clipboard[1].attribute);
+
+        // //EXPRESSEN
+        // if (symtable->type[0] == FLOAT)
+        // {
+        //     generate_move(char_type(symtable->scope), symtable->name, char_type(symtable->type[0]), floatNum(symtable->data)); /// added codegen move
+        //     for(int i=2; i < 21;i++)
+        //         floatStart[i] = '\0';
+        // }else
+        //     generate_move(char_type(symtable->scope), symtable->name, char_type(symtable->type[0]), symtable->data);
+        // NEXT();
         return OK;
         break;
     // case DOUB_DOT1:
@@ -1541,14 +1605,17 @@ int exprFunc()
     switch (token.type)
     {
     case IDENTIFICATOR: // Rule: <expr_func> ->  id ( <func_param> )
-        callFunc = token;
         clipboard[1] = token;
-        // symtable = smSearchNode(root_symtable, token.attribute);
         if (smSearcParamFunc(root_symtable, token.attribute) == NULL )
         {
+            symtable = smSearchNode(root_symtable, token.attribute);    
             CHECK_AND_CALL_FUNCTION(check_dec(token.attribute,1));
             if (smSearchNode(root_symtable, token.attribute)->isFunction == true)
+            {
+                callFunc = token;
+                // generate_frame();
                 checkAndLoadToken(IDENTIFICATOR);
+            }
         }
 
         if (token.type == LBR)
@@ -1559,12 +1626,13 @@ int exprFunc()
 
             int countP = 0;
             char charParam[32];
+            generate_frame();
             for(int i=0; symtable->param[i].name != NULL; i++)
             {
                 sprintf(charParam, "%%%d", i+1);
                 generate_declaration("TF@", charParam);
                 // symtable = smSearchNode(root_symtable, expressionStack.head.attribute);
-                generate_move("TF@", charParam, char_type(change_enum(expressionStack.head.type)), expressionStack.head.attribute);
+                generate_move("TF@", charParam, "LF@", expressionStack.head.attribute); //FIX MY
                 // symtable = smSearchNode(root_symtable, callFunc.attribute);
                 stackPop(&expressionStack);
             }
@@ -1575,12 +1643,13 @@ int exprFunc()
             for(int i=0; symtable->type[i] != NO; i++)
             {
                 char charRetval[10];
-                sprintf(charRetval, "retval%d", i);
+                sprintf(charRetval, "%%retval%d", i);
                 // symtable = smSearchNode(root_symtable, expressionStack.head.attribute);
                 generate_move("LF@", clipboard[0].attribute,"TF@", charRetval);
                 // symtable = smSearchNode(root_symtable, callFunc.attribute);
             }
             symtable = root_symtable;
+            callFunc.attribute = NULL;
             
 
             
@@ -1706,28 +1775,31 @@ int funcParam()
     case DOUB_EXP2:
         CHECK_AND_CALL_FUNCTION(expr());  //FIX MY add -----
         CHECK_AND_CALL_FUNCTION(funcParamN());
-
-        if (strcmp(clipboard[0].attribute, "write") == 0)
-            return OK;
-
-        symtable = smSearchNode(root_symtable, clipboard[1].attribute);
-        if (symtable != NULL) // FIXED исправить поиск, добавить поиск параметров
+        if(callFunc.attribute == NULL)
         {
-            for (int i = 0; symtable->param[i].name != NULL; i++)
+            if (strcmp(clipboard[0].attribute, "write") == 0)
+            return OK;
+            
+            symtable = smSearchNode(root_symtable, clipboard[1].attribute);
+            if (symtable != NULL) // FIXED исправить поиск, добавить поиск параметров
             {
-                if (strcmp(symtable->param[i].name, clipboard[1].attribute) == 0)
+                for (int i = 0; symtable->param[i].name != NULL; i++)
                 {
-                    generate_move("LF@", clipboard[1].attribute, char_type(change_enum(expressionStack.head.type)), expressionStack.head.attribute);
-                    return OK;
+                    if (strcmp(symtable->param[i].name, clipboard[1].attribute) == 0)
+                    {
+                        generate_move("LF@", clipboard[1].attribute, char_type(change_enum(expressionStack.head.type)), expressionStack.head.attribute);
+                        return OK;
+                    }
                 }
             }
+            if (symtable != NULL)
+            {
+                generate_move(char_type(symtable->scope), clipboard[1].attribute, char_type(change_enum(expressionStack.head.type)), expressionStack.head.attribute);
+            }
+            else
+                return SYNTAX_ERROR;
+    
         }
-        if (symtable != NULL)
-        {
-            generate_move(char_type(symtable->scope), clipboard[1].attribute, char_type(change_enum(expressionStack.head.type)), expressionStack.head.attribute);
-        }
-        else
-            return SYNTAX_ERROR;
         return OK;
         break;
     default:
