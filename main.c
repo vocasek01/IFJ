@@ -1,8 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+// #include "scanner.c"
+// #include "scanner.h"
 #include "codegen.c"
+// #include "parser.h"
 #include "parser.c"
+// #include "parser.c"
 
+// #include "treegen.c"
 
 int main(int argc, char *argv[])
 {
@@ -21,3 +26,5 @@ int main(int argc, char *argv[])
     return a;
 
 }
+//./prg.code < test_pr2.in > out.out
+// float @0x1.2666666666666p+0

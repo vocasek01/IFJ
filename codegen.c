@@ -11,6 +11,7 @@
 #include "string.h"
 #include "scanner.c"
 #include "parser.h"
+#pragma once
 
 #pragma once
 
