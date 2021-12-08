@@ -1,10 +1,16 @@
 require "ifj21"
 
 function main()
-	local s : string = "Hello" .. " there\n"
-	local t : string = "General" .. "\032" .. "Kenobi" .. "!\010"
-	local u : string = s .. t
-	write(u)
+    local x:number = 4.9
+    local y:string = "hello there"
+
+    -- try to compare number and string
+    -- this should fail to compile
+    if x == y then
+        write("yes\n")
+    else
+        write("no\n")
+    end
 end
 
 main()
