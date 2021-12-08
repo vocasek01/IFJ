@@ -1,3 +1,10 @@
+/*------------------------------------------
+ Title:  parser.c
+ Author: Matěj Krátký,
+ Login:  xkratk17, 
+ Date:   23 Nov 2021;
+------------------------------------------*/
+
 #include "parser.h"
 #include "codegen.c"
 #include "codegen.h"
@@ -153,7 +160,7 @@ int func()
     smInsertFunctin(&symtable, token.attribute, NO, NULL, NO, 0, 0); // symtable added name_func
     root_symtable = symtable;
     generate_func_top(token.attribute);
-    CHECK_AND_CALL_FUNCTION(chek_name(token.attribute));
+    // CHECK_AND_CALL_FUNCTION(chek_name(token.attribute));
     checkAndLoadToken(IDENTIFICATOR);
     checkAndLoadToken(LBR);
     CHECK_AND_CALL_FUNCTION(params());
@@ -498,6 +505,7 @@ int stateList()
         else
         {
             return SYNTAX_ERROR;
+            // return 3;
             break;
         }
 
@@ -760,6 +768,7 @@ int state()
         // call func or приправнивание переменной
         clipboard[0] = token;
         checkAndLoadToken(IDENTIFICATOR);
+        CHECK_AND_CALL_FUNCTION(check_dec(clipboard[0].attribute, 1));
         CHECK_AND_CALL_FUNCTION(afterID());
         expressionStack = stackReverse(&expressionStack);
         if (strcmp(clipboard[0].attribute, "write") == 0)
@@ -777,7 +786,7 @@ int state()
         {
             clipboard[0] = token;
             checkAndLoadKeyword(KEYWORD, "local");
-            CHECK_AND_CALL_FUNCTION(chek_name(token.attribute));
+            // CHECK_AND_CALL_FUNCTION(chek_name(token.attribute));
             clipboard[1] = token; ///added stack name var token
             CHECK_AND_CALL_FUNCTION(check_dec(token.attribute, 0));
             //
@@ -1061,8 +1070,6 @@ int isAssign()
         {
             // LOL
         }
-        else
-            CHECK_AND_CALL_FUNCTION(check_type());
 
         smInsertVariable(&symtable, clipboard[1].attribute, token.attribute, symtable->type[0], change_type(clipboard[0].attribute));
         // stackPop(&tmp);
@@ -1185,8 +1192,8 @@ int expr()
 {
     int brackets_number = 0; // number of ()
     int finish = 0; // if == 1, end of expr()
-    Stack tokenStack;  
-    Token tmp,a,b,shift;
+    Stack tokenStack;
+    Token tmp, a, b, shift;
     shift.attribute = NULL;
     shift.type = E_SHIFT;
 
@@ -1337,11 +1344,11 @@ int declr()
     {
     case IDENTIFICATOR: // Rule: <declr>     ->  id ( <func_param> )
         clipboard[2] = token;
-        if (smSearcParamFunc(root_symtable, token.attribute) == NULL)
+        if (smSearchNode(root_symtable, token.attribute) != NULL)
         {
             symtable = smSearchNode(root_symtable, token.attribute);
             CHECK_AND_CALL_FUNCTION(check_dec(token.attribute, 1));
-            if (smSearchNode(root_symtable, token.attribute)->isFunction == true)
+            if (symtable->isFunction == true)
             {
                 callFunc = token;
                 // generate_frame();
@@ -1397,6 +1404,7 @@ int declr()
         CHECK_AND_CALL_FUNCTION(expr());
         CHECK_AND_CALL_FUNCTION(exprNT40());
 
+        CHECK_AND_CALL_FUNCTION(check_type());
         generate_move(char_type(symtable->scope), symtable->name, "LF@", expressionStack.head.attribute); /// added codegen move
         stackPop(&expressionStack);
         // symtable = root_symtable;
@@ -1857,7 +1865,7 @@ typeVar change_type(char *type)
  **/
 int check_type()
 {
-    if ((expressionStack.head.type == E_NONTERM_INT || expressionStack.head.type == E_NONTERM_FLOAT) && symtable->type[0] == sINT)
+    if (expressionStack.head.type == E_NONTERM_INT  && symtable->type[0] == sINT)
     {
         return OK;
     }
@@ -1865,7 +1873,7 @@ int check_type()
     {
         return OK;
     }
-    else if (expressionStack.head.type == E_NONTERM_FLOAT && symtable->type[0] == FLOAT)
+    else if ((expressionStack.head.type == E_NONTERM_FLOAT || expressionStack.head.type == E_NONTERM_INT) && symtable->type[0] == FLOAT)
     {
         return OK;
     }
@@ -1896,51 +1904,68 @@ int chek_name(char *name)
     for (int i=0; i < 15; i++)
     {
         if (strcmp(name, dec_name[i]) == 0)
-            return 3;
+            return 2;
     }
     return OK;
 }
 /**
- *checking for error 3
+ *checking for error
  *3 - sémantická chyba v programu – nedefinovaná funkce/proměnná,
  *pokus o redefinici proměnné, atp.
+ *@param a can have 0 or 1
+ *  @param 0 checking whether the declared variable was, if it does not exist, returns OK
+ *  @param 1 checking for the presence of a variable, if it exists, returns OK
  **/
 int check_dec(char *name, int a)
 {
     if (a == 0)
-    {        
+    {      
+        CHECK_AND_CALL_FUNCTION(chek_name(name));  
         if (smSearchNode(root_symtable, name) != NULL)
         {
-            //FIX MY 
+            symtable = smSearchNode(root_symtable, nameFunc[counter_func].attribute);
+            if (smChekVar(symtable, name) != NULL)
+                return ERR_UNDEFINED_VARIABLE;
+
+            symtable = root_symtable;
+
             for (int i=0; nameFunc[i].attribute != NULL;i++)
             {
                 if (strcmp(name, nameFunc[i].attribute) == 0)
-                    return 3; //• 3 - sémantická chyba v programu – nedefinovaná funkce/proměnná, pokus o redefinici proměnné, atp.
-
-                symtable = smSearchNode(root_symtable, nameFunc[counter_func].attribute);
-                if (smChekVar(symtable, name) != NULL)
-                    return 3;
-                symtable = root_symtable;
-                // smSearchNode(root_symtable, nameFunc[i].attribute)
+                    return ERR_UNDEFINED_VARIABLE; 
             }
-
+        }
+        else if (smSearchParamNode(root_symtable, name) != NULL)
+        {
+            if (smSearcParamFunc(smSearchNode(root_symtable, nameFunc[counter_func].attribute), name) != NULL )
+            {
+                return ERR_UNDEFINED_VARIABLE;
+            }
         }
         return OK;
     }
     if (a == 1)
     {
-        if (smSearchNode(root_symtable, name) != NULL)
+        if (smSearchNode(root_symtable, nameFunc[counter_func].attribute) != NULL)
         {
-            // FIX MY
-            // for (int i = 0; nameFunc[i].attribute != NULL; i++)
-            // {
-                // if (strcmp(name, nameFunc[i].attribute) == 0)
-                    return OK; //• 3 - sémantická chyba v programu – nedefinovaná funkce/proměnná, pokus o redefinici proměnné, atp.
+            if (smChekVar(smSearchNode(root_symtable, nameFunc[counter_func].attribute), name) != NULL)
+            {
+                return OK; //• 3 - sémantická chyba v programu – nedefinovaná funkce/proměnná, pokus o redefinici proměnné, atp.
+            }
 
-                // smSearchNode(root_symtable, nameFunc[i].attribute)
-            // }
+            if (smSearchNode(root_symtable, name) != NULL && smSearchNode(root_symtable, name)->isFunction == true)
+            {
+                return OK;
+            }
+
+            // if (smSearc)
+
+            if (smSearcParamFunc(smSearchNode(root_symtable, nameFunc[counter_func].attribute), name) != NULL)
+            {
+                return OK;
+            }
         }
-        return 3;
+        return ERR_UNDEFINED_VARIABLE;
     }
 }
 

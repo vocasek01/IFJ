@@ -1,3 +1,11 @@
+/*------------------------------------------
+ Title:  scanner.h
+ Author: Matěj Krátký,
+ Login:  xkratk17, 
+ Date:   15 Oct 2021;
+------------------------------------------*/
+
+
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
