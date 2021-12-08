@@ -165,7 +165,7 @@ int generate_builtin_function(char *function_identifier)
     }
     else if (strcmp(function_identifier, "len") == 0)
     {
-        return generate_len();
+        // return generate_len();
     }
     else if (strcmp(function_identifier, "substr") == 0)
     {
@@ -262,19 +262,11 @@ int generate_float2int()
     return 0;
 }
 
-int generate_len()
+int generate_len(char* a, char* b)
 {
-    fprintf(ifj_code, "LABEL $len\n");
-    fprintf(ifj_code, "PUSHFRAME\n");
-    fprintf(ifj_code, "DEFVAR LF@%%retval1\n");
-    fprintf(ifj_code, "DEFVAR LF@%%retval2\n");
-    fprintf(ifj_code, "MOVE LF@%%retval1 nil@nil\n");
-    fprintf(ifj_code, "MOVE LF@%%retval2 int@0\n");
-    fprintf(ifj_code, "DEFVAR LF@len\n");
-    fprintf(ifj_code, "MOVE LF@len LF@%%1\n");
-    fprintf(ifj_code, "STRLEN LF@%%retval1 LF@len\n");
-    fprintf(ifj_code, "POPFRAME\n");
-    fprintf(ifj_code, "RETURN\n");
+    
+    fprintf(ifj_code, "STRLEN LF@%s LF@%s\n",a,b);
+    
     return 0;
 }
 
@@ -473,7 +465,7 @@ int generate_arithmetic_operation_string(Token operation, char *result, char *a,
 {
     switch (operation.type)
     {
-    case ADD:
+    case KONC:
         fprintf(ifj_code, "CONCAT LF@%s LF@%s LF@%s\n", result, a, b);
         break;
     case LT:
@@ -551,6 +543,9 @@ int generate_arithmetic_operation_int(Token operation, char *result, char *a, ch
         break;
     case DIV:
         fprintf(ifj_code, "DIV LF@%s LF@%s LF@%s\n", result, a, b);
+        break;
+    case INT_DIV:
+        fprintf(ifj_code, "IDIV LF@%s LF@%s LF@%s\n", result, a, b);
         break;
     case LT:
         fprintf(ifj_code, "LT LF@%s LF@%s LF@%s\n", result, a, b);

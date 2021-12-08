@@ -8,24 +8,27 @@ typedef enum{
     X = -1   // Error   " "
 } Rule;
 
-Rule precedence[14][14] = {
+int precedence[17][17] = {
 
-    /*         +,   -,   *,   /,   (,   ),   >,   <,   >=,  <=,  ==,  ~=,  i,   #    $   */
-    /* +  */  {L,   L,   S,   S,   S,   L,   L,   L,   L,   L,   L,   L,   S,       L},   
-    /* -  */  {L,   L,   S,   S,   S,   L,   L,   L,   L,   L,   L,   L,   S,       L},   
-    /* *  */  {L,   L,   L,   L,   S,   L,   L,   L,   L,   L,   L,   L,   S,   L},   
-    /* /  */  {L,   L,   L,   L,   S,   L,   L,   L,   L,   L,   L,   L,   S,   L},   
-    /* (  */  {S,   S,   S,   S,   S,   E,   S,   S,   S,   S,   S,   S,   S,   X},  
-    /* )  */  {L,   L,   L,   L,   X,   L,   L,   L,   L,   L,   L,   L,   X,   L},   
-    /* >  */  {S,   S,   S,   S,   S,   L,   X,   X,   X,   X,   X,   X,   S,   L},  
-    /* <  */  {S,   S,   S,   S,   S,   L,   X,   X,   X,   X,   X,   X,   S,   L},  
-    /* >= */  {S,   S,   S,   S,   S,   L,   X,   X,   X,   X,   X,   X,   S,   L},  
-    /* <= */  {S,   S,   S,   S,   S,   L,   X,   X,   X,   X,   X,   X,   S,   L},  
-    /* == */  {S,   S,   S,   S,   S,   L,   X,   X,   X,   X,   X,   X,   S,   L},  
-    /* ~= */  {S,   S,   S,   S,   S,   L,   X,   X,   X,   X,   X,   X,   S,   L},  
-    /* i  */  {L,   L,   L,   L,   X,   L,   L,   L,   L,   L,   L,   L,   F,   L},   
-    /* $  */  {S,   S,   S,   S,   S,   X,   S,   S,   S,   S,   S,   S,   S,   F},   
+    /*         #    +,   -,   *,   /,  //,  ..,   (,   ),   >,   <,   >=,  <=,  ==,  ~=,  i,   $   */
+    /* #  */  {X,   L,   L,   L,   L,   L,   X,   S,   L,   L,   L,   L,   L,   L,   L,   S,   L},   
+    /* +  */  {S,   L,   L,   S,   S,   S,   X,   S,   L,   L,   L,   L,   L,   L,   L,   S,   L},   
+    /* -  */  {S,   L,   L,   S,   S,   S,   X,   S,   L,   L,   L,   L,   L,   L,   L,   S,   L},   
+    /* *  */  {S,   L,   L,   L,   L,   L,   X,   S,   L,   L,   L,   L,   L,   L,   L,   S,   L},   
+    /* /  */  {S,   L,   L,   L,   L,   L,   X,   S,   L,   L,   L,   L,   L,   L,   L,   S,   L},   
+    /* // */  {S,   L,   L,   L,   L,   L,   X,   S,   L,   L,   L,   L,   L,   L,   L,   S,   L},   
+    /* .. */  {X,   X,   X,   X,   X,   X,   L,   S,   X,   X,   X,   X,   X,   L,   L,   S,   L},   
+    /* (  */  {S,   S,   S,   S,   S,   S,   S,   S,   E,   S,   S,   S,   S,   S,   S,   S,   X},  
+    /* )  */  {X,   L,   L,   L,   L,   L,   L,   X,   L,   L,   L,   L,   L,   L,   L,   X,   L},   
+    /* >  */  {S,   S,   S,   S,   S,   S,   X,   S,   L,   X,   X,   X,   X,   X,   X,   S,   L},  
+    /* <  */  {S,   S,   S,   S,   S,   S,   X,   S,   L,   X,   X,   X,   X,   X,   X,   S,   L},  
+    /* >= */  {S,   S,   S,   S,   S,   S,   X,   S,   L,   X,   X,   X,   X,   X,   X,   S,   L},  
+    /* <= */  {S,   S,   S,   S,   S,   S,   X,   S,   L,   X,   X,   X,   X,   X,   X,   S,   L},  
+    /* == */  {S,   S,   S,   S,   S,   S,   S,   S,   L,   X,   X,   X,   X,   X,   X,   S,   L},  
+    /* ~= */  {S,   S,   S,   S,   S,   S,   S,   S,   L,   X,   X,   X,   X,   X,   X,   S,   L},  
+    /* i  */  {X,   L,   L,   L,   L,   L,   L,   X,   L,   L,   L,   L,   L,   L,   L,   F,   L},   
+    /* $  */  {S,   S,   S,   S,   S,   S,   S,   S,   X,   S,   S,   S,   S,   S,   S,   S,   F},   
  
 };
 
-Rule find_rule(TokenType a, TokenType b);
+int find_rule(TokenType a, TokenType b);

@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 {
     // scannerInit(stdin);
     // set_code_output(stdout);
-    //
+    
     argc = 3;
     argv[1] = "test_pr2.in";
     argv[2] = "out.out";
@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     set_code_output(fopen(argv[2], "w"));
 
     int a = start();
-    printf("EROR CODE:%d\n", a);
+    // printf("EROR CODE:%d\n", a);
     return a;
 
 }

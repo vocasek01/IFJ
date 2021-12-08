@@ -364,12 +364,10 @@ Token getToken () {
                 ungetc(c, sourceFile);
                 errorCode();
                 token.type = ERROR;
-                getString(str, &token); // add
-                return token;           // add
+                getString(str, &token); 
+                return token;          
             }
 
-            // getString(str, &token);
-            // return token;
         }
 
         if (state == DOUB_DOT2) {
@@ -390,11 +388,6 @@ Token getToken () {
         }
 
         if (state == DOUB_EXP1) {
-            // if (isdigit(c)){
-            //     strncat(str, &c, 1);
-            //     state = DOUBLE;
-            //     continue;
-            // } else                            change!
             
             if (c == '+' || c == '-') {
                 strncat(str, &c, 1);
