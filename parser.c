@@ -1345,7 +1345,13 @@ int declr()
         CHECK_AND_CALL_FUNCTION(exprNT40());
 
         CHECK_AND_CALL_FUNCTION(check_type());
-        generate_move(char_type(symtable->scope), symtable->name, "LF@", expressionStack.head.attribute);
+        if (expressionStack.head.type == E_NONTERM_NIL)
+        {
+            generate_move(char_type(symtable->scope), symtable->name, "nil@", expressionStack.head.attribute);
+        }
+        else{
+            generate_move(char_type(symtable->scope), symtable->name, "LF@", expressionStack.head.attribute);
+        }
         stackPop(&expressionStack);
         return OK;
         break;
