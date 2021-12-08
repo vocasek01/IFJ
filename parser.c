@@ -1259,7 +1259,7 @@ int expr()
 
         case L:
             // takes tokens from stack and convert to term (i+i) -> (E) -> E
-            CHECK_AND_CALL_FUNCTION(convert_to_nonterm(root_symtable, &tokenStack));
+            CHECK_AND_CALL_FUNCTION(convert_to_nonterm(root_symtable, &tokenStack, nameFunc, counter_func));
             break;
 
         case X:
