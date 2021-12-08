@@ -1,3 +1,10 @@
+/*------------------------------------------
+ Title:  parser.h
+ Author: Matěj Krátký,
+ Login:  xkratk17, 
+ Date:   23 Nov 2021;
+------------------------------------------*/
+
 #pragma once
 #include "scanner.h"
 #include "symtable.h"
