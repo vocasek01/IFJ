@@ -99,13 +99,8 @@ int convert_to_nonterm(BSTNodePtr *root, Stack *tokenStack,Token *nameFunc, int 
         break;
 
     case IDENTIFICATOR:
-<<<<<<< HEAD
-        CHECK_AND_CALL_FUNCTION(convert_id(root, tokenStack));
-        return OK;
-=======
         CHECK_AND_CALL_FUNCTION(convert_id(root, tokenStack, nameFunc, counter_func));
         return 0;
->>>>>>> 7de1e379ac0e009e6bb7d603bc89ee3cde9aeef2
     case STR:
     case INT:
     case DOUBLE:
