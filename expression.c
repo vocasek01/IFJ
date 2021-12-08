@@ -144,12 +144,14 @@ int types_compability(Token a, Token b) {
             // find "a.attribute" in symtable and change type to sFLOAT
             // BSTNodePtr *node1 = smSearchNode(root_symtable, a.attribute);
             // node1->type[0] = FLOAT;
+            // FORARTEM
             a.type = E_NONTERM_FLOAT;
             return OK;
         case B:
             // find "b.attribute" in symtable and change type to sFLOAT
             // BSTNodePtr *node2 = smSearchNode(root_symtable, b.attribute);
             // node2->type[0] = FLOAT;
+            // FORARTEM
             generate_int2float(b.attribute);
             b.type = E_NONTERM_FLOAT;   
             return OK;
@@ -305,6 +307,9 @@ int convert_id(BSTNodePtr *root, Stack *tokenStack) {
 
     Token x = stackTop(tokenStack);
     BSTNodePtr *node = smSearchNode(root, x.attribute);
+    // FORARTEM
+    // check_dec(x.attribute,1);
+
     stackPop(tokenStack); //pop id
     stackPop(tokenStack); //pop shift
 
