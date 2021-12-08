@@ -1,7 +1,7 @@
 /*------------------------------------------
  Title:  scanner.h
- Author: Matěj Krátký,
- Login:  xkratk17, 
+ Author: Matěj Krátký, Golikov Ivan
+ Login:  xkratk17, xgolik00 
  Date:   15 Oct 2021;
 ------------------------------------------*/
 
