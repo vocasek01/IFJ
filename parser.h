@@ -1,10 +1,3 @@
-/*------------------------------------------
- Title:  parser.h
- Author: Matěj Krátký,
- Login:  xkratk17, 
- Date:   23 Nov 2021;
-------------------------------------------*/
-
 #pragma once
 #include "scanner.h"
 #include "symtable.h"
@@ -49,6 +42,7 @@ int returnCode;
                 {                                                                                                      \
                     return LEX_ERROR;                                                                                  \
                 }                                                                                                      \
+                printf("%s - %d \n", token.attribute, token.type);                                                     \
                 break;                                                                                                 \
             }                                                                                                          \
         }                                                                                                              \

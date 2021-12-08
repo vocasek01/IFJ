@@ -791,7 +791,7 @@ int state()
             CHECK_AND_CALL_FUNCTION(check_dec(token.attribute, 0));
             //
             smInsertVariable(&symtable, clipboard[1].attribute, NULL, NO, change_type(clipboard[0].attribute)); /// added symtable name var
-            symtable = smSearchNode(symtable, clipboard[1].attribute);
+            symtable = smSearchNode(root_symtable, clipboard[1].attribute);
 
             // generate_declaration("LF@", token.attribute); /// added codegen
             checkAndLoadToken(IDENTIFICATOR);
@@ -1918,9 +1918,12 @@ int chek_name(char *name)
  **/
 int check_dec(char *name, int a)
 {
+    if (strcmp(name, "write") == 0)
+        return OK;
+
     if (a == 0)
-    {      
-        CHECK_AND_CALL_FUNCTION(chek_name(name));  
+    {
+        CHECK_AND_CALL_FUNCTION(chek_name(name));
         if (smSearchNode(root_symtable, name) != NULL)
         {
             symtable = smSearchNode(root_symtable, nameFunc[counter_func].attribute);
@@ -1929,15 +1932,15 @@ int check_dec(char *name, int a)
 
             symtable = root_symtable;
 
-            for (int i=0; nameFunc[i].attribute != NULL;i++)
+            for (int i = 0; nameFunc[i].attribute != NULL; i++)
             {
                 if (strcmp(name, nameFunc[i].attribute) == 0)
-                    return ERR_UNDEFINED_VARIABLE; 
+                    return ERR_UNDEFINED_VARIABLE;
             }
         }
         else if (smSearchParamNode(root_symtable, name) != NULL)
         {
-            if (smSearcParamFunc(smSearchNode(root_symtable, nameFunc[counter_func].attribute), name) != NULL )
+            if (smSearcParamFunc(smSearchNode(root_symtable, nameFunc[counter_func].attribute), name) != NULL)
             {
                 return ERR_UNDEFINED_VARIABLE;
             }
