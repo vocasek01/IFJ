@@ -17,7 +17,6 @@ int main(int argc, char *argv[])
     // argc = 3;
     // argv[1] = "test_pr2.in";
     // argv[2] = "out.out";
-
     // scannerInit(fopen(argv[1], "r"));
     // set_code_output(fopen(argv[2], "w"));
 

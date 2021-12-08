@@ -1406,6 +1406,15 @@ int declr()
     case KEYWORD:
         if (strcmp(token.attribute, "nil") != 0)
             return SYNTAX_ERROR;
+
+        CHECK_AND_CALL_FUNCTION(expr());
+        CHECK_AND_CALL_FUNCTION(exprNT40());
+
+        CHECK_AND_CALL_FUNCTION(check_type());
+        generate_move(char_type(symtable->scope), symtable->name, "LF@", expressionStack.head.attribute); /// added codegen move
+        stackPop(&expressionStack);
+        return OK;
+        break;
     case INT:
     case DOUBLE:
     case STR: ///added
