@@ -33,7 +33,6 @@ int smInsertFunctin(BSTNodePtr **root, char *name, typeVar type, char *parametr_
                 (*root)->type[type_num] = type;
             }
             return 0;
-            // (*root)->isFunction = true;
         }
     }
     BSTNodePtr *item = (BSTNodePtr *)malloc(sizeof(struct BSTNode));
@@ -263,32 +262,3 @@ void smDeleteFunction (BSTNodePtr **root) {
 
     return;
 }
-
-//after delete!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-// int main() {
-//     BSTNodePtr **root;
-//     root = malloc(sizeof(BSTNodePtr));
-//     BSTNodePtr *item;
-
-//     smInit(root);
-//     smInsertFunctin(root, "lolf1");
-//     smInsertVariable(&((*root)->LPtr), "lolname1", "loldata1", 1);
-//     smInsertVariable(&((*root)->LPtr), "lolname2", "loldata2", 1);
-
-//     smInsertFunctin(root, "lolf2");
-//     smInsertVariable(&((*root)->LPtr), "lolname3", "loldata3", 1);
-//     smInsertVariable(&((*root)->LPtr), "lolname1", "loldata1", 1);
-
-//     item = smSearchNode(*root, "lolname1");
-//     printf("%s\n", item->name);
-
-//     item = smSearchNode(*root, "lolname2");
-//     printf("%s\n", item->name);
-
-//     smDeleteFunction(root);
-
-//     smDispose(root);
-//     free(root);
-//     return 0;
-// }

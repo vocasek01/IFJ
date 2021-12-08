@@ -1,3 +1,10 @@
+/*------------------------------------------
+ Title:  parser.c
+ Author: Koval Maksym
+ Login:  xkoval20
+ Date:   23 Nov 2021;
+------------------------------------------*/
+
 #include <stdlib.h>
 #include "stack.h"
 #include "scanner.h"
@@ -7,8 +14,6 @@ void stackInit(Stack *stack)
     Token tmp;
     tmp.type = EMPTY;
     tmp.attribute = NULL;
-
-    // stack = (Stack*)malloc(sizeof(Stack));
 
     stack->head = tmp;
     
@@ -78,7 +83,6 @@ Stack stackReverse(Stack *stack)
         result = stack;
     }
 
-    // stackFree(stack);
     stack = &clone;
     return *stack;
 }
