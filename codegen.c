@@ -36,27 +36,6 @@ int generate_header()
 {
     fprintf(ifj_code, ".IFJcode21\n");
     fprintf(ifj_code, "JUMP $$main\n\n");
-
-    // char *id = "inputf";
-    // generate_builtin_function(id);
-    // id = "inputi";
-    // generate_builtin_function(id);
-    // id = "inputs";
-    // generate_builtin_function(id);
-    // id = "print";
-    // generate_builtin_function(id);
-    // id = "int2float";
-    // generate_builtin_function(id);
-    // id = "float2int";
-    // generate_builtin_function(id);
-    // id = "len";
-    // generate_builtin_function(id);
-    // id = "substr";
-    // generate_builtin_function(id);
-    // id = "ord";
-    // generate_builtin_function(id);
-    // id = "chr";
-    // generate_builtin_function(id);
     return 0;
 }
 
@@ -120,21 +99,6 @@ int generate_func_bottom(char *function_identifier)
     fprintf(ifj_code, "POPFRAME\n");
     fprintf(ifj_code, "RETURN\n\n");
     return 0;
-}
-
-bool chceck_character_ok(int character)
-{                                                                                          //
-    if ((character >= 48 && character <= 57) || (character >= 65 && character <= 90) ||    //0-9, a-z
-        (character >= 97 && character <= 122) || (character == 95) || (character == 45) || //A-Z, _, -
-        (character >= 36 && character <= 38) || (character == 42) || (character == 33) ||  //$,%,&,*,!
-        (character == 63))
-    { //?
-        return true;
-    }
-    else
-    {
-        return false;
-    }
 }
 
 int generate_builtin_function(char *function_identifier)
