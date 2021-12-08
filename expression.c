@@ -131,7 +131,7 @@ int convert_parentheses(Stack *tokenStack) {
 
     stackPush(tokenStack,term);
 
-
+    return 0;
 }
 
 

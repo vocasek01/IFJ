@@ -8,6 +8,19 @@
 #pragma once
 
 typedef enum {
+
+    //Expression type
+    E_NONTERM_INT,
+    E_NONTERM_FLOAT,
+    E_NONTERM_STR,
+    E_NONTERM_BOOL,
+    E_NONTERM_NIL,
+    E_NONTERM_ZERO_INT,
+    E_NONTERM_RULE,
+    E_NONTERM_ID,
+    E_STOP,
+    E_SHIFT,
+
     START = 100,
 
     //Keyword or Identificator
