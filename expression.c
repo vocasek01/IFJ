@@ -6,39 +6,44 @@ int find_index(TokenType a) {
 
     switch(a) {
 
-        case ADD:
+        case LEN:
             return 0;
-        case SUB:
+        case ADD:
             return 1;
-        case MUL:
+        case SUB:
             return 2;
-        case DIV: 
+        case MUL:
             return 3;
-        case LBR:
+        case DIV: 
             return 4;
-        case RBR:
+        case INT_DIV:
             return 5;
-        case GT:
+        case KONC:
             return 6;
-        case LT:
+        case LBR:
             return 7;
-        case GTE:
+        case RBR:
             return 8;
-        case LTE:
+        case GT:
             return 9;
-        case EQ:
+        case LT:
             return 10;
-        case NOTEQ:
+        case GTE:
             return 11;
-        // for nil only
+        case LTE:
+            return 12;
+        case EQ:
+            return 13;
+        case NOTEQ:
+            return 14;
         case KEYWORD: 
         case IDENTIFICATOR:
         case INT:
         case DOUBLE:
         case STR:
-            return 12;
+            return 15;
         case E_STOP:
-            return 13;
+            return 16;
 
         default:
             return ERROR;          
@@ -48,7 +53,7 @@ int find_index(TokenType a) {
 
 }
 
-Rule find_rule(TokenType a, TokenType b) {
+int find_rule(TokenType a, TokenType b) {
 
     int x = find_index(a);
     int y = find_index(b);
@@ -80,32 +85,62 @@ int convert_to_nonterm(BSTNodePtr *root, Stack *tokenStack) {
         case NOTEQ:
         case GTE:
         case LTE:
+        case KONC:
         case EQ:
             CHECK_AND_CALL_FUNCTION(convert_operation(root, tokenStack));
-            return 0;
+            return OK;
+        case LEN:
+            CHECK_AND_CALL_FUNCTION(convert_len(tokenStack));
+            return OK;
+        default:
+            return ERR_COMPATIBILITY_IN_OPERATIONS;
         }
         break;
 
     case IDENTIFICATOR:
         CHECK_AND_CALL_FUNCTION(convert_id(root, tokenStack));
-        return 0;
+        return OK;
     case STR:
     case INT:
     case DOUBLE:
         CHECK_AND_CALL_FUNCTION(convert_str(root, tokenStack));
-        return 0;
+        return OK;
     case RBR:
         CHECK_AND_CALL_FUNCTION(convert_parentheses(tokenStack));
-        return 0;
+        return OK;
     case KEYWORD:
         CHECK_AND_CALL_FUNCTION(convert_nil(tokenStack));
-        return 0;
+        return OK;
     default:
         break;
     }
 
     return 0;
 }
+
+int convert_len(Stack *tokenStack) {
+
+    Token x = stackTop(tokenStack);
+    stackPop(tokenStack); //pop operand
+    stackPop(tokenStack); //pop len
+    stackPop(tokenStack); //pop shift
+
+    if (x.type != E_NONTERM_STR) return ERR_COMPATIBILITY_IN_OPERATIONS;
+
+    char* var_name = malloc(sizeof(char) * 10);
+    if (var_name == NULL) return ERR_ALLOCATION_ERROR_OR_ETC;
+
+    sprintf(var_name,"var%i",counter_of_vars++);
+    generate_declaration("LF@", var_name);
+
+    generate_len(var_name,x.attribute);
+    free(x.attribute);
+    x.attribute = var_name;
+    x.type = E_NONTERM_INT;
+    stackPush(tokenStack,x);
+
+    return OK;
+} 
 
 int convert_nil(Stack *tokenStack) {
 
@@ -314,7 +349,7 @@ int convert_id(BSTNodePtr *root, Stack *tokenStack) {
     stackPop(tokenStack); //pop shift
 
     if (node == NULL) {
-        fprintf(stderr, "uninitialized variable");
+        fprintf(stderr, "uninitialized variable!\n");
         return ERROR;
     }
 
