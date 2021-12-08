@@ -592,6 +592,7 @@ int dataType()
         }
         else if (strcmp(token.attribute, "nil") == 0)
         {
+            decType();
             checkAndLoadKeyword(KEYWORD, "nil");
             return OK;
             break;
@@ -1402,10 +1403,14 @@ int declr()
         }
         return OK;
         break;
+    case KEYWORD:
+        if (strcmp(token.attribute, "nil") != 0)
+            return SYNTAX_ERROR;
     case INT:
     case DOUBLE:
     case STR: ///added
     case KONC:
+    // case N
         // generate_declaration(char_type(symtable->scope), symtable->name); ///added
         CHECK_AND_CALL_FUNCTION(expr());
         CHECK_AND_CALL_FUNCTION(exprNT40());
@@ -1678,14 +1683,16 @@ int exprFunc()
             {
                 if (symtable != NULL)
                 {
-                    generate_move(char_type(symtable->scope), symtable->name, char_type(change_enum(expressionStack.head.type)), expressionStack.head.attribute);
+                    // generate_move(char_type(symtable->scope), symtable->name, char_type(change_enum(expressionStack.head.type)), expressionStack.head.attribute);
+                    generate_move(char_type(symtable->scope), symtable->name, "LF@", expressionStack.head.attribute);
                     stackPop(&expressionStack);
                     return OK;
                 }
                 else
                     return SYNTAX_ERROR;
             }
-            generate_move("LF@", smSearcParamFunc(root_symtable, clipboard[0].attribute)->name, char_type(change_enum(expressionStack.head.type)), expressionStack.head.attribute);
+            // generate_move("LF@", smSearcParamFunc(root_symtable, clipboard[0].attribute)->name, char_type(change_enum(expressionStack.head.type)), expressionStack.head.attribute);
+            generate_move("LF@", smSearcParamFunc(root_symtable, clipboard[0].attribute)->name, "LF@", expressionStack.head.attribute);
             stackPop(&expressionStack);
         }
         return OK;
@@ -1857,13 +1864,17 @@ typeVar change_type(char *type)
     {
         return sSTR;
     }
-    else if (strcmp(type, "local") == 0)
-    {
-        return sLOCAL;
-    }
     else if (strcmp(type, "number") == 0)
     {
         return FLOAT;
+    }
+    else if (strcmp(type, "nil") == 0)
+    {
+        return sNULL;
+    }
+    else if (strcmp(type, "local") == 0)
+    {
+        return sLOCAL;
     }
     return NO;
 }
@@ -1873,15 +1884,19 @@ typeVar change_type(char *type)
  **/
 int check_type()
 {
-    if (expressionStack.head.type == E_NONTERM_INT  && symtable->type[0] == sINT)
+    if ((expressionStack.head.type == E_NONTERM_INT || expressionStack.head.type == E_NONTERM_NIL) && symtable->type[0] == sINT)
     {
         return OK;
     }
-    else if (expressionStack.head.type == E_NONTERM_STR && symtable->type[0] == sSTR)
+    else if ((expressionStack.head.type == E_NONTERM_STR || expressionStack.head.type == E_NONTERM_NIL) && symtable->type[0] == sSTR)
     {
         return OK;
     }
-    else if ((expressionStack.head.type == E_NONTERM_FLOAT || expressionStack.head.type == E_NONTERM_INT) && symtable->type[0] == FLOAT)
+    else if ((expressionStack.head.type == E_NONTERM_FLOAT || expressionStack.head.type == E_NONTERM_INT || expressionStack.head.type == E_NONTERM_NIL) && symtable->type[0] == FLOAT)
+    {
+        return OK;
+    }
+    else if (expressionStack.head.type == E_NONTERM_NIL && symtable->type[0] == sNULL)
     {
         return OK;
     }
@@ -2031,6 +2046,10 @@ char *char_type(typeVar type)
     else if (type == sLOCAL || type == NO) //FIX MY
     {
         return "LF@";
+    }
+    else if (type == sNULL)
+    {
+        return "nil@";
     }
     printf("+++SYTAX ERROR+++");
 }
