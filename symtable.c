@@ -219,8 +219,14 @@ BSTNodePtr *smChekVar(BSTNodePtr *root, char *name)
     {
             if (strcmp(root->name, name) != 0)
             {
-                item = smChekVar(root->LPtr, name);
-                // printf("N+++");
+                if (root->isFunction == true)
+                {
+                   item = smChekVar(root->LPtr, name);
+                }
+                else
+                {
+                    item = smSearchNode(root, name);
+                }
             }
             else
             {

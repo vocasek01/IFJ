@@ -129,6 +129,7 @@ typeVar change_enum(TokenType token);
 typeVar change_type(char *type);
 char *floatNum(char *num);
 int chek_name(char *name);
+int build_func(char *name);
 int check_dec(char *name, int a);
 int check_type();
 char *char_type(typeVar type);

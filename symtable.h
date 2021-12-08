@@ -18,8 +18,9 @@ typedef enum
     sINT,
     sSTR,
     FLOAT,
+    sNULL,
     sLOCAL,
-    sGLOBAL,
+    sGLOBAL
 } typeVar;
 
 typedef struct Parametrs
