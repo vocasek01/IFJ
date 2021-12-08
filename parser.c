@@ -1344,6 +1344,11 @@ int declr()
     {
     case IDENTIFICATOR: // Rule: <declr>     ->  id ( <func_param> )
         clipboard[2] = token;
+        // if (!build_func(token.attribute))
+        // {
+        //     callFunc = token;
+        //     checkAndLoadToken(IDENTIFICATOR);
+        // }
         if (smSearchNode(root_symtable, token.attribute) != NULL)
         {
             symtable = smSearchNode(root_symtable, token.attribute);
@@ -1400,6 +1405,7 @@ int declr()
     case INT:
     case DOUBLE:
     case STR: ///added
+    case KONC:
         // generate_declaration(char_type(symtable->scope), symtable->name); ///added
         CHECK_AND_CALL_FUNCTION(expr());
         CHECK_AND_CALL_FUNCTION(exprNT40());
@@ -1701,6 +1707,7 @@ int exprFunc()
                 if (strcmp(symtable->param[i].name, clipboard[0].attribute) == 0)
                 {
                     generate_move("LF@", clipboard[0].attribute, "LF@", expressionStack.head.attribute);
+                    stackPop(&expressionStack); //ff
                     return OK;
                 }
             }
@@ -1708,6 +1715,7 @@ int exprFunc()
         if (symtable != NULL)
         {
             generate_move(char_type(symtable->scope), clipboard[0].attribute, "LF@", expressionStack.head.attribute);
+            stackPop(&expressionStack); // ff
         }else
             return SYNTAX_ERROR;
 
@@ -1901,12 +1909,24 @@ int chek_name(char *name)
     "nil", "number", "require", "return", 
     "string", "then", "while"};
 
-    for (int i=0; i < 15; i++)
+    for (int i = 0; i < 15; i++)
     {
         if (strcmp(name, dec_name[i]) == 0)
             return 2;
     }
     return OK;
+}
+
+int build_func(char *name)
+{
+    char *func_name[] =
+    {"write"};
+    for (int i = 0; i < 1; i++)
+    {
+        if (strcmp(name, func_name[i]) == 0)
+            return OK;
+    }
+    return 699;
 }
 /**
  *checking for error
@@ -1917,8 +1937,8 @@ int chek_name(char *name)
  *  @param 1 checking for the presence of a variable, if it exists, returns OK
  **/
 int check_dec(char *name, int a)
-{
-    if (strcmp(name, "write") == 0)
+{   
+    if (!build_func(name))
         return OK;
 
     if (a == 0)

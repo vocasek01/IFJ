@@ -427,6 +427,12 @@ int generate_write(char *dest_frame,char *var)
     return 0;
 }
 
+int generate_readi(char *dest_frame, char *var, char *type)
+{
+    fprintf(ifj_code, "READ %s%s %s\n", dest_frame, var, type);
+    return 0;
+}
+
 int generate_declaration(char *dest_frame, char *identifier)
 {
     fprintf(ifj_code, "DEFVAR %s%s\n", dest_frame, identifier);
