@@ -155,8 +155,16 @@ Token getToken () {
 
         if (state == BLOCKCOMMENT) {
             if (c != ']') {
-                strncat(str, &c, 1);
-                continue;
+                
+                if (c == EOF) {
+                    errorCode();
+                    token.type = ERROR;
+                    return token;
+                } else {
+                    strncat(str, &c, 1);
+                    continue;
+                }
+
             } else {
                 strncat(str, &c, 1);
                 token.type = BLOCKCOMMENT;

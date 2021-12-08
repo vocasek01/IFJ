@@ -49,7 +49,6 @@ int returnCode;
                 {                                                                                                      \
                     return LEX_ERROR;                                                                                  \
                 }                                                                                                      \
-                printf("%s - %d \n", token.attribute, token.type);                                                     \
                 break;                                                                                                 \
             }                                                                                                          \
         }                                                                                                              \

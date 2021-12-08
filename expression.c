@@ -157,6 +157,17 @@ int convert_nil(Stack *tokenStack) {
     stackPop(tokenStack); //pop nil
     stackPop(tokenStack); //pop shift
     
+    char* var_name = malloc(sizeof(char) * 10);
+    if (var_name == NULL) return ERR_ALLOCATION_ERROR_OR_ETC;
+
+    sprintf(var_name,"var%i",counter_of_vars++);
+    generate_declaration("LF@", var_name);
+    
+    generate_move("LF@", var_name, "nil@", x.attribute);
+
+    free(x.attribute);
+    x.attribute = var_name; 
+
     x.type = E_NONTERM_NIL; 
 
     stackPush(tokenStack, x);
