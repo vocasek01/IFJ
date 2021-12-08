@@ -5,22 +5,8 @@
  Date:   23 Nov 2021;
 ------------------------------------------*/
 
+#include "expression.h"
 #pragma once
-#include "scanner.h"
-#include "symtable.h"
-
-#define OK 0
-#define BAD 1
-#define LEX_ERROR 1
-#define SYNTAX_ERROR 2
-#define ERR_UNDEFINED_VARIABLE 3
-#define ERR_COMPATIBILITY 4
-#define ERR_PARAMETERS_OR_RETURNS 5
-#define ERR_COMPATIBILITY_IN_OPERATIONS 6
-#define ERR_SEMANTICAL 7
-#define ERR_NIL_UNSUPPORTED_OPERATION 8
-#define ERR_DIVISION_BY_ZERO 9
-#define ERR_ALLOCATION_ERROR_OR_ETC 99
 
 
 Token token;
@@ -133,7 +119,6 @@ int funcParam();
 int funcParamN();
 typeVar change_enum(TokenType token);
 typeVar change_type(char *type);
-char *floatNum(char *num);
 int chek_name(char *name);
 int build_func(char *name);
 int check_dec(char *name, int a);

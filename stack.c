@@ -7,7 +7,6 @@
 
 #include <stdlib.h>
 #include "stack.h"
-#include "scanner.h"
 
 void stackInit(Stack *stack)
 {

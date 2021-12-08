@@ -6,11 +6,6 @@
 ------------------------------------------*/
 
 #include "parser.h"
-#include "codegen.c"
-#include "codegen.h"
-#include "symtable.c"
-#include "stack.c"
-#include "expression.c"
 
 Token token;
 BSTNodePtr *symtable;
@@ -28,7 +23,6 @@ int counter_retVal = 0;
 int counter_param = 0;
 int count_bracket = 0;
 int returnCode;
-char floatStart[21] = "0x";
 
 Stack expressionStack;
     // Load next token, check the return code.
@@ -1938,15 +1932,6 @@ typeVar change_enum (TokenType token)
     default:
         return SYNTAX_ERROR;
     }
-}
-
-char *floatNum(char *num)
-{
-
-    char end[4] = "p+0\0";
-    strncat(floatStart, num, 15);
-    strncat(floatStart, end, 4);
-    return floatStart;
 }
 
 char* nil(typeVar type)

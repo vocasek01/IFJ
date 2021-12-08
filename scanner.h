@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include "error.h"
 
 #define MAX_LENGTH 1024
 #pragma once

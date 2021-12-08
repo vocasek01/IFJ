@@ -8,12 +8,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "codegen.h"
-#include "string.h"
-#include "scanner.c"
-#include "parser.h"
-#pragma once
-
-#pragma once
 
 FILE *ifj_code;
 

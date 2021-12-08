@@ -6,9 +6,7 @@
 ------------------------------------------*/
 
 #include "precedence.h"
-#include "stack.h"
-#include "symtable.h"
-#include "codegen.c"
+#include "codegen.h"
 
 typedef enum{
 

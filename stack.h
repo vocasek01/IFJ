@@ -4,7 +4,7 @@
  Login:  xkoval20
  Date:   23 Nov 2021;
 ------------------------------------------*/
-
+#include "symtable.h"
 #define EMPTY 999
 #pragma once
 typedef struct tokenStack Stack;
