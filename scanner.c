@@ -43,16 +43,13 @@ void getString (char *str, Token *token) {
 
     token->attribute = (char *) malloc(sizeof(char) * (strlen(str)+1));
 
-    // printf("+++%ld\n", sizeof(char) * strlen(str)); //added
     if (!token->attribute)
         fprintf(stderr, "%s", "Internal err\n");
     else
     {
         token->attribute[strlen(str)] = '\0';
-            // str[strlen(str)-1] = '\0';
         memcpy(token->attribute, str, sizeof(char) * strlen(str));
     }
-    // printf("+++%ld\n", sizeof(char) * strlen(str));
 }
 
 bool isKeyWord (char *str) {
@@ -92,12 +89,8 @@ Token getToken () {
         }
 
         if (state == START && c == '\n') {
-                // strncat(str, &c, 1);
-                // token.type = EOL;
-                // getString(str, &token);
-                // return token;
-                state = START;//added
-                continue;//added
+                state = START;
+                continue;
             }
 
         if (state == START && c == ' ') {
@@ -455,10 +448,10 @@ Token getToken () {
                 state = STR;
 
                 if (c == ' ') {
-                    strncat(str, "\\032", 5); // FIX MY
+                    strncat(str, "\\032", 5);
                     continue;
                 } else if ( c == '#') {
-                    strncat(str, "\\032", 5); // FIX MY
+                    strncat(str, "\\032", 5);
                     continue;
                 } else {
                     strncat(str, &c, 1);
@@ -474,23 +467,23 @@ Token getToken () {
 
         if (state == ESCAPE1) {
             if (c == 'n') {
-                strncat(str, "\\010", 5); // FIX MY
+                strncat(str, "\\010", 5);
                 state = STR;
                 continue;
             } else if (c == 't') {
-                strncat(str, "\\009", 5); //FIX MY
+                strncat(str, "\\009", 5);
                 state = STR;
                 continue;
             } else if (c == '\\') {
-                strncat(str, "\\092", 5); // FIX MY
+                strncat(str, "\\092", 5);
                 state = STR;
                 continue;
             } else if (c == '"') {
-                strncat(str, "\\034", 5); // FIX MY
+                strncat(str, "\\034", 5);
                 state = STR;
                 continue;
             } else if (isdigit(c)) {
-                strncat(str, "\\", 2); // FIX MY
+                strncat(str, "\\", 5);
                 ungetc(c, sourceFile);
                 state = ESCAPE2;
                 continue;
