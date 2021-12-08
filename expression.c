@@ -1,6 +1,7 @@
 #include "expression.h"
 
 int counter_of_vars = 0;
+BSTNodePtr item;
 
 int find_index(TokenType a) {
 
@@ -61,7 +62,7 @@ int find_rule(TokenType a, TokenType b) {
     return precedence[x][y];
 }
 
-int convert_to_nonterm(BSTNodePtr *root, Stack *tokenStack) {
+int convert_to_nonterm(BSTNodePtr *root, Stack *tokenStack,Token *nameFunc, int counter_func) {
 
     Token x = stackTop(tokenStack);
     switch (x.type)
@@ -98,8 +99,13 @@ int convert_to_nonterm(BSTNodePtr *root, Stack *tokenStack) {
         break;
 
     case IDENTIFICATOR:
+<<<<<<< HEAD
         CHECK_AND_CALL_FUNCTION(convert_id(root, tokenStack));
         return OK;
+=======
+        CHECK_AND_CALL_FUNCTION(convert_id(root, tokenStack, nameFunc, counter_func));
+        return 0;
+>>>>>>> 7de1e379ac0e009e6bb7d603bc89ee3cde9aeef2
     case STR:
     case INT:
     case DOUBLE:
@@ -180,6 +186,7 @@ int types_compability(Token a, Token b) {
             // BSTNodePtr *node1 = smSearchNode(root_symtable, a.attribute);
             // node1->type[0] = FLOAT;
             // FORARTEM
+
             a.type = E_NONTERM_FLOAT;
             return OK;
         case B:
@@ -335,17 +342,23 @@ int convert_str(BSTNodePtr *root, Stack *tokenStack) {
     return 0;
 }
 
-
-
-
-int convert_id(BSTNodePtr *root, Stack *tokenStack) {
+int convert_id(BSTNodePtr *root, Stack *tokenStack, Token *nameFunc, int counter_func)
+{
 
     Token x = stackTop(tokenStack);
-    BSTNodePtr *node = smSearchNode(root, x.attribute);
-    // FORARTEM
-    // check_dec(x.attribute,1);
+    BSTNodePtr *link_node = smSearchNode(root, nameFunc[counter_func].attribute);
+    CHECK_AND_CALL_FUNCTION(check_var(link_node, x.attribute));
+    BSTNodePtr *node = checking_searching(link_node, x.attribute);
+    // parametr *param; 
 
-    stackPop(tokenStack); //pop id
+    // CHECK_AND_CALL_FUNCTION(check_dec(smSearchNode(root, nameFunc[counter_func].attribute), 1));
+    // if (node == NULL)
+    // parametr *param = smSearcParamFunc(smSearchNode(root, nameFunc[counter_func].attribute), x.attribute);
+
+        // FORARTEM
+        // check_dec(x.attribute,1);
+
+    stackPop(tokenStack); // pop id
     stackPop(tokenStack); //pop shift
 
     if (node == NULL) {
@@ -426,4 +439,44 @@ int isShifted(Token a) {
     default:
         return 1;
     }
+}
+
+BSTNodePtr *checking_searching(BSTNodePtr *node, char *name)
+{   
+    // CHECK_AND_CALL_FUNCTION(check_var(node, name));
+    if (smSearcParamFunc(node, name) != NULL)
+    {
+        
+        item.name = smSearcParamFunc(node, name)->name;
+        item.type[0] = smSearcParamFunc(node, name)->type;
+        item.isFunction = false;
+        return &item;
+    }
+    node = smSearchNode(node, name);
+
+    return node;
+}
+
+int check_var(BSTNodePtr *root, char *name)
+{
+    if (root != NULL)
+    {
+        if (smChekVar(root, name) != NULL)
+        {
+            return OK; //• 3 - sémantická chyba v programu – nedefinovaná funkce/proměnná, pokus o redefinici proměnné, atp.
+        }
+
+        if (smSearchNode(root, name) != NULL && smSearchNode(root, name)->isFunction == true)
+        {
+            return OK;
+        }
+
+        // if (smSearc)
+
+        if (smSearcParamFunc(root, name) != NULL)
+        {
+            return OK;
+        }
+    }
+    return 3;
 }
