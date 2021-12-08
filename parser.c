@@ -1345,12 +1345,12 @@ int declr()
     {
     case IDENTIFICATOR: // Rule: <declr>     ->  id ( <func_param> )
         clipboard[2] = token;
-        // if (!build_func(token.attribute))
+        // if (strcmp("readi", token))
         // {
         //     callFunc = token;
         //     checkAndLoadToken(IDENTIFICATOR);
         // }
-        if (smSearchNode(root_symtable, token.attribute) != NULL)
+        if (smSearchNode(root_symtable, token.attribute) != NULL && strcmp("readi", token.attribute) != 0)
         {
             symtable = smSearchNode(root_symtable, token.attribute);
             CHECK_AND_CALL_FUNCTION(check_dec(token.attribute, 1));
@@ -1397,6 +1397,15 @@ int declr()
         }
         else // Rule: <declr>     ->  <expression>
         {
+            if (strcmp("readi", token.attribute) == 0)
+            {
+                generate_readi("LF@", clipboard[1].attribute, "int@0");
+                checkAndLoadToken(IDENTIFICATOR);
+                checkAndLoadToken(LBR);
+                checkAndLoadToken(RBR);
+                return OK;
+            }
+
             CHECK_AND_CALL_FUNCTION(expr());
             generate_move("LF@", symtable->name, "LF@", expressionStack.head.attribute);
             stackPop(&expressionStack);
@@ -1944,8 +1953,8 @@ int chek_name(char *name)
 int build_func(char *name)
 {
     char *func_name[] =
-    {"write"};
-    for (int i = 0; i < 1; i++)
+    {"write", "readi"};
+    for (int i = 0; i < 2; i++)
     {
         if (strcmp(name, func_name[i]) == 0)
             return OK;
