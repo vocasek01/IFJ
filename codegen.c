@@ -1,3 +1,10 @@
+/*------------------------------------------
+ Title:  codegen.c
+ Author: Kirillov Artem
+ Login:  xkiril01
+ Date:   23 Nov 2021;
+------------------------------------------*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "codegen.h"
@@ -63,10 +70,6 @@ int generate_return_values(typeVar type, int i)
     char *ifjcode_type;
     switch (type)
     {
-    // case VOID:
-    //     ifjcode_type = "nil";
-    //     empty_value = "nil";
-    //     break;
     case sSTR:
         ifjcode_type = "string";
         empty_value = "\"\"";
@@ -114,7 +117,7 @@ int generate_builtin_function(char *function_identifier)
     }
     else if (strcmp(function_identifier, "int2float") == 0)
     {
-        // return generate_int2float();
+
     }
     else if (strcmp(function_identifier, "float2int") == 0)
     {
@@ -122,7 +125,7 @@ int generate_builtin_function(char *function_identifier)
     }
     else if (strcmp(function_identifier, "len") == 0)
     {
-        // return generate_len();
+
     }
     else if (strcmp(function_identifier, "substr") == 0)
     {
