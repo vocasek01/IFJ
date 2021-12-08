@@ -10,9 +10,9 @@ typedef enum{
 
 Rule precedence[14][14] = {
 
-    /*         +,   -,   *,   /,   (,   ),   >,   <,   >=,  <=,  ==,  ~=,  i,   $   */
-    /* +  */  {L,   L,   S,   S,   S,   L,   L,   L,   L,   L,   L,   L,   S,   L},   
-    /* -  */  {L,   L,   S,   S,   S,   L,   L,   L,   L,   L,   L,   L,   S,   L},   
+    /*         +,   -,   *,   /,   (,   ),   >,   <,   >=,  <=,  ==,  ~=,  i,   #    $   */
+    /* +  */  {L,   L,   S,   S,   S,   L,   L,   L,   L,   L,   L,   L,   S,       L},   
+    /* -  */  {L,   L,   S,   S,   S,   L,   L,   L,   L,   L,   L,   L,   S,       L},   
     /* *  */  {L,   L,   L,   L,   S,   L,   L,   L,   L,   L,   L,   L,   S,   L},   
     /* /  */  {L,   L,   L,   L,   S,   L,   L,   L,   L,   L,   L,   L,   S,   L},   
     /* (  */  {S,   S,   S,   S,   S,   E,   S,   S,   S,   S,   S,   S,   S,   X},  
