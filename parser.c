@@ -764,7 +764,7 @@ int state()
             checkAndLoadKeyword(KEYWORD, "local");
             clipboard[1] = token;
             CHECK_AND_CALL_FUNCTION(check_dec(token.attribute, 0));
-            smInsertVariable(&symtable, clipboard[1].attribute, NULL, NO, change_type(clipboard[0].attribute));
+            smInsertVariable(&root_symtable, clipboard[1].attribute, NULL, NO, change_type(clipboard[0].attribute)); //ERROR&
             symtable = smSearchNode(root_symtable, clipboard[1].attribute);
             checkAndLoadToken(IDENTIFICATOR);
             checkAndLoadToken(COLON);
