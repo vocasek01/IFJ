@@ -1,5 +1,5 @@
 /*------------------------------------------
- Title:  parser.c
+ Title:  parser.h
  Author: Matěj Krátký, Koval Maksym, Kirillov Artem
  Login:  xkratk17, xkoval20, xkiril01
  Date:   23 Nov 2021;
