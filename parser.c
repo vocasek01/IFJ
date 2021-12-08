@@ -1047,12 +1047,14 @@ int isAssign()
     switch (token.type)
     {
     case IDENTIFICATOR: // Rule: <is_assign> ->  eps
-
+        generate_move("LF@", symtable->name, char_type(symtable->type[0]), nil(symtable->type[0]));
         return OK;
         break;
     case KEYWORD:
-        if (strcmp(token.attribute, "while") == 0 || strcmp(token.attribute, "if") == 0 || strcmp(token.attribute, "local") == 0 || strcmp(token.attribute, "return") == 0 || strcmp(token.attribute, "end") == 0) // Rule: <return>  ->  eps
+        if (strcmp(token.attribute, "while") == 0 || strcmp(token.attribute, "if") == 0 || strcmp(token.attribute, "local") == 0 
+        || strcmp(token.attribute, "return") == 0 || strcmp(token.attribute, "end") == 0 ) // Rule: <return>  ->  eps
         {
+            generate_move("LF@", symtable->name, char_type(symtable->type[0]), nil(symtable->type[0]));
             return OK;
             break;
         }
@@ -2124,6 +2126,27 @@ char *floatNum(char *num)
     strncat(floatStart, num, 15);
     strncat(floatStart, end, 4);
     return floatStart;
+}
+
+char* nil(typeVar type)
+{
+    switch (type)
+    {
+    case sINT:
+        return "0";
+
+    case sSTR:
+        return "nil";
+
+    case FLOAT:
+        return "0x0p+0";
+
+    case sNULL:
+        return "nil";
+
+    default:
+        break;
+    }
 }
 
 char *char_type(typeVar type)

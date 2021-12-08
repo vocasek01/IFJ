@@ -4,6 +4,7 @@
 #include "string.h"
 #include "scanner.c"
 #include "parser.h"
+#pragma once
 
 FILE *ifj_code;
 int generate_inputs();
