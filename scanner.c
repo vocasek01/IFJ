@@ -1,3 +1,11 @@
+/*------------------------------------------
+ Title:  scanner.c
+ Author: Matěj Krátký,
+ Login:  xkratk17, 
+ Date:   15 Oct 2021;
+------------------------------------------*/
+
+
 #include "scanner.h"
 
 /*

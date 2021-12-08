@@ -1,3 +1,10 @@
+/*------------------------------------------
+ Title:  parser.c
+ Author: Matěj Krátký,
+ Login:  xkratk17, 
+ Date:   23 Nov 2021;
+------------------------------------------*/
+
 #include "parser.h"
 #include "codegen.c"
 #include "codegen.h"
