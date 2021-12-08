@@ -1,5 +1,5 @@
 /*------------------------------------------
- Title:  parser.c
+ Title:  stack.c
  Author: Koval Maksym
  Login:  xkoval20
  Date:   23 Nov 2021;
