@@ -1,4 +1,10 @@
-// #include "parser.h"
+/*------------------------------------------
+ Title:  stack.h
+ Author: Koval Maksym
+ Login:  xkoval20
+ Date:   23 Nov 2021;
+------------------------------------------*/
+
 #define EMPTY 999
 #pragma once
 typedef struct tokenStack Stack;

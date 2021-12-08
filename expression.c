@@ -1,3 +1,10 @@
+/*------------------------------------------
+ Title:  expression.c
+ Author: Koval Maksym
+ Login:  xkoval20
+ Date:   23 Nov 2021;
+------------------------------------------*/
+
 #include "expression.h"
 
 int counter_of_vars = 0;
@@ -179,22 +186,14 @@ int types_compability(BSTNodePtr *root, Token a, Token b, Token *nameFunc, int c
         case A:
             generate_int2float(a.attribute);
 
-            // find "a.attribute" in symtable and change type to sFLOAT
-            // BSTNodePtr *node1 = smSearchNode(root_symtable, a.attribute);
-            // node1->type[0] = FLOAT;
             link_node = smSearchNode(root, nameFunc[counter_func].attribute);
             CHECK_AND_CALL_FUNCTION(check_var(link_node, a.attribute));
             node = checking_searching(link_node, a.attribute);
             node->type[0] = FLOAT;
-            // FORARTEM
 
             a.type = E_NONTERM_FLOAT;
             return OK;
         case B:
-            // find "b.attribute" in symtable and change type to sFLOAT
-            // BSTNodePtr *node2 = smSearchNode(root_symtable, b.attribute);
-            // node2->type[0] = FLOAT;
-            // FORARTEM
 
             link_node = smSearchNode(root, nameFunc[counter_func].attribute);
             CHECK_AND_CALL_FUNCTION(check_var(link_node, b.attribute));
@@ -296,7 +295,6 @@ int convert_str(BSTNodePtr *root, Stack *tokenStack) {
             break;
         case DOUBLE:
             prefix = "float@";
-            // FIXME float can be 0
             double attribute_in_double = atof(x.attribute);
             char* tmp = malloc(sizeof(char)*100);
             if (tmp == NULL) return ERR_ALLOCATION_ERROR_OR_ETC;
@@ -307,7 +305,6 @@ int convert_str(BSTNodePtr *root, Stack *tokenStack) {
 
         case INT:
             prefix = "int@";
-            // if attribute will be zero, value will be non zero
             value = !atoi(x.attribute);
 
             break;
@@ -334,12 +331,7 @@ int convert_str(BSTNodePtr *root, Stack *tokenStack) {
             x.type = E_NONTERM_FLOAT;
             break;
         case INT:
-            // FIXME zero division 
-            // if (value) {
-                // x.type = E_NONTERM_ZERO_INT;
-            // } else {
-                x.type = E_NONTERM_INT;
-            // }
+            x.type = E_NONTERM_INT;
             break;
         default:
             break;
@@ -357,14 +349,6 @@ int convert_id(BSTNodePtr *root, Stack *tokenStack, Token *nameFunc, int counter
     BSTNodePtr *link_node = smSearchNode(root, nameFunc[counter_func].attribute);
     CHECK_AND_CALL_FUNCTION(check_var(link_node, x.attribute));
     BSTNodePtr *node = checking_searching(link_node, x.attribute);
-    // parametr *param; 
-
-    // CHECK_AND_CALL_FUNCTION(check_dec(smSearchNode(root, nameFunc[counter_func].attribute), 1));
-    // if (node == NULL)
-    // parametr *param = smSearcParamFunc(smSearchNode(root, nameFunc[counter_func].attribute), x.attribute);
-
-        // FORARTEM
-        // check_dec(x.attribute,1);
 
     stackPop(tokenStack); // pop id
     stackPop(tokenStack); //pop shift

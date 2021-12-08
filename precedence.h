@@ -1,3 +1,10 @@
+/*------------------------------------------
+ Title:  precedence.h
+ Author: Koval Maksym
+ Login:  xkoval20
+ Date:   23 Nov 2021;
+------------------------------------------*/
+
 #include "scanner.h" 
 
 typedef enum{
