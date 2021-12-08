@@ -1140,8 +1140,47 @@ int afterID()
         // creat frame
         //safe name func
         checkAndLoadToken(LBR);
+        // callFunc = clipboard[0];
         CHECK_AND_CALL_FUNCTION(funcParam());
         checkAndLoadToken(RBR);
+
+        // if (callFunc.attribute != NULL)
+        // {
+        //     symtable = smSearchNode(root_symtable, callFunc.attribute);
+        //     int countP = 0;
+        //     char charParam[32];
+        //     generate_frame();
+        //     for (int i = 0; symtable->param[i].name != NULL; i++)
+        //     {
+        //         sprintf(charParam, "%%%d", i + 1);
+        //         generate_declaration("TF@", charParam);
+        //         // symtable = smSearchNode(root_symtable, expressionStack.head.attribute);
+        //         if (expressionStack.head.attribute == NULL)
+        //             return 5;
+        //         generate_move("TF@", charParam, "LF@", expressionStack.head.attribute); // FIX MY
+        //         // symtable = smSearchNode(root_symtable, callFunc.attribute);
+        //         stackPop(&expressionStack);
+        //     }
+
+        //     if (expressionStack.head.attribute != NULL)
+        //         return 5;
+
+
+        //     generate_function_call(callFunc.attribute);
+
+        //     symtable = smSearchNode(root_symtable, callFunc.attribute);
+        //     for (int i = 0; symtable->type[i] != NO; i++)
+        //     {
+        //         char charRetval[10];
+        //         sprintf(charRetval, "%%retval%d", i);
+        //         // symtable = smSearchNode(root_symtable, expressionStack.head.attribute);
+        //         generate_move("LF@", clipboard[0].attribute, "TF@", charRetval);
+        //         // symtable = smSearchNode(root_symtable, callFunc.attribute);
+        //     }
+        //     symtable = root_symtable;
+        //     callFunc.attribute = NULL;
+        // }
+
         return OK;
         break;
     case COMMA: // Rule:  <after_id> -> <id_n> = <expr_func>
@@ -1669,10 +1708,14 @@ int exprFunc()
                 sprintf(charParam, "%%%d", i+1);
                 generate_declaration("TF@", charParam);
                 // symtable = smSearchNode(root_symtable, expressionStack.head.attribute);
+                if (expressionStack.head.attribute == NULL)
+                    return 5;
                 generate_move("TF@", charParam, "LF@", expressionStack.head.attribute); //FIX MY
                 // symtable = smSearchNode(root_symtable, callFunc.attribute);
                 stackPop(&expressionStack);
             }
+            if (expressionStack.head.attribute != NULL)
+                return 5;
 
             generate_function_call(callFunc.attribute);
 
@@ -1807,6 +1850,41 @@ int funcParam()
         CHECK_AND_CALL_FUNCTION(funcParamN());
         return OK;
         break;
+
+
+    // case KEYWORD:
+    //     if (strcmp(token.attribute, "nil") != 0)
+    //         return SYNTAX_ERROR;
+
+    //     CHECK_AND_CALL_FUNCTION(expr()); // FIX MY add -----
+    //     CHECK_AND_CALL_FUNCTION(funcParamN());
+    //     if (callFunc.attribute == NULL)
+    //     {
+    //         if (strcmp(clipboard[0].attribute, "write") == 0)
+    //             return OK;
+
+    //         symtable = smSearchNode(root_symtable, clipboard[1].attribute);
+    //         if (symtable != NULL) // FIXED исправить поиск, добавить поиск параметров
+    //         {
+    //             for (int i = 0; symtable->param[i].name != NULL; i++)
+    //             {
+    //                 if (strcmp(symtable->param[i].name, clipboard[1].attribute) == 0)
+    //                 {
+    //                     generate_move("LF@", clipboard[1].attribute, char_type(change_enum(expressionStack.head.type)), expressionStack.head.attribute);
+    //                     return OK;
+    //                 }
+    //             }
+    //         }
+    //         if (symtable != NULL)
+    //         {
+    //             generate_move(char_type(symtable->scope), clipboard[1].attribute, char_type(change_enum(expressionStack.head.type)), expressionStack.head.attribute);
+    //         }
+    //         else
+    //             return SYNTAX_ERROR;
+    //     }
+
+    //     return OK;
+    //     break;
     case INT:
     case STR:
     case DOUBLE:
@@ -1841,6 +1919,7 @@ int funcParam()
                 return SYNTAX_ERROR;
     
         }
+
         return OK;
         break;
     default:
