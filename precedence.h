@@ -1,5 +1,5 @@
 /*------------------------------------------
- Title:  parser.c
+ Title:  precedence.h
  Author: Koval Maksym
  Login:  xkoval20
  Date:   23 Nov 2021;
