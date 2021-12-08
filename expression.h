@@ -19,13 +19,15 @@ typedef enum{
 
 } Compability;
 
-int compability[5][5] = {
-    //           INT   FLOAT STR   BOOL  NIL
-    /* INT   */ {C,    A,    D,    D,    C},
-    /* FLOAT */ {B,    C,    X,    D,    C},
-    /* STR   */ {D,    D,    C,    D,    C},
-    /* BOOL  */ {D,    D,    D,    C,    D},
-    /* NIL   */ {C,    C,    C,    D,    C}
+int compability[6][6] = {
+    //           INT   FLOAT STR   BOOL  NIL   ZERO
+    /* INT   */ {C,    A,    D,    D,    C,    C},
+    /* FLOAT */ {B,    C,    X,    D,    C,    C},
+    /* STR   */ {D,    D,    C,    D,    C,    D},
+    /* BOOL  */ {D,    D,    D,    C,    D,    D},
+    /* NIL   */ {C,    C,    C,    D,    C,    C},
+    /* ZERO  */ {C,    C,    D,    D,    C,    C}
+
 };
 
 int find_index(TokenType a);
