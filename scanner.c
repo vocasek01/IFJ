@@ -486,10 +486,11 @@ Token getToken () {
                 state = STR;
                 continue;
             } else if (c == '"') {
-                strncat(str, "\\034", 2); // FIX MY
+                strncat(str, "\\034", 5); // FIX MY
                 state = STR;
                 continue;
             } else if (isdigit(c)) {
+                strncat(str, "\\", 2); // FIX MY
                 ungetc(c, sourceFile);
                 state = ESCAPE2;
                 continue;

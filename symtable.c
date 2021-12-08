@@ -73,12 +73,20 @@ int smAddRetVal(BSTNodePtr **root, char *retVal, int num_ret)
 
 int smInsertVariable(BSTNodePtr **root, char *name, char *data, typeVar type, typeVar scope) {
     if (*root != NULL) {
-
-        if (strcmp((*root)->name, name) > 0) {
+        if ((*root)->isFunction == true)
+        {
             smInsertVariable(&(*root)->LPtr, name, data, type, scope);
-        } else if (strcmp((*root)->name, name) < 0) {
+        }
+        if (strcmp((*root)->name, name) > 0)
+        {
+            smInsertVariable(&(*root)->LPtr, name, data, type, scope);
+        }
+        else if (strcmp((*root)->name, name) < 0)
+        {
             smInsertVariable(&(*root)->RPtr, name, data, type, scope);
-        } else {
+        }
+        else
+        {
             (*root)->data = data;
             (*root)->type[0] = type;
             (*root)->scope = scope;
