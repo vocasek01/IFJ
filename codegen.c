@@ -2,12 +2,8 @@
 #include <stdlib.h>
 #include "codegen.h"
 #include "string.h"
-// #include "scanner.h"
 #include "scanner.c"
 #include "parser.h"
-
-// #include "symtable.h"
-#pragma once
 
 FILE *ifj_code;
 int generate_inputs();
@@ -43,8 +39,7 @@ int generate_func_top(char *function_identifier)
 {
     if (strcmp(function_identifier, "main") == 0)
     {
-        fprintf(ifj_code, "LABEL $$main\n");
-        fprintf(ifj_code, "CREATEFRAME\n");
+        fprintf(ifj_code, "LABEL $$main\nCREATEFRAME\n");
     }
     else
     {
@@ -56,8 +51,7 @@ int generate_func_top(char *function_identifier)
 
 int generate_func_param(char *param_identifier, int param_pos)
 {
-    fprintf(ifj_code, "DEFVAR LF@%s\n", param_identifier);
-    fprintf(ifj_code, "MOVE LF@%s LF@%%%d\n", param_identifier, param_pos);
+    fprintf(ifj_code, "DEFVAR LF@%s\nMOVE LF@%s LF@%%%d\n", param_identifier, param_identifier, param_pos);
     return 0;
 }
 
@@ -84,8 +78,7 @@ int generate_return_values(typeVar type, int i)
         empty_value = "0x0.0p+0";
         break;
     }
-    fprintf(ifj_code, "DEFVAR LF@%%retval%d\n", i);
-    fprintf(ifj_code, "MOVE LF@%%retval%d %s@%s\n", i, ifjcode_type, empty_value);
+    fprintf(ifj_code, "DEFVAR LF@%%retval%d\nMOVE LF@%%retval%d %s@%s\n", i, i, ifjcode_type, empty_value);
     return 0;
 }
 
@@ -93,11 +86,9 @@ int generate_func_bottom(char *function_identifier)
 {
     if (strcmp(function_identifier, "main") == 0)
     {
-        fprintf(ifj_code, "# end of main body\n");
         return 0;
     }
-    fprintf(ifj_code, "POPFRAME\n");
-    fprintf(ifj_code, "RETURN\n\n");
+    fprintf(ifj_code, "POPFRAME\nRETURN\n\n");
     return 0;
 }
 
@@ -208,7 +199,7 @@ int generate_inputf()
 
 int generate_print()
 {
-    fprintf(ifj_code, "%s", "LABEL $print\nPUSHFRAME\nDEFVAR LF@counter\nMOVE LF@counter LF@%%1\n# while\nJUMP $$print_while_end\nLABEL $$print_while\nCREATEFRAME\nDEFVAR TF@variable\nPOPS TF@variable\nWRITE TF@variable\nSUB LF@counter LF@counter int@1\nLABEL $$print_while_end\nJUMPIFNEQ $$print_while LF@counter int@0\n# end while\nPOPFRAME\nRETURN\n\n");
+    fprintf(ifj_code, "%s", "LABEL $print\nPUSHFRAME\nDEFVAR LF@counter\nMOVE LF@counter LF@%%1\nJUMP $$print_while_end\nLABEL $$print_while\nCREATEFRAME\nDEFVAR TF@variable\nPOPS TF@variable\nWRITE TF@variable\nSUB LF@counter LF@counter int@1\nLABEL $$print_while_end\nJUMPIFNEQ $$print_while LF@counter int@0\nPOPFRAME\nRETURN\n\n");
     return 0;
 }
 
@@ -591,8 +582,7 @@ int generate_arithmetic_operation_nil(Token operation, char *result, char *a, ch
         fprintf(ifj_code, "EQ LF@%s LF@%s LF@%s\n", result, a, b);
         break;
     case NOTEQ:
-        fprintf(ifj_code, "EQ LF@%s LF@%s LF@%s\n", result, a, b);
-        fprintf(ifj_code, "NOT LF@%s LF@%s\n", result, result);
+        fprintf(ifj_code, "EQ LF@%s LF@%s LF@%s\nNOT LF@%s LF@%s\n", result, a, b, result, result);
         break;
     default:
         fprintf(stderr, "Unsupported operation!");
@@ -604,7 +594,6 @@ int generate_arithmetic_operation_nil(Token operation, char *result, char *a, ch
 int generate_if_head(char *compare_variable, int number)
 {
     fprintf(ifj_code, "JUMPIFEQ $$IF_FALSE%d LF@%s bool@false\n", number, compare_variable);
-    fprintf(ifj_code, "# True%d\n", number);
     return 0;
 }
 
@@ -612,21 +601,18 @@ int generate_if_middle(int number)
 {
     fprintf(ifj_code, "JUMP $$IF_END%d\n", number);
     fprintf(ifj_code, "LABEL $$IF_FALSE%d\n", number);
-    fprintf(ifj_code, "# False%d\n", number);
     return 0;
 }
 
 int generate_if_end(int number)
 {
     fprintf(ifj_code, "LABEL $$IF_END%d\n", number);
-    fprintf(ifj_code, "# if%d end\n", number);
     return 0;
 }
 
 int generate_while_head(char *check_operand_identifier, int while_counter)
 {
-    fprintf(ifj_code, "JUMPIFEQ $CYCLE%d LF@%s bool@true\n", while_counter, check_operand_identifier);
-    fprintf(ifj_code, "JUMP $END%d\n", while_counter);
+    fprintf(ifj_code, "JUMPIFEQ $CYCLE%d LF@%s bool@true\nJUMP $END%d\n", while_counter, check_operand_identifier, while_counter);
     return 0;
 }
 
@@ -638,8 +624,7 @@ int generate_while_label_cycle(int while_counter)
 
 int generate_while_iterate(char *check_operand_identifier, int while_counter)
 {
-    fprintf(ifj_code, "JUMPIFEQ $CYCLE%d LF@%s bool@true\n", while_counter, check_operand_identifier);
-    fprintf(ifj_code, "JUMP $END%d\n", while_counter);
+    fprintf(ifj_code, "JUMPIFEQ $CYCLE%d LF@%s bool@true\nJUMP $END%d\n", while_counter, check_operand_identifier, while_counter);
     return 0;
 }
 
