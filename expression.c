@@ -1,6 +1,7 @@
 #include "expression.h"
 
 int counter_of_vars = 0;
+BSTNodePtr item;
 
 int find_index(TokenType a) {
 
@@ -305,9 +306,9 @@ int convert_id(BSTNodePtr *root, Stack *tokenStack, Token *nameFunc, int counter
 {
 
     Token x = stackTop(tokenStack);
-    BSTNodePtr *node = smSearchNode(root, nameFunc[counter_func].attribute);
-    CHECK_AND_CALL_FUNCTION(check_var(node, x.attribute));
-    node = checking_searching(node, x.attribute);
+    BSTNodePtr *link_node = smSearchNode(root, nameFunc[counter_func].attribute);
+    CHECK_AND_CALL_FUNCTION(check_var(link_node, x.attribute));
+    BSTNodePtr *node = checking_searching(link_node, x.attribute);
     // parametr *param; 
 
     // CHECK_AND_CALL_FUNCTION(check_dec(smSearchNode(root, nameFunc[counter_func].attribute), 1));
@@ -403,14 +404,15 @@ int isShifted(Token a) {
 BSTNodePtr *checking_searching(BSTNodePtr *node, char *name)
 {   
     // CHECK_AND_CALL_FUNCTION(check_var(node, name));
-    node = smSearchNode(node, name);
-    if (node == NULL)
+    if (smSearcParamFunc(node, name) != NULL)
     {
-        BSTNodePtr *param;
-        param->name = smSearcParamFunc(node, name)->name;
-        param->type[0] = smSearcParamFunc(node, name)->type;
-        return param;
+        
+        item.name = smSearcParamFunc(node, name)->name;
+        item.type[0] = smSearcParamFunc(node, name)->type;
+        item.isFunction = false;
+        return &item;
     }
+    node = smSearchNode(node, name);
 
     return node;
 }
