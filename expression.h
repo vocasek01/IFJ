@@ -1,14 +1,14 @@
-// #include "scanner.h"
+/*------------------------------------------
+ Title:  parser.c
+ Author: Koval Maksym
+ Login:  xkoval20
+ Date:   23 Nov 2021;
+------------------------------------------*/
+
 #include "precedence.h"
 #include "stack.h"
 #include "symtable.h"
-#include "codegen.c" // FIX MY
-
-// typedef enum{
-
-
-
-// } RuleType;
+#include "codegen.c"
 
 typedef enum{
 
