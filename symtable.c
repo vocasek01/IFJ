@@ -68,9 +68,9 @@ int smInsertVariable(BSTNodePtr **root, char *name, char *data, typeVar type, ty
     if (*root != NULL) {
 
         if (strcmp((*root)->name, name) > 0) {
-            smInsertVariable(&(*root)->RPtr, name, data, type, scope);
-        } else if (strcmp((*root)->name, name) < 0) {
             smInsertVariable(&(*root)->LPtr, name, data, type, scope);
+        } else if (strcmp((*root)->name, name) < 0) {
+            smInsertVariable(&(*root)->RPtr, name, data, type, scope);
         } else {
             (*root)->data = data;
             (*root)->type[0] = type;
@@ -120,16 +120,16 @@ BSTNodePtr *smSearchNode (BSTNodePtr *root, char *name) {
         {
             return root;
         }
-        if (root->isFunction == true)
-        {
-            for (int i=0;root->param[i].name != NULL; i++)
-            {
-                if (strcmp(root->param[i].name, name) == 0)
-                {
-                    return root;
-                }
-            }
-        }
+        // if (root->isFunction == true)
+        // {
+        //     for (int i=0;root->param[i].name != NULL; i++)
+        //     {
+        //         if (strcmp(root->param[i].name, name) == 0)
+        //         {
+        //             return root;
+        //         }
+        //     }
+        // }
         if (root->isFunction == true) {
             item = smSearchNode(root->LPtr, name);
             if (item == NULL) {
@@ -152,11 +152,44 @@ BSTNodePtr *smSearchNode (BSTNodePtr *root, char *name) {
     }
     
 }
+/**
+ * searches for a node that has a parameter
+ *
+ **/
+BSTNodePtr *smSearchParamNode(BSTNodePtr *root, char *name)
+{
+    BSTNodePtr *item = NULL;
+
+    if (root != NULL)
+    {
+        if (root->isFunction == true)
+        {
+            for (int i = 0; root->param[i].name != NULL; i++)
+            {
+                if (strcmp(root->param[i].name, name) == 0)
+                {
+                    return root;
+                }
+            }
+        }
+        else
+        {
+            item = smSearchParamNode(root->RPtr, name);
+            return item;
+        }
+        return NULL;
+    }
+    else
+    {
+        return NULL;
+    }
+    return NULL;
+}
 
 parametr *smSearcParamFunc(BSTNodePtr *root, char *name)
 {
     BSTNodePtr *item = NULL;
-    item = smSearchNode(root, name);
+    item = root;
     if (item == NULL)
         return NULL;
 
@@ -178,7 +211,8 @@ BSTNodePtr *smChekVar(BSTNodePtr *root, char *name)
     {
             if (strcmp(root->name, name) != 0)
             {
-                item = smChekVar(root->RPtr, name);
+                item = smChekVar(root->LPtr, name);
+                // printf("N+++");
             }
             else
             {

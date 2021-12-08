@@ -53,10 +53,26 @@ int smAddRetVal(BSTNodePtr **root, char *retVal, int num_ret);
 
 int smInsertVariable(BSTNodePtr **root, char *name, char *data, typeVar type, typeVar scope);
 
+/**
+ *searches by node name
+ **/
 BSTNodePtr *smSearchNode (BSTNodePtr *root, char *name);
 
+/**
+ * searches for a function that has a parameter 
+ * @param name variable name
+ **/
+BSTNodePtr *smSearchParamNode(BSTNodePtr *root, char *name);
+
+/**
+ * returns a data type parameter parametr
+ * searches for a parameter in the node
+ **/
 parametr *smSearcParamFunc(BSTNodePtr *root, char *name);
 
+/**
+ *searches only for variables in a function
+ **/
 BSTNodePtr *smChekVar(BSTNodePtr *root, char *name);
 
 void smDispose (BSTNodePtr **root);
