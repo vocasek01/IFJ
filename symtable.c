@@ -115,42 +115,43 @@ void smDispose (BSTNodePtr **root) {
 BSTNodePtr *smSearchNode (BSTNodePtr *root, char *name) {
     BSTNodePtr *item = NULL;
 
-    if (root != NULL) {
+    if (root != NULL)
+    {
         if (strcmp(root->name, name) == 0)
         {
             return root;
         }
-        // if (root->isFunction == true)
-        // {
-        //     for (int i=0;root->param[i].name != NULL; i++)
-        //     {
-        //         if (strcmp(root->param[i].name, name) == 0)
-        //         {
-        //             return root;
-        //         }
-        //     }
-        // }
-        if (root->isFunction == true) {
+        if (root->isFunction == true)
+        {
             item = smSearchNode(root->LPtr, name);
-            if (item == NULL) {
+            if (item == NULL)
+            {
                 item = smSearchNode(root->RPtr, name);
             }
 
             return item;
-        } else {
-            if (strcmp(root->name, name) > 0) {
-                item = smSearchNode(root->RPtr, name);
-            } else if (strcmp(root->name, name) < 0) {
+        }
+        else
+        {
+            if (strcmp(root->name, name) > 0)
+            {
                 item = smSearchNode(root->LPtr, name);
-            } else {
+            }
+            else if (strcmp(root->name, name) < 0)
+            {
+                item = smSearchNode(root->RPtr, name);
+            }
+            else
+            {
                 item = root;
             }
             return item;
         }
-    } else {
+    }
+    else
+    {
         return NULL;
     }
-    
 }
 /**
  * searches for a node that has a parameter
