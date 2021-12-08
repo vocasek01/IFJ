@@ -30,12 +30,12 @@ int compability[5][5] = {
 
 int find_index(TokenType a);
 int find_rule(TokenType a, TokenType b);
-int types_compability(Token a, Token b);
+int types_compability(BSTNodePtr *root, Token a, Token b, Token *nameFunc, int counter_func);
 int find_type(Token a);
 int convert_id(BSTNodePtr *root, Stack *tokenStack, Token *nameFunc, int counter_func);
 int convert_str(BSTNodePtr *root, Stack *tokenStack);
 int convert_to_nonterm(BSTNodePtr *root, Stack *tokenStack,Token *nameFunc, int counter_func);
-int convert_operation(BSTNodePtr *root, Stack *tokenStack);
+int convert_operation(BSTNodePtr *root, Stack *tokenStack, Token *nameFunc, int counter_func);
 int convert_len(Stack *tokenStack);
 int convert_nil(Stack *tokenStack);
 int convert_parentheses(Stack *tokenStack);

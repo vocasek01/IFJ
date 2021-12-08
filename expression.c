@@ -88,7 +88,7 @@ int convert_to_nonterm(BSTNodePtr *root, Stack *tokenStack,Token *nameFunc, int 
         case LTE:
         case KONC:
         case EQ:
-            CHECK_AND_CALL_FUNCTION(convert_operation(root, tokenStack));
+            CHECK_AND_CALL_FUNCTION(convert_operation(root, tokenStack, nameFunc, counter_func));
             return OK;
         case LEN:
             CHECK_AND_CALL_FUNCTION(convert_len(tokenStack));
@@ -99,13 +99,8 @@ int convert_to_nonterm(BSTNodePtr *root, Stack *tokenStack,Token *nameFunc, int 
         break;
 
     case IDENTIFICATOR:
-<<<<<<< HEAD
-        CHECK_AND_CALL_FUNCTION(convert_id(root, tokenStack));
-        return OK;
-=======
         CHECK_AND_CALL_FUNCTION(convert_id(root, tokenStack, nameFunc, counter_func));
         return 0;
->>>>>>> 7de1e379ac0e009e6bb7d603bc89ee3cde9aeef2
     case STR:
     case INT:
     case DOUBLE:
@@ -176,8 +171,10 @@ int convert_parentheses(Stack *tokenStack) {
 }
 
 
-int types_compability(Token a, Token b) {
+int types_compability(BSTNodePtr *root, Token a, Token b, Token *nameFunc, int counter_func) {
 
+    BSTNodePtr *link_node;
+    BSTNodePtr *node;
     switch(compability[a.type][b.type]) {
         case A:
             generate_int2float(a.attribute);
@@ -185,6 +182,10 @@ int types_compability(Token a, Token b) {
             // find "a.attribute" in symtable and change type to sFLOAT
             // BSTNodePtr *node1 = smSearchNode(root_symtable, a.attribute);
             // node1->type[0] = FLOAT;
+            link_node = smSearchNode(root, nameFunc[counter_func].attribute);
+            CHECK_AND_CALL_FUNCTION(check_var(link_node, a.attribute));
+            node = checking_searching(link_node, a.attribute);
+            node->type[0] = FLOAT;
             // FORARTEM
 
             a.type = E_NONTERM_FLOAT;
@@ -194,7 +195,14 @@ int types_compability(Token a, Token b) {
             // BSTNodePtr *node2 = smSearchNode(root_symtable, b.attribute);
             // node2->type[0] = FLOAT;
             // FORARTEM
+
+            link_node = smSearchNode(root, nameFunc[counter_func].attribute);
+            CHECK_AND_CALL_FUNCTION(check_var(link_node, b.attribute));
+            node = checking_searching(link_node, b.attribute);
+            node->type[0] = FLOAT;
+
             generate_int2float(b.attribute);
+
             b.type = E_NONTERM_FLOAT;   
             return OK;
         case C:
@@ -204,7 +212,7 @@ int types_compability(Token a, Token b) {
     }
 }
 
-int convert_operation(BSTNodePtr *root, Stack *tokenStack) {
+int convert_operation(BSTNodePtr *root, Stack *tokenStack, Token *nameFunc, int counter_func) {
 
     int error_code = 0;
     Token right = stackTop(tokenStack);
@@ -223,7 +231,7 @@ int convert_operation(BSTNodePtr *root, Stack *tokenStack) {
     result.attribute = var_name;
     generate_declaration("LF@", var_name);
 
-    CHECK_AND_CALL_FUNCTION(types_compability(right,left));
+    CHECK_AND_CALL_FUNCTION(types_compability(root, right, left, nameFunc, counter_func));
 
     switch (right.type)
     {
