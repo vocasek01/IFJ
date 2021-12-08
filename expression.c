@@ -391,6 +391,9 @@ int convert_id(BSTNodePtr *root, Stack *tokenStack, Token *nameFunc, int counter
         case FLOAT:
             x.type = E_NONTERM_FLOAT;
             break;
+        case sNULL:
+            x.type = E_NONTERM_NIL;
+            break;
         default:
             break;
     }
