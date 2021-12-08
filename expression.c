@@ -71,6 +71,7 @@ int convert_to_nonterm(BSTNodePtr *root, Stack *tokenStack,Token *nameFunc, int 
     case E_NONTERM_FLOAT:
     case E_NONTERM_BOOL:
     case E_NONTERM_STR:
+    case E_NONTERM_ZERO_INT:
     case E_NONTERM_NIL:
 
         x = stackTop(tokenStack->next);
@@ -233,6 +234,10 @@ int convert_operation(BSTNodePtr *root, Stack *tokenStack, Token *nameFunc, int 
 
     CHECK_AND_CALL_FUNCTION(types_compability(root, right, left, nameFunc, counter_func));
 
+    if (right.type == E_NONTERM_ZERO_INT && (operator.type == DIV || operator.type == INT_DIV)) {
+        return ERR_DIVISION_BY_ZERO;
+    }
+
     switch (right.type)
     {
         case E_NONTERM_STR:
@@ -335,11 +340,11 @@ int convert_str(BSTNodePtr *root, Stack *tokenStack) {
             break;
         case INT:
             // FIXME zero division 
-            // if (value) {
-                // x.type = E_NONTERM_ZERO_INT;
-            // } else {
+            if (value) {
+                x.type = E_NONTERM_ZERO_INT;
+            } else {
                 x.type = E_NONTERM_INT;
-            // }
+            }
             break;
         default:
             break;
@@ -390,6 +395,10 @@ int convert_id(BSTNodePtr *root, Stack *tokenStack, Token *nameFunc, int counter
             break;
     }
 
+    if (node->data != NULL && strcmp(node->data,"nil") == 0) {
+        x.type = E_NONTERM_NIL;
+    }
+
     stackPush(tokenStack, x);
     return 0;
 }
@@ -412,6 +421,7 @@ Token find_term(Stack *tokenStack) {
         case E_NONTERM_FLOAT:
         case E_NONTERM_BOOL:
         case E_NONTERM_NIL:
+        case E_NONTERM_ZERO_INT:
         case E_SHIFT:
             break;
         
