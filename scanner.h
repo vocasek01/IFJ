@@ -1,7 +1,7 @@
 /*------------------------------------------
  Title:  scanner.h
- Author: Matěj Krátký,
- Login:  xkratk17, 
+ Author: Matěj Krátký, Golikov Ivan
+ Login:  xkratk17, xgolik00 
  Date:   15 Oct 2021;
 ------------------------------------------*/
 
@@ -39,7 +39,7 @@ typedef enum {
     //Type of date
     INT,      // celé číslo 42
 
-    DOUBLE,    // 4.2, nebo 4e+4.47
+    DOUBLE,    // 4.2, nebo 4e+447
     DOUB_DOT1, // 
     DOUB_DOT2, //
     DOUB_EXP1, //

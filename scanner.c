@@ -1,7 +1,7 @@
 /*------------------------------------------
  Title:  scanner.c
- Author: Matěj Krátký,
- Login:  xkratk17, 
+ Author: Matěj Krátký, Golikov Ivan
+ Login:  xkratk17, xgolik00 
  Date:   15 Oct 2021;
 ------------------------------------------*/
 
@@ -359,14 +359,17 @@ Token getToken () {
             if (isdigit(c)) {
                 strncat(str, &c, 1);
                 state = DOUB_DOT2;
+                continue;
             } else {
                 ungetc(c, sourceFile);
                 errorCode();
                 token.type = ERROR;
+                getString(str, &token); // add
+                return token;           // add
             }
 
-            getString(str, &token);
-            return token;
+            // getString(str, &token);
+            // return token;
         }
 
         if (state == DOUB_DOT2) {
@@ -387,11 +390,13 @@ Token getToken () {
         }
 
         if (state == DOUB_EXP1) {
-            if (isdigit(c)){
-                strncat(str, &c, 1);
-                state = DOUBLE;
-                continue;
-            } else if (c == '+' || c == '-') {
+            // if (isdigit(c)){
+            //     strncat(str, &c, 1);
+            //     state = DOUBLE;
+            //     continue;
+            // } else                            change!
+            
+            if (c == '+' || c == '-') {
                 strncat(str, &c, 1);
                 state = DOUB_EXP2;
                 continue;

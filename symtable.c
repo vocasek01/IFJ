@@ -1,3 +1,10 @@
+/*------------------------------------------
+ Title:  symtable.c
+ Author: Golikov Ivan
+ Login:  xgolik00 
+ Date:   15 Oct 2021;
+------------------------------------------*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "symtable.h"
